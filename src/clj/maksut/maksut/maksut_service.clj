@@ -29,6 +29,8 @@
 
 ;api_schemas/LaskuCreate (ei sisällä gereroituja kenttiä)
 (defn json->LaskuCreate [lasku]
+  ;this constrain cannot be in schema-def as CLJS does not support BigDecimal
+  (s/validate (s/constrained s/Str #(>= (bigdec %) 0.65M) 'valid-payment-amount) (:amount lasku))
   (assoc
    (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference])
    :amount (.setScale (bigdec (:amount lasku)) 2 BigDecimal/ROUND_HALF_UP)))

@@ -42,7 +42,7 @@
    :first-name s/Str
    :last-name s/Str
    :email s/Str
-   :amount (s/constrained s/Str #(>= (bigdec %) 0.65M) 'valid-payment-amount)
+   :amount s/Str
    :index (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
    })
 
@@ -52,7 +52,7 @@
    :last-name s/Str
    :email s/Str
    ; java.math.BigDecimal - Does not port to CLJS
-   :amount (s/constrained s/Str #(>= (bigdec %) 0.65M) 'valid-payment-amount)
+   :amount s/Str
    :due-days (s/constrained s/Int #(> % 0) 'positive-due-days)
    :origin s/Str
    :reference s/Str})
