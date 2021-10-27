@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fi">
+  <head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style id="_stylefy-constant-styles_"></style>
+    <style id="_stylefy-styles_"></style>
+    <title>Maksut</title>
+    <script src="/maksut/js/vendor/oph_urls.js?fingerprint={{cache-fingerprint}}"></script>
+    <script type="text/javascript">
+      const frontendConfig = {{ frontend-config|safe }}
+      window.urls.addProperties({{front-properties|safe}})
+    </script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,600,400italic,600italic,700italic' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div id="app"></div>
+    {% if apply-raamit %}<script src="/virkailija-raamit/apply-raamit.js?fingerprint={{cache-fingerprint}}"></script>{% endif %}
+    <script src="/maksut/js/compiled/maksut.js?fingerprint={{cache-fingerprint}}"></script>
+  </body>
+</html>
