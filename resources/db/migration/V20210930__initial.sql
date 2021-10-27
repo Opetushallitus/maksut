@@ -39,7 +39,7 @@ CREATE TABLE payments (
 
 CREATE TABLE secrets (
 	fk_invoice              INTEGER REFERENCES invoices(id) NOT NULL,
-	secret                  TEXT NOT NULL,
+	secret                  TEXT NOT NULL UNIQUE,
 	created_at         		TIMESTAMP DEFAULT now() NOT NULL
 );
 
@@ -51,8 +51,6 @@ create table sessions (
 	created_at timestamp default now()
 );
 
-
---- Prefix secrets with order_id to force them unique even if random would generate two identical
 
 ---
 --- Views

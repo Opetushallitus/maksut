@@ -9,7 +9,8 @@
             [com.stuartsierra.component :as component]
             [schema.core :as s]
             [ring.util.http-response :as response]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log])
+  (:import [java.time LocalDate]))
 
 (def maksut-create (audit/->operation "MaksutCreate"))
 
@@ -101,9 +102,14 @@
 
   (get-laskut-by-secret [_ session secret]
     (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
-      (do
+      (let [now (. LocalDate (now))
+            passed? #(.isAfter now %)
+            all-passed? (every? passed? (mapv :due_date laskut))]
+        ;do not let user to the page if all due_dates for all (linked) invoices has passed
         (log/info "laskut " laskut)
-        (map Lasku->json laskut))
+        (if all-passed?
+          (maksut-error :invoice-notfound-oldsecret "Linkki on vanhentunut")
+          (map Lasku->json laskut)))
       (maksut-error :invoice-notfound-secret "Linkki on väärä tai vanhentunut"))))
 
 

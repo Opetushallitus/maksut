@@ -1,5 +1,5 @@
 
--- :name insert-lasku-returning! :! :1
+-- :name insert-lasku! :returning-execute :1
 INSERT INTO invoices (
     order_id,
     first_name,
@@ -20,7 +20,7 @@ VALUES (
     :reference,
     CURRENT_DATE + INTERVAL '1 day' * :due-days
 )
-RETURNING * ;
+RETURNING *;
 
 -- :name update-lasku! :! :n
 UPDATE invoices
@@ -49,6 +49,16 @@ VALUES (
     :payment-id,
     :amount,
     to_timestamp(:timestamp)::timestamp without time zone
+);
+
+-- :name insert-secret-for-invoice! :! :n
+INSERT INTO secrets (
+    fk_invoice,
+    secret
+)
+VALUES (
+    :invoice-id,
+    :secret
 );
 
 -- :name select-payment :? :1
