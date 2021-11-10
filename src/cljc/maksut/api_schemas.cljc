@@ -57,6 +57,11 @@
    :origin s/Str
    :reference s/Str})
 
+;(s/defschema TutuLaskuList
+;  {:application-key s/Str ;TODO validate proper oid-syntax
+;   (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
+;   })
+
 ;(s/defschema MaksutResponse
 ;  {:secret s/Str
 ;   :status LaskuStatus

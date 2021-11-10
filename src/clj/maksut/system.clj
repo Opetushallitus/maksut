@@ -36,11 +36,6 @@
                                              [:audit-logger
                                               :db])
 
-                           :email-service (component/using
-                                             (email-service/map->EmailService {:config config})
-                                             [:audit-logger
-                                              :db])
-
                            :health-checker (component/using
                                              (health-check/map->DbHealthChecker {})
                                              [:db])
@@ -68,6 +63,15 @@
 
                            :kayttooikeus-service (component/using (kayttooikeus-service/map->HttpKayttooikeusService {:config config})
                                                     [:kayttooikeus-authenticating-client])
+
+                           :email-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :email
+                                                                                                             :config  config})
+
+                           :email-service (component/using (email-service/map->EmailService {:config config})
+                                           [:audit-logger
+                                            :db
+                                            :email-authenticating-client])
+
                            :cas-ticket-validator (cas-ticket-validator/map->CasTicketClient {:config config})]
         mock-system       [:mock-ataru-cas-request-map (atom {})
 

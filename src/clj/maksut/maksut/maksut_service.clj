@@ -92,6 +92,16 @@
                 :origin (get-in this [:config :lasku-origin])
                 :reference application-id))))
 
+  (list-tutu [this session input]
+    (let [{:keys [application-key index]} input
+          origin (get-in this [:config :lasku-origin])]
+      ;TODO handle index if needed (by ataru-editori use-cases)
+      (s/validate s/Str application-key)
+      (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
+        ;TODO secret should not maybe be included here if it's not needed (only return it when asked with secret, or when new invoice is created?)
+        (map Lasku->json laskut)
+        (maksut-error :invoice-notfound "Laskuja ei löytynyt"))))
+
   (get-lasku [_ session order-id]
     (if-let [lasku (maksut-queries/get-lasku-by-order-id db {:order-id order-id})]
       ; Mikäli lasku tulee maksetuksi manuaalisesti (Paytrailin ulkopuolella), se tulee näkymään "past-due"

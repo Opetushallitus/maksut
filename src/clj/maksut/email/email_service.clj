@@ -3,6 +3,7 @@
   (:require [maksut.oph-url-properties :as url]
             [maksut.util.http-util :as http-util]
             [maksut.email.email-service-protocol :refer [EmailServiceProtocol]]
+            [maksut.cas.cas-authenticating-client-protocol :as authenticating-client]
             [maksut.config :as c]
             [com.stuartsierra.component :as component]
             [cheshire.core :as json]
@@ -11,14 +12,24 @@
 
 (defn- send-email [this from recipients subject body]
   (let [url                (get this :email-service-url)
+        cas-client         (get this :cas-client)
         wrapped-recipients (mapv (fn [rcp] {:email rcp}) recipients)
-        response           (http-util/do-post url {:headers      {"content-type" "application/json"}
-                                                   :query-params {:sanitize "false"}
-                                                   :body         (json/generate-string {:email     {:from    from
-                                                                                                    :subject subject
-                                                                                                    :isHtml  true
-                                                                                                    :body    body}
-                                                                                        :recipient wrapped-recipients})})]
+        old-body           {:headers      {"content-type" "application/json"}
+                            :query-params {:sanitize "false"}
+                            :body         (json/generate-string {:email     {:from    from
+                                                                             :subject subject
+                                                                             :isHtml  true
+                                                                             :body    body}
+                                                                 :recipient wrapped-recipients})}
+        body-content       {:email     {:from    from
+                                        :subject subject
+                                        :isHtml  true
+                                        :body    body}
+                            :recipient wrapped-recipients}
+        schemas            {:request-schema  nil
+                            :response-schema nil} ;TODO
+        response            (authenticating-client/post cas-client {:url url :body body-content} schemas)
+        ]
     (log/info "email url " url)
 
     (log/info "email response " response)
@@ -26,15 +37,17 @@
       (throw (Exception. (str "Could not send email to " (apply str recipients)))))))
 
 
-(defrecord EmailService [config]
+(defrecord EmailService [config email-authenticating-client]
   component/Lifecycle
   (start [this]
     (s/validate c/MaksutConfig config)
     (let [url (url/resolve-url :ryhmasahkoposti-service.email config)]
-      (assoc this :email-service-url url)))
+      (assoc this :email-service-url url
+                  :cas-client email-authenticating-client)))
   (stop [this]
     (assoc this
            :config nil
+           :cas-client nil
            ))
 
   EmailServiceProtocol

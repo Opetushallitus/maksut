@@ -34,7 +34,7 @@
   http-request-failed
   (fn-traced [{db :db} [error]]
              (let [error-code (:code error)
-                   server-error (and error-code (i18n-utils/get-translation (:lang db) (:translations db) (keyword "rest" error-code)))
+                   server-error (and error-code (i18n-utils/get-translation (:lang db) (:translations db) (keyword "rest-error" error-code)))
                    message (or server-error
                                (i18n-utils/get-translation (:lang db) (:translations db) :yleiset/http-virhe))
                    id (message-id)]

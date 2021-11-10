@@ -2,10 +2,10 @@
   (:require [camel-snake-kebab.core :as csk]
             [camel-snake-kebab.extras :as cske]
             [maksut.config :as c]
-            [reitit.coercion.spec :as rss]
+            [schema.core :as s]
+            [reitit.coercion.schema]
             [reitit.frontend :as rf]
             [reitit.frontend.easy :as rfe]
-            [spec-tools.data-spec :as ds]
             [re-frame.core :as re-frame]))
 
 (def default-panel (:default-panel c/config))
@@ -28,13 +28,12 @@
      :parameters {:query {:secret string?}}}]])
 
 (def routes
-  [;["/"
-   ; {:redirect :panel/tutu-maksut}]
+  [["/"
+    {:redirect :panel/tutu-maksut}]
    ["/maksut/"
     {:name :panel/tutu-maksut
-     :parameters {:query {:secret string?
-                          (ds/opt :payment) string?
-                          }}}]
+     :parameters {:query {(s/optional-key :secret) s/Str
+                          (s/optional-key :payment) s/Str}}}]
     ])
 
 (def keys->kebab-case (partial cske/transform-keys csk/->kebab-case-keyword))
@@ -43,7 +42,7 @@
   (rfe/start!
     (rf/router
       routes
-      {:data {:coercion rss/coercion}})
+      {:data {:coercion reitit.coercion.schema/coercion}})
     (fn [m]
       (let [{{:keys [name redirect]}    :data
              {:keys [path query]

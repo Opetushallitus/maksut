@@ -12,7 +12,7 @@
             [maksut.config :as c]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
-            [maksut.email.email-service-protocol :as email-protocol]
+            ;[maksut.email.email-service-protocol :as email-protocol]
             [maksut.health-check :as health-check]
             [maksut.oph-url-properties :as oph-urls]
             [maksut.schemas.class-pred :as p]
@@ -73,7 +73,9 @@
 
 
 ; --- Routes ---
-(defn- payment-routes [{:keys [mock-dispatcher config payment-service email-service]}]
+(defn- payment-routes [{:keys [mock-dispatcher config payment-service
+                               ;email-service
+                               ]}]
   ["/payment"
    ;Mikäli tarvitsee tukea eri maksujärjestelmiä (tai niiden versioita) samaan aikaan,
    ;voi tänne luoda useamman hakemiston
@@ -101,7 +103,7 @@
                         ; ^ pass extra parameter "&status=cancel"? (BUT that shall not be used for any real logic as it can be modified by the user), only for the notification text
                         (response/permanent-redirect (str "/maksut/?secret=" (:tutusecret query) "&payment=cancel"))
                         ;TODO test
-                        (email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
+                        ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
                         ;(.reset-mocks mock-dispatcher)
                         )}}]
     ["/notify"
@@ -155,6 +157,7 @@
        {:get {;:middleware auth
               :no-doc     true
               :handler    (create-index-handler config)}}]
+
       ["/swagger.json"
        {:get {:no-doc  true
               :swagger {:info {:title       "Maksut"
@@ -194,6 +197,17 @@
 
         ]
 
+       ["/lasku-tutu/:application-key"
+        [""
+         {:get {;TODO:middleware auth ;TODO
+                  :tags       ["Lasku"]
+                  :summary    "Palauttaa kaikki Tutu-hakemukseen liittyvät laskut"
+                  :responses  {200 {:body schema/Laskut}}
+                  :parameters {:path {:application-key s/Str}}
+                  :handler    (fn [{session :session {input :path} :parameters}]
+                                (response/ok (maksut-protocol/list-tutu maksut-service session input)))}}]
+        ]
+
        ["/lasku/:order-id"
         [""
          {:get {;:middleware auth
@@ -202,6 +216,7 @@
                   :responses  {200 {:body schema/Lasku}}
                   :parameters {:path {:order-id s/Str}}
                   :handler    (fn [{session :session {order-id :path} :parameters}]
+                                ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
                                 (response/ok (maksut-protocol/get-lasku maksut-service session (:order-id order-id))))}}]
         ]
 

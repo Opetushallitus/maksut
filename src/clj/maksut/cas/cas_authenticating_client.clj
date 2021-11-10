@@ -78,6 +78,7 @@
                                config)))
         response       (request-fn session-token)
         status (:status response)]
+    ;(log/error (str "CAS LOG session " session-token))
     (when (error-status status)
       (log/error (str "CAS-authenticated request failed with status " status " on url " url)))
     (cond

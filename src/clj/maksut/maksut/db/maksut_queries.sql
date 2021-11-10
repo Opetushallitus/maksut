@@ -76,3 +76,6 @@ SELECT ai.* FROM all_invoices ai
 JOIN (
 	SELECT origin, reference FROM invoices WHERE id = (SELECT fk_invoice FROM secrets WHERE secret = :secret LIMIT 1)
 ) sharing_refs ON (ai.origin = sharing_refs.origin AND ai.reference = sharing_refs.reference AND ai.reference IS NOT NULL);
+
+-- :name all-linked-laskut-by-reference :? :*
+SELECT * FROM all_invoices WHERE reference = :reference AND origin = :origin;

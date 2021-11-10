@@ -18,6 +18,7 @@
 (declare update-lasku!)
 (declare get-lasku-by-order-id)
 (declare all-linked-laskut-by-secret)
+(declare all-linked-laskut-by-reference)
 (declare get-lasku-locked)
 (declare select-payment)
 (declare insert-payment!)
@@ -61,6 +62,9 @@
 
 (defn get-laskut-by-secret [db secret]
   (all-linked-laskut-by-secret db {:secret secret}))
+
+(defn get-laskut-by-reference [db origin reference]
+  (all-linked-laskut-by-reference db {:origin origin :reference reference}))
 
 (defn create-payment [db pt-params]
   (with-db-transaction
