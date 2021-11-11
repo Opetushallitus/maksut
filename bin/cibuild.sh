@@ -29,6 +29,7 @@ run-all-tests() {
 }
 
 run-test-nothing-for-now() {
+  echo ""
 }
 
 run-mocked-maksut() {
