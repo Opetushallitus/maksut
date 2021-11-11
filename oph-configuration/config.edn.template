@@ -1,4 +1,4 @@
-{:server               {:http {:port {{ maksut_server_http_port | default('9099') }}}}
+{:server               {:http {:port {{ maksut_server_http_port | default('8080') }}}}
  :log                  {:base-path "{{ maksut_log_path | default('/root/logs') }}"}
  :db                   {:username      "{{ maksut_db_username | default('app') }}"
                         :password      "{{ maksut_db_app_password }}"

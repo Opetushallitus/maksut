@@ -28,8 +28,7 @@ run-all-tests() {
     && test-e2e
 }
 
-create-uberjar() {
-  lein with-profile +prod uberjar
+run-test-nothing-for-now() {
 }
 
 run-mocked-maksut() {
@@ -58,8 +57,8 @@ case $COMMAND in
   "run-all-tests" )
     run-all-tests
     ;;
-  "run-create-uberjar" )
-    run-create-uberjar
+  "run-test-nothing-for-now" )
+    run-test-nothing-for-now
     ;;
   "run-all-tests-and-create-uberjar" )
     run-all-tests-and-create-uberjar

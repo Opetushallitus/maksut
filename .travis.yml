@@ -17,7 +17,7 @@ cache:
 install:
 - git clone https://github.com/Opetushallitus/ci-tools.git
 - source ci-tools/common/setup-tools.sh
-script: nvm install && nvm use && npm install && ./bin/cibuild.sh run-create-uberjar
+script: nvm install && nvm use && npm install && ./bin/cibuild.sh run-test-nothing-for-now
   && bin/lein with-profile prod uberjar && export BASE_IMAGE="baseimage-fatjar-openjdk11:master"
   && ./ci-tools/common/pull-image.sh && cp -v ./target/maksut.jar $DOCKER_BUILD_DIR/artifact/maksut.jar
   && cp -vr ./oph-configuration $DOCKER_BUILD_DIR/config/ && ./ci-tools/build/build-fatjar.sh maksut
