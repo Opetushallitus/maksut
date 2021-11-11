@@ -55,12 +55,12 @@ Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](
 
 Tämä on suositeltu tapa ajaa palvelua paikallisesti. Tässä ohjeessa oletetaan, että local-environment -repository löytyy hakukohderyhmäpalvelu -hakemiston vierestä, samasta hakemistosta.
 
-Käynnistetty palvelu on käytettävissä osoitteessa (http://localhost:9030/hakukohderyhmapalvelu).
+Käynnistetty palvelu on käytettävissä osoitteessa (http://localhost:9099/maksut).
 
-Kun ajat palvelua, käynnistä aina ensin SSH-yhteys käyttämääsi ympäristöön. Oletuksena se on `pallero`:
+Kun ajat palvelua, käynnistä aina ensin SSH-yhteys käyttämääsi ympäristöön. Oletuksena se on `untuva`:
 
 ```
-ssh bastion.pallero
+ssh bastion.untuva
 ```
 
 #### Palvelun käynnistäminen
@@ -180,19 +180,19 @@ lein repl :connect localhost:9031
 REPL-yhteys selaimeen avautuu sanomalla em. REPL-yhteyden sisällä. Muistathan ensin avata selaimellasi palvelun (ks. osoite alta).
 
 ```clj
-(shadow.cljs.devtools.api/nrepl-select :hakukohderyhmapalvelu)
+(shadow.cljs.devtools.api/nrepl-select :maksut)
 ```
 
 ## Palvelun paikalliset osoitteet
 
-* Palvelun osoite: (http://localhost:9032/hakukohderyhmapalvelu)
+* Palvelun osoite: (http://localhost:9099/maksut)
 * Palvelun Shadow CLJS -palvelimen osoite (http://localhost:9630)
 
 ## Tuotantokäyttö
 
 ### Palvelun uberjar -tiedoston luonti tuotantokäyttöä varten
 
-Seuraava komento luo tämän repositoryn `target` -hakemistoon tiedoston `hakukohderyhmapalvelu.jar`.
+Seuraava komento luo tämän repositoryn `target` -hakemistoon tiedoston `maksut.jar`.
 
 ```sh
 lein with-profile prod uberjar
@@ -201,5 +201,5 @@ lein with-profile prod uberjar
 ### Palvelun ajaminen uberjar -tiedostosta
 
 ```sh
-CONFIG=/polku/palvelun/config-tiedostoon java -jar hakukohderyhmapalvelu.jar
+CONFIG=/polku/palvelun/config-tiedostoon java -jar maksut.jar
 ```

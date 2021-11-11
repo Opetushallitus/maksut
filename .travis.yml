@@ -1,0 +1,29 @@
+dist: xenial
+language: java
+jdk:
+- openjdk11
+env:
+  global:
+  # AWS_ACCESS_KEY_ID
+  - secure: RsrrhmMNE1czv4M8/9cxTBKPzY0U2tmHEXT298dDBJ5F681yhHVkN4qe4w4WLreEK9y/hNUP5dWn4uKzSIrXKjirOLnrUTG+6jfMhAATwnfFuIbqcFd0YstdbDthnzPzT21oQ/LCL7rXQjftpsd8o4ide6bzFYwScQRq9q5Sp8cmmakW+svbVMtYm2+I8PURSteQc6ZRA6QX46MZ552Ny0A0uLklusenxtaCO2IFCJOuwwqE48ZTh2oEPycs/fNKf0WXZZ36t67agEDRXKCV0S/BbVRRLLOwEgvfBQBYnG//GOVbgfUdfKy0bgslsxhu7iprNA8MunoyELR+MJWNda7cZ+DilGzGQiq/+kTe66eUtnl5IEvTcJsFLGezzrsVOZfkP95FciQTQ/wT3wMEsb69BuTfQ1HhnETzJvAn12qA17f0fVu3agf7l/Gz1FfNYzL0FV8Ck9MEBeTA0Ha1Od1BzDWk0g4tw5KsvCKWdvZ7XG19J4l40di5vKMWcynOW9FpIAg0pQsvzX/9KnmOPf7bEegZ8PSmLVv3FW8gqDcPgNseA3c0iEKjj5qih0duPNT+UJizB9gKIWvG3MiYqtffUPayvUpLKjt+4XUU7DzLZPpfWayb9lf6aKpHq/GnhLMG+C3jjcS8UR1Vd2n42sSXHWHRBiwDTY1Ya626YGg=
+  # AWS_SECRET_ACCESS_KEY
+  - secure: H3T7A3abPWqLsHkql6ynuJNauiOjbb6EADOnm+AFKyf/eVKcqQCHr8O2+StjOYp5iP6nrrpX3+SRMKIBm9+9pdrUBARPvRFnHRKyiIfiDWN3Sbavd8MG4/7NRWHlSn0LATZDvupD+j2FD3Sn7keVrecmMAdhTUXZA3thnRUhl8cTRq7L+PhoGew/2QmmF04iPUI2Tw6JhWJKukx9vExlpCuDpUlwX9NxAYCbitbUEvzle0W4QOrIQIaNXb42FKrOZpM0haR2ReiQGeHwgftewEUo4KG5wzka4/mewelIWkQhyvFYp2f1UvtLlNg1Vnp6aoKhnf9dx2RSaqkr6uF5WIim6d3fyZx03vhmBxkeS37UEU62+i578h1qXp3AcIHJZGZJgW/0+wYWnY7N4aRpdMq8KkETyka1D+YlBy5Uagr27A4uVVDb1L2RRHOTOYWpSpnHDLH4PHlGPAj9guGEdEXaxBraayUZDsDpZ2CMy+hSuruC5HlN0b5frKJYCEiET1vF8lzquyN1kT4BopuvNAU9I9GaSdpYXYik6OXwy2/zWsQJzwtljs1shnGYNKpBew+nmnKyHnqHq+AK1ZxGGv3jIpGH9xgB4eZOGhRZ6kGIhdCSw8iA9WA3USzda7XtpvNYTvNRYdlQ5gcRvbks4BGlS4Gu6ecuayb0Y+634OI=
+cache:
+  npm: true
+  directories:
+  - "$HOME/.m2"
+  - "$HOME/.cache"
+  - node_modules
+install:
+- git clone https://github.com/Opetushallitus/ci-tools.git
+- source ci-tools/common/setup-tools.sh
+script: nvm install && nvm use && npm install && ./bin/cibuild.sh run-all-tests-and-create-uberjar
+  && bin/lein with-profile prod uberjar && export BASE_IMAGE="baseimage-fatjar-openjdk11:master"
+  && ./ci-tools/common/pull-image.sh && cp -v ./target/maksut.jar $DOCKER_BUILD_DIR/artifact/maksut.jar
+  && cp -vr ./oph-configuration $DOCKER_BUILD_DIR/config/ && ./ci-tools/build/build-fatjar.sh
+  maksut
+deploy:
+  provider: script
+  script: "./ci-tools/build/upload-image.sh maksut"
+  on:
+    all_branches: true
