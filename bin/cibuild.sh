@@ -40,8 +40,7 @@ run-mocked-maksut() {
 }
 
 run-create-uberjar() {
-  tsc \
-    && create-uberjar
+  create-uberjar
 }
 
 run-all-tests-and-create-uberjar() {
