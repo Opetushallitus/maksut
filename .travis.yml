@@ -17,10 +17,10 @@ cache:
 install:
 - git clone https://github.com/Opetushallitus/ci-tools.git
 - source ci-tools/common/setup-tools.sh
-script: set -x && nvm install && nvm use && npm install && ./bin/cibuild.sh run-all-tests-and-create-uberjar
+script: nvm install && nvm use && npm install && ./bin/cibuild.sh run-create-uberjar
   && bin/lein with-profile prod uberjar && export BASE_IMAGE="baseimage-fatjar-openjdk11:master"
   && ./ci-tools/common/pull-image.sh && cp -v ./target/maksut.jar $DOCKER_BUILD_DIR/artifact/maksut.jar
-  && cp -vr ./oph-configuration $DOCKER_BUILD_DIR/config/ && ./ci-tools/build/build-fatjar.sh maksut && set +x
+  && cp -vr ./oph-configuration $DOCKER_BUILD_DIR/config/ && ./ci-tools/build/build-fatjar.sh maksut
 deploy:
   provider: script
   script: "./ci-tools/build/upload-image.sh maksut"
