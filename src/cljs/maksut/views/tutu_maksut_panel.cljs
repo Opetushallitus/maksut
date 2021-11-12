@@ -13,7 +13,6 @@
             [re-frame.core :refer [dispatch subscribe]]
             [reagent.dom :refer [dom-node]]
             [reagent.core :as reagent]
-            [stylefy.core :as stylefy]
             [stylefy.core :as stylefy :refer [use-style]]))
 
 ;Note. Tämä näkymä on Tutu käyttökohteen mukainen, jos/kun Maksuja käytetään muuhunkin tarkoitukseen,
@@ -196,7 +195,7 @@
                 }]
     (fn [header {:keys [order_id first_name last_name amount due_date status paid_at]} invoice]
       ^{:key (:order_id order_id)}
-      [:div (stylefy/use-style lasku-style)
+      [:div (use-style lasku-style)
        [:div (use-style {:margin-bottom "20px"
                          :text-align "center"})
         [:span (use-style (merge h/h3-styles value-style)) header]
@@ -324,7 +323,7 @@
                      :level     :h2}
           "Tutkinnon tunnustaminen"]
 
-         ;[:span (stylefy/use-style {:grid-row 1 :grid-column "1 / 3"}) @hakukohteet-label]
+         ;[:span (use-style {:grid-row 1 :grid-column "1 / 3"}) @hakukohteet-label]
 
          [laskut-container @invoices]
 
@@ -336,5 +335,5 @@
   [p/panel
    {:cypressid "tutu-maksut-panel"}
    "Maksutapahtumat"
-   [:div (stylefy/use-style grid-styles)
+   [:div (use-style grid-styles)
     [lasku-container]]])
