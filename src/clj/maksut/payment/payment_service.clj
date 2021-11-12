@@ -136,7 +136,7 @@
     (-> plaintext (.getBytes "ISO-8859-1") DigestUtils/sha256Hex str/upper-case)))
 
 (defn- generate-form-data [{:keys [paytrail-host callback-uri merchant-id merchant-secret]}
-                           {:keys [language-code amount order-number reference-number msg] :as params}]
+                           {:keys [language-code amount order-number secret reference-number msg] :as params}]
 ;  {:pre  [(s/valid? ::os/pt-payment-params params)]
 ;   :post [(s/valid? ::os/pt-payment-form-data %)]}
   ;Paytrail does not support sending back the LOCALE we sent
@@ -144,9 +144,9 @@
         params-out "ORDER_NUMBER,PAYMENT_ID,AMOUNT,TIMESTAMP,STATUS"
         form-params {:MERCHANT_ID  merchant-id
                      :LOCALE       (case language-code "fi" "fi_FI" "sv" "sv_SE" "en" "en_US")
-                     :URL_SUCCESS  (str callback-uri "/success" "?tutulocale=fi&tutusecret=wunderbar")
-                     :URL_CANCEL   (str callback-uri "/cancel" "?tutulocale=fi&tutusecret=wunderbar")
-                     :URL_NOTIFY   (str callback-uri "/notify" "?tutulocale=fi&tutusecret=wunderbar")
+                     :URL_SUCCESS  (str callback-uri "/success" "?tutulocale=fi&tutusecret=" secret)
+                     :URL_CANCEL   (str callback-uri "/cancel" "?tutulocale=fi&tutusecret=" secret)
+                     :URL_NOTIFY   (str callback-uri "/notify" "?tutulocale=fi&tutusecret=" secret)
                      :AMOUNT       (format-number-us-locale amount)
                      :ORDER_NUMBER order-number
                      ;:REFERENCE_NUMBER reference-number
@@ -174,6 +174,7 @@
                 :amount           (:amount lasku)
                 ;:reference-number oid  ;TODO ask if this is really needed
                 :order-number     order-id
+                :secret           secret
                 :msg              "Viesti"
                 ;(loc/t localisation lang "payment-name")
                 }]
