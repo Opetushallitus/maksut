@@ -6,7 +6,7 @@
                         :host          "{{ maksut_db_host }}"
                         :port          {{ maksut_db_port | default('5432') }}}
  :payment              {:paytrail-config {:host             "{{ maksut_payment_paytrail_host | default('https://payment.paytrail.com/e2')}}"
-                                          :merchant-i d      {{ maksut_payment_paytrail_id | default('13466')}}
+                                          :merchant-id       {{ maksut_payment_paytrail_id | default('13466')}}
                                           :merchant-secret  "{{ maksut_payment_paytrail_secret | default('6pKF4jkv97zmqBJ3ZL8gUw5DfT2NMQ')}}"}
                         :callback-uri       "{{ maksut_payment_callback_uri }}"
                         :lasku-origin       "tutu"
