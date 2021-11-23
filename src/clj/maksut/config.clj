@@ -16,11 +16,11 @@
                                             :merchant-id      s/Int
                                             :merchant-secret  s/Str}
                           :callback-uri       s/Str
-                          :lasku-origin       s/Str
                           :order-id-prefix    s/Str
                           :currency           s/Str
-                          :amount             {s/Keyword   java.math.BigDecimal}}
-
+                          }
+   :tutu                 {:lasku-origin       s/Str
+                          :order-id-prefix    s/Str}
    :cas                  {:username s/Str
                           :password s/Str
                           :services {:kayttooikeus          {:service-url-property s/Keyword

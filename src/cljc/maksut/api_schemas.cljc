@@ -38,7 +38,7 @@
     :overdue))
 
 (s/defschema TutuLaskuCreate
-  {:application-id s/Str ;TODO validate proper oid-syntax
+  {:application-key s/Str ;TODO validate proper oid-syntax
    :first-name s/Str
    :last-name s/Str
    :email s/Str

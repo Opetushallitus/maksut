@@ -187,24 +187,26 @@
 
        ["/lasku-tutu"
         [""
-         {:post {;TODO:middleware auth ;TODO
+         {:post { :middleware auth ;TODO
                   :tags       ["Lasku"]
                   :summary    "Luo uuden Tutu laskun"
                   :responses  {200 {:body schema/Lasku}}
                   :parameters {:body schema/TutuLaskuCreate}
                   :handler    (fn [{session :session {lasku :body} :parameters}]
+                                (prn "LASKU-TUTU " (type lasku) lasku)
                                 (response/ok (maksut-protocol/create-tutu maksut-service session lasku)))}}]
 
         ]
 
        ["/lasku-tutu/:application-key"
         [""
-         {:get {;TODO:middleware auth ;TODO
+         {:get {;:middleware auth ;TODO
                   :tags       ["Lasku"]
                   :summary    "Palauttaa kaikki Tutu-hakemukseen liittyvät laskut"
                   :responses  {200 {:body schema/Laskut}}
                   :parameters {:path {:application-key s/Str}}
                   :handler    (fn [{session :session {input :path} :parameters}]
+                                (prn "GET LASKUT-TUTU" input)
                                 (response/ok (maksut-protocol/list-tutu maksut-service session input)))}}]
         ]
 

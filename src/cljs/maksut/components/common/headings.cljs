@@ -7,18 +7,18 @@
   {:color       colors/black
    :font-size   "48px"
    :font-weight vars/font-weight-bold
-   :text-align "center" ;this should be somewhere else
+   :text-align "center"
    :line-height "24px"})
 
 (def h2-styles
   {:color       colors/black
-   :font-size   "24px"
+   :font-size   "28px"
    :font-weight vars/font-weight-bold
    :line-height "24px"})
 
 (def h3-styles
   {:color       colors/black
-   :font-size   "20px"
+   :font-size   "22px"
    :font-weight vars/font-weight-bold
    :line-height "24px"})
 
@@ -30,6 +30,7 @@
 
 (defn heading [{:keys [cypressid
                        level
+                       style
                        id]} heading-text]
   (let [[element styles] (case level
                            :h1 [:h1 h1-styles]
@@ -37,7 +38,7 @@
                            :h3 [:h3 h3-styles]
                            :h4 [:h3 h4-styles])]
     [element (stylefy/use-style
-               styles
+               (merge styles style)
                {:id        id
                 :cypressid cypressid})
      heading-text]))

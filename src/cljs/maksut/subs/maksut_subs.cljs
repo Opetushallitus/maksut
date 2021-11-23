@@ -5,6 +5,7 @@
 
 ;; Subscriptions
 (def maksut-invoice :maksut/invoice)
+(def maksut-invoice-fullname :maksut/invoice-fullname)
 (def maksut-is-loading :maksut/is-loading)
 (def maksut-payment-form :maksut/payment-form)
 (def maksut-secret :maksut/secret)
@@ -18,6 +19,14 @@
  maksut-invoice
  (fn [db _]
    (get-in db maksut-events/maksut-invoice)))
+
+(re-frame/reg-sub
+ maksut-invoice-fullname
+ (fn [db _]
+   (let [laskut (get-in db maksut-events/maksut-invoice)
+         lasku  (first laskut)
+         name   (str (:first_name lasku) " " (:last_name lasku))]
+     name)))
 
 (re-frame/reg-sub
  maksut-secret

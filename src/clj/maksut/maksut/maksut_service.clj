@@ -67,8 +67,8 @@
   component/Lifecycle
   (start [this]
     (s/validate c/MaksutConfig config)
-    (assoc this :config (select-keys (:payment config) [:lasku-origin
-                                                        :order-id-prefix])))
+    (assoc this :config (select-keys (:tutu config) [:lasku-origin
+                                                     :order-id-prefix])))
   (stop [this]
     (assoc this :config nil))
 
@@ -79,9 +79,12 @@
 
   (create-tutu [this session lasku]
     (s/validate api-schemas/TutuLaskuCreate lasku)
-    (let [{:keys [application-id index]} lasku
-          ;Using the last part of application-id OID as unique order-id
-          aid (last (str/split application-id #"[.]"))
+    (let [{:keys [application-key index]} lasku
+          trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
+                        (this (subs str 1))
+                        str))
+          ;Using the last part of application-key OID as unique order-id
+          aid (trim-zeroes (last (str/split application-key #"[.]")))
           prefix (get-in this [:config :order-id-prefix])
           order-id (str prefix aid "-" index)]
       (create this session db
@@ -90,7 +93,7 @@
                 :order-id order-id
                 :due-days 14  ;TODO fetch this from config
                 :origin (get-in this [:config :lasku-origin])
-                :reference application-id))))
+                :reference application-key))))
 
   (list-tutu [this session input]
     (let [{:keys [application-key index]} input

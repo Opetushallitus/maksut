@@ -22,6 +22,7 @@
            [java.net URLEncoder URLDecoder]
            [java.time.format DateTimeFormatter]
            [java.util Locale]
+           [org.apache.commons.codec.net URLCodec]
            [org.apache.commons.codec.digest DigestUtils]))
 
 
@@ -142,11 +143,14 @@
   ;Paytrail does not support sending back the LOCALE we sent
   (let [params-in "MERCHANT_ID,LOCALE,URL_SUCCESS,URL_CANCEL,URL_NOTIFY,AMOUNT,ORDER_NUMBER,MSG_SETTLEMENT_PAYER,MSG_UI_MERCHANT_PANEL,PARAMS_IN,PARAMS_OUT"
         params-out "ORDER_NUMBER,PAYMENT_ID,AMOUNT,TIMESTAMP,STATUS"
+        encoder (new URLCodec)
+        encode #(.encode encoder %)
+        query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
         form-params {:MERCHANT_ID  merchant-id
                      :LOCALE       (case language-code "fi" "fi_FI" "sv" "sv_SE" "en" "en_US")
-                     :URL_SUCCESS  (str callback-uri "/success" "?tutulocale=fi&tutusecret=" secret)
-                     :URL_CANCEL   (str callback-uri "/cancel" "?tutulocale=fi&tutusecret=" secret)
-                     :URL_NOTIFY   (str callback-uri "/notify" "?tutulocale=fi&tutusecret=" secret)
+                     :URL_SUCCESS  (str callback-uri "/success" query)
+                     :URL_CANCEL   (str callback-uri "/cancel" query)
+                     :URL_NOTIFY   (str callback-uri "/notify" query)
                      :AMOUNT       (format-number-us-locale amount)
                      :ORDER_NUMBER order-number
                      ;:REFERENCE_NUMBER reference-number
@@ -179,6 +183,8 @@
                 ;(loc/t localisation lang "payment-name")
                 }]
 
+         ;TODO make sure language/locale is validated (before or at latest here)
+
          (cond
             (not (some? lasku)) (maksut-error :invoice-notfound "Laskua ei löydy")
             (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue "Lasku on erääntynyt")
@@ -195,8 +201,10 @@
   (let [{:keys [STATUS]} pt-params]
     (when (not= STATUS "PAID") (maksut-error :payment-invalid-status "Maksun tiedoissa on vikaa"))
     )
+
   ;TODO validate Paytrail checksum
   ;TODO validate "STATUS" so that it =PAID
+  ;TODO only send email once, but if 1st success was a failure, then notify? should be able to send the email also
   ;TODO add some check for due-date, with maybe 1day grace-period (but basically user should not be able to initiate Paytrail payment themselves)
   ;TODO secret should be ok
 

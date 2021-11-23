@@ -321,7 +321,7 @@
         [:<>
          [h/heading {:cypressid (str "sub-heading")
                      :level     :h2}
-          "Tutkinnon tunnustaminen"]
+                    "Tutkinnon tunnustaminen"]
 
          ;[:span (use-style {:grid-row 1 :grid-column "1 / 3"}) @hakukohteet-label]
 
@@ -332,8 +332,10 @@
          ]))))
 
 (defn tutu-maksut-panel []
-  [p/panel
-   {:cypressid "tutu-maksut-panel"}
-   "Maksutapahtumat"
-   [:div (use-style grid-styles)
-    [lasku-container]]])
+  (let [fullname (subscribe [maksut-subs/maksut-invoice-fullname])]
+    [p/panel
+      {:cypressid "tutu-maksut-panel"}
+      "Maksutapahtumat"
+      @fullname
+      [:div (use-style grid-styles)
+        [lasku-container]]]))

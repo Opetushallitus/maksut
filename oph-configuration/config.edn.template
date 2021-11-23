@@ -9,10 +9,10 @@
                                           :merchant-id       {{ maksut_payment_paytrail_id | default('13466')}}
                                           :merchant-secret  "{{ maksut_payment_paytrail_secret | default('6pKF4jkv97zmqBJ3ZL8gUw5DfT2NMQ')}}"}
                         :callback-uri       "{{ maksut_payment_callback_uri }}"
-                        :lasku-origin       "tutu"
-                        :order-id-prefix    "TTU"
-                        :currency           "EUR"
-                        :amount             {:HAKEMUS   70.00M}}
+                        :order-id-prefix    "MKS"
+                        :currency           "EUR"}
+ :tutu                 {:lasku-origin       "tutu"
+                        :order-id-prefix    "TTU"}
  :cas                  {:username "{{ maksut_cas_username | default('maksut') }}"
                         :password "{{ maksut_cas_password }}"
                         :services {:kayttooikeus    {:service-url-property :cas.service.kayttooikeus-service
