@@ -37,6 +37,9 @@
     :paid
     :overdue))
 
+(s/defschema LaskuRefList
+  {:keys [s/Str]})
+
 (s/defschema TutuLaskuCreate
   {:application-key s/Str ;TODO validate proper oid-syntax
    :first-name s/Str

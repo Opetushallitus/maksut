@@ -198,6 +198,23 @@
 
         ]
 
+       ["/lasku-check-tutu"
+        [""
+         {:post { ;:middleware auth ;TODO
+                  :tags       ["Lasku"]
+                  :summary    "Palauttaa usemman Tutu -laskun statuksen"
+                  ;:responses  {200 {:body schema/Lasku}}
+                  :parameters {:body schema/LaskuRefList}
+                  :handler    (fn [{session :session {input :body} :parameters}]
+                                (prn "CHECK-TUTU " (type input) input)
+                                (let [x (maksut-protocol/check-status-tutu maksut-service session input)]
+                                  (prn "RESULT" x)
+                                  (response/ok x))
+
+                                )}}]
+
+        ]
+
        ["/lasku-tutu/:application-key"
         [""
          {:get {;:middleware auth ;TODO

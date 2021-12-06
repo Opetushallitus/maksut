@@ -28,6 +28,11 @@
         :status (keyword (:status lasku))
         :paid_at (str (:paid_at lasku))))
 
+(defn LaskuStatus->json [lasku]
+  (assoc
+   (select-keys lasku [:order_id :reference])
+   :status (keyword (:status lasku))))
+
 ;api_schemas/LaskuCreate (ei sisällä gereroituja kenttiä)
 (defn json->LaskuCreate [lasku]
   ;this constrain cannot be in schema-def as CLJS does not support BigDecimal
@@ -103,6 +108,13 @@
       (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
         ;TODO secret should not maybe be included here if it's not needed (only return it when asked with secret, or when new invoice is created?)
         (map Lasku->json laskut)
+        (maksut-error :invoice-notfound "Laskuja ei löytynyt"))))
+
+  (check-status-tutu [this session input]
+    (let [origin (get-in this [:config :lasku-origin])
+          keys (:keys input)]
+      (if-let [statuses (seq (maksut-queries/check-laskut-statuses-by-reference db origin keys))]
+        (map LaskuStatus->json statuses)
         (maksut-error :invoice-notfound "Laskuja ei löytynyt"))))
 
   (get-lasku [_ session order-id]

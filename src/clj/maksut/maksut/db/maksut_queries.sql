@@ -79,3 +79,7 @@ JOIN (
 
 -- :name all-linked-laskut-by-reference :? :*
 SELECT * FROM all_invoices WHERE reference = :reference AND origin = :origin;
+
+
+-- :name get-linked-lasku-statuses-by-reference :? :*
+SELECT order_id, reference, status FROM all_invoices WHERE reference IN (:v*:refs) AND origin = :origin ORDER BY order_id;
