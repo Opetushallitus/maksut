@@ -38,7 +38,9 @@
 (defrecord CasTicketClient [config]
   component/Lifecycle
   (start [this]
+    ;TODO use different variable than :maksut.login-success
     (let [service-parameter (url/resolve-url :maksut.login-success config)]
+      (log/info "Staring CasTicketClient with service-parameter: " service-parameter)
       (assoc this :service-parameter service-parameter)))
 
   (stop [this]
