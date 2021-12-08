@@ -113,9 +113,9 @@
   (check-status-tutu [this session input]
     (let [origin (get-in this [:config :lasku-origin])
           keys (:keys input)]
-      (if-let [statuses (seq (maksut-queries/check-laskut-statuses-by-reference db origin keys))]
+      (let [statuses (maksut-queries/check-laskut-statuses-by-reference db origin keys)]
         (map LaskuStatus->json statuses)
-        (maksut-error :invoice-notfound "Laskuja ei löytynyt"))))
+        )))
 
   (get-lasku [_ session order-id]
     (if-let [lasku (maksut-queries/get-lasku-by-order-id db {:order-id order-id})]
