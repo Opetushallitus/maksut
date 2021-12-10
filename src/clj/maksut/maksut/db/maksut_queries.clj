@@ -69,6 +69,7 @@
 (defn check-laskut-statuses-by-reference [db origin refs]
   (get-linked-lasku-statuses-by-reference db {:origin origin :refs refs}))
 
+;TODO return what happened: not-found, created, not-modified OR error
 (defn create-payment [db pt-params]
   (with-db-transaction
    [tx db]

@@ -77,10 +77,7 @@
                                ;email-service
                                ]}]
   ["/payment"
-   ;Mikäli tarvitsee tukea eri maksujärjestelmiä (tai niiden versioita) samaan aikaan,
-   ;voi tänne luoda useamman hakemiston
-
-   ;TODO catchaa näissä tapahtunee exceptionit koska ne näytetään nyt rumasti käyttäjälle
+   ;TODO catchaa näissä tapahtuneet exceptionit koska ne näytetään nyt rumasti käyttäjälle
    ;TODO  => ja lisää ?error=error-code
    ["/paytrail"
     ["/success"
@@ -88,31 +85,26 @@
            :handler    (fn [{{{:as query} :query} :parameters}]
                          (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
                             (payment-protocol/process-success-callback payment-service params false))
+                         ;TODO lähetä vain yksi email per prosessoitu maksu
+                         ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
                          (log/warn "Paytrail success " query)
                          ;TODO handle locale (vai pitäiskö se olla tallennettuna jo maksuun?)
-                         (response/permanent-redirect (str "/maksut/?secret=" (:tutusecret query)))
-                          ;(.dispatch-mock mock-dispatcher spec)
-                          ;(response/ok {})
-             )}}]
+                         (response/permanent-redirect (str "/maksut/?secret=" (:tutusecret query))))}}]
+
     ["/cancel"
      {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
             :handler (fn [{{{:as query} :query} :parameters}]
                         (log/warn "Paytrail cancel " query)
                         ;Canceling does not really need to be processed in any way, lets just direct back to payment view
-                        ; OR maybe we could display notification bar that explains "Payment was cancelled"?
-                        ; ^ pass extra parameter "&status=cancel"? (BUT that shall not be used for any real logic as it can be modified by the user), only for the notification text
                         (response/permanent-redirect (str "/maksut/?secret=" (:tutusecret query) "&payment=cancel"))
-                        ;TODO test
-                        ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
-                        ;(.reset-mocks mock-dispatcher)
                         )}}]
+
     ["/notify"
      {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
             :handler (fn [{{{:as query} :query} :parameters}]
                        (log/warn "Paytrail notify " query)
                        (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
                          (payment-protocol/process-success-callback payment-service params true))
-                       ;(.reset-mocks mock-dispatcher)
                         (response/ok {}))}}]
 
    ]])
@@ -150,12 +142,10 @@
               :handler (create-error-handler config)}}]
 
       [""
-       {:get {;:middleware auth
-              :no-doc     true
+       {:get {:no-doc     true
               :handler    (fn [_] (response/permanent-redirect "/maksut/"))}}]
       ["/"
-       {:get {;:middleware auth
-              :no-doc     true
+       {:get {:no-doc     true
               :handler    (create-index-handler config)}}]
 
       ["/swagger.json"
@@ -173,21 +163,22 @@
                               response/ok
                               (response/content-type "text/html")))}}]
 
-       ["/lasku"
-        [""
-         {:post {;TODO:middleware auth ;TODO
-                  :tags       ["Lasku"]
-                  :summary    "Luo uuden laskun"
-                  :responses  {200 {:body schema/Lasku}}
-                  :parameters {:body schema/LaskuCreate}
-                  :handler    (fn [{session :session {lasku :body} :parameters}]
-                                (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
-
-        ]
+;For generic (non-TuTu) payments
+;       ["/lasku"
+;        [""
+;         {:post { :middleware auth
+;                  :tags       ["Lasku"]
+;                  :summary    "Luo uuden laskun"
+;                  :responses  {200 {:body schema/Lasku}}
+;                  :parameters {:body schema/LaskuCreate}
+;                  :handler    (fn [{session :session {lasku :body} :parameters}]
+;                                (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
+;
+;        ]
 
        ["/lasku-tutu"
         [""
-         {:post { :middleware auth ;TODO
+         {:post { :middleware auth
                   :tags       ["Lasku"]
                   :summary    "Luo uuden Tutu laskun"
                   :responses  {200 {:body schema/Lasku}}
@@ -200,50 +191,46 @@
 
        ["/lasku-check-tutu"
         [""
-         {:post { ;:middleware auth ;TODO
+         {:post { :middleware auth
                   :tags       ["Lasku"]
                   :summary    "Palauttaa usemman Tutu -laskun statuksen"
-                  ;:responses  {200 {:body schema/Lasku}}
+                  ;TODO enable this once order-id vs. order_id is refactored everywhere, otherwise this will return status=500
+                  ;:responses  {200 {:body [schema/LaskuStatus]}}
                   :parameters {:body schema/LaskuRefList}
                   :handler    (fn [{session :session {input :body} :parameters}]
                                 (prn "CHECK-TUTU " (type input) input)
                                 (let [x (maksut-protocol/check-status-tutu maksut-service session input)]
                                   (prn "RESULT" x)
-                                  (response/ok x))
-
-                                )}}]
-
-        ]
+                                  (response/ok x)))}}]]
 
        ["/lasku-tutu/:application-key"
         [""
-         {:get {;:middleware auth ;TODO
-                  :tags       ["Lasku"]
-                  :summary    "Palauttaa kaikki Tutu-hakemukseen liittyvät laskut"
-                  :responses  {200 {:body schema/Laskut}}
-                  :parameters {:path {:application-key s/Str}}
-                  :handler    (fn [{session :session {input :path} :parameters}]
-                                (prn "GET LASKUT-TUTU" input)
-                                (response/ok (maksut-protocol/list-tutu maksut-service session input)))}}]
-        ]
+         {:get {:middleware auth
+                :tags       ["Lasku"]
+                :summary    "Palauttaa kaikki Tutu-hakemukseen liittyvät laskut"
+                :responses  {200 {:body schema/Laskut}}
+                :parameters {:path {:application-key s/Str}}
+                :handler    (fn [{session :session {input :path} :parameters}]
+                              (response/ok (maksut-protocol/list-tutu maksut-service session input)))}}]]
 
-       ["/lasku/:order-id"
-        [""
-         {:get {;:middleware auth
-                  :tags       ["Lasku"]
-                  :summary    "Palauttaa olemassa olevan laskun"
-                  :responses  {200 {:body schema/Lasku}}
-                  :parameters {:path {:order-id s/Str}}
-                  :handler    (fn [{session :session {order-id :path} :parameters}]
-                                ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
-                                (response/ok (maksut-protocol/get-lasku maksut-service session (:order-id order-id))))}}]
-        ]
+;For generic (non-TuTu) payments
+;       ["/lasku/:order-id"
+;        [""
+;         {:get {:middleware auth
+;                :tags       ["Lasku"]
+;                :summary    "Palauttaa olemassa olevan laskun"
+;                :responses  {200 {:body schema/Lasku}}
+;                :parameters {:path {:order-id s/Str}}
+;                :handler    (fn [{session :session {order-id :path} :parameters}]
+;                                ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
+;                                (response/ok (maksut-protocol/get-lasku maksut-service session (:order-id order-id))))}}]
+;        ]
 
        ["/lasku/:order-id/maksa"
         [""
-         {:get {;:middleware auth
+         {:get {;No authentication for this service, accessed from /maksut/ Web-page
                  :tags       ["Maksa"]
-                 :summary    "Maksaa laskun"
+                 :summary    "Palauttaa form-kentät joilla aloitetaan Paytrail -maksuprosessi"
                  ;:responses  {200 {:body nil}}
                  ;TODO lisää secret tähän ettei voi randomilla maksaa muiden laskuja
                  :parameters {:path {:order-id s/Str}
@@ -257,11 +244,10 @@
 
        ["/laskut-by-secret"
         [""
-         {:get {;:middleware auth
+         {:get {;No authentication for this service, accessed from /maksut/ Web-page
                  :tags       ["Laskut"]
                  :summary    "Palauttaa laskut salaisuuden perusteella"
                  :responses  {200 {:body [schema/Lasku]}}
-                 ;:responses  {200 {:body schema/Any}}
                  :parameters {:query {:secret s/Str}}
                  :handler    (fn [{session :session {secret :query} :parameters}]
                                (response/ok (maksut-protocol/get-laskut-by-secret maksut-service session (:secret secret))))}}]

@@ -61,64 +61,64 @@
     ;         (registration/send-confirmation-email! config lang))
     (error "Can't send confirmation email because of missing data. Payment data:" payment-data)))
 
-(defn confirm-payment! [config form-data lang]
-  (when (process-response! config form-data prn);dba/confirm-registration-and-payment!)
-;    (audit/log :app :admin
-;               :on :payment
-;               :op :update
-;               :id (:ORDER_NUMBER form-data)
-;               :before {:state states/pmt-unpaid}
-;               :after {:state states/pmt-ok}
-;               :msg "Payment has been confirmed.")
-    (try
-      (send-confirmation-email! config form-data lang)
-      (catch Throwable t
-        (error t "Could not send confirmation email. Payment data:" form-data)))
-    :confirmed))
+;(defn confirm-payment! [config form-data lang]
+;  (when (process-response! config form-data prn);dba/confirm-registration-and-payment!)
+;    ;    (audit/log :app :admin
+;    ;               :on :payment
+;    ;               :op :update
+;    ;               :id (:ORDER_NUMBER form-data)
+;    ;               :before {:state states/pmt-unpaid}
+;    ;               :after {:state states/pmt-ok}
+;    ;               :msg "Payment has been confirmed.")
+;    (try
+;      (send-confirmation-email! config form-data lang)
+;      (catch Throwable t
+;        (error t "Could not send confirmation email. Payment data:" form-data)))
+;    :confirmed))
 
-(defn cancel-payment! [config form-data]
-  (when (process-response! config form-data prn) ;dba/cancel-registration-and-payment!)
-;    (audit/log :app :admin
-;               :on :payment
-;               :op :update
-;               :id (:ORDER_NUMBER form-data)
-;               :before {:state states/pmt-unpaid}
-;               :after {:state states/pmt-error}
-;               :msg "Payment has been cancelled.")
-    :cancelled))
+;(defn cancel-payment! [config form-data]
+;  (when (process-response! config form-data prn) ;dba/cancel-registration-and-payment!)
+;    ;    (audit/log :app :admin
+;    ;               :on :payment
+;    ;               :op :update
+;    ;               :id (:ORDER_NUMBER form-data)
+;    ;               :before {:state states/pmt-unpaid}
+;    ;               :after {:state states/pmt-error}
+;    ;               :msg "Payment has been cancelled.")
+;    :cancelled))
 
-(defn- cancel-payment-by-order-number! [db {:keys [state order_number]}]
-;  (audit/log :app :admin
-;             :on :payment
-;             :op :update
-;             :id order_number
-;             :before {:state state}
-;             :after {:state states/pmt-error}
-;             :msg "Payment has been cancelled.")
-  ;(dba/cancel-registration-and-payment! db {:order-number order_number})
-  :cancelled)
+;(defn- cancel-payment-by-order-number! [db {:keys [state order_number]}]
+;    ;  (audit/log :app :admin
+;    ;             :on :payment
+;    ;             :op :update
+;    ;             :id order_number
+;    ;             :before {:state state}
+;    ;             :after {:state states/pmt-error}
+;    ;             :msg "Payment has been cancelled.")
+;  ;(dba/cancel-registration-and-payment! db {:order-number order_number})
+;  :cancelled)
 
-(defn confirm-payment-manually! [{:keys [db] :as config} order-number user-lang session]
-  {:pre [order-number user-lang]}
-;  (audit/log :app :admin
-;             :who (get-in session [:identity :oid])
-;             :ip (get-in session [:identity :ip])
-;             :user-agent (get-in session [:identity :user-agent])
-;             :on :payment
-;             :op :update
-;             :id order-number
-;             :before {:state states/pmt-error}
-;             :after {:state states/pmt-ok}
-;             :msg "Payment and related registration has been approved.")
-  (when (= 1 1;(dba/confirm-registration-and-payment! db {:order-number order-number})
-           )
-;    (some->> (user-data/participant-data config order-number user-lang)
-;             (registration/send-confirmation-email! config user-lang))
-    true))
+;(defn confirm-payment-manually! [{:keys [db] :as config} order-number user-lang session]
+;  {:pre [order-number user-lang]}
+;    ;  (audit/log :app :admin
+;    ;             :who (get-in session [:identity :oid])
+;    ;             :ip (get-in session [:identity :ip])
+;    ;             :user-agent (get-in session [:identity :user-agent])
+;    ;             :on :payment
+;    ;             :op :update
+;    ;             :id order-number
+;    ;             :before {:state states/pmt-error}
+;    ;             :after {:state states/pmt-ok}
+;    ;             :msg "Payment and related registration has been approved.")
+;  (when (= 1 1;(dba/confirm-registration-and-payment! db {:order-number order-number})
+;           )
+;    ;    (some->> (user-data/participant-data config order-number user-lang)
+;    ;             (registration/send-confirmation-email! config user-lang))
+;    true))
 
-(defn cancel-obsolete-payments! [db]
-  (info "Cancelled obsolete payments" ;(dba/cancel-obsolete-registrations-and-payments! db)
-        ))
+;(defn cancel-obsolete-payments! [db]
+;  (info "Cancelled obsolete payments" ;(dba/cancel-obsolete-registrations-and-payments! db)
+;        ))
 
 ; -----
 
@@ -194,23 +194,22 @@
                (maksut-error :invoice-not-active "Maksua ei voi enää maksaa"))
 
          (info "test config value " this)
-                 (generate-form-data (get-paytrail-config this) p)))
+         (generate-form-data (get-paytrail-config this) p)))
 
 (defn- process-success-callback [this db pt-params notify?]
   (s/validate api-schemas/PaytrailCallbackRequest pt-params)
-  (let [{:keys [STATUS]} pt-params]
-    (when (not= STATUS "PAID") (maksut-error :payment-invalid-status "Maksun tiedoissa on vikaa"))
-    )
 
-  ;TODO validate Paytrail checksum
-  ;TODO validate "STATUS" so that it =PAID
-  ;TODO only send email once, but if 1st success was a failure, then notify? should be able to send the email also
-  ;TODO add some check for due-date, with maybe 1day grace-period (but basically user should not be able to initiate Paytrail payment themselves)
-  ;TODO secret should be ok
+  (let [{:keys [STATUS]} pt-params
+        pt-config (get-paytrail-config this)]
+    (cond
+      (not (return-authcode-valid? pt-config pt-params)) (maksut-error :payment-invalid-status "Maksun tiedoissa on vikaa")
+      (not= STATUS "PAID") (maksut-error :payment-invalid-status "Maksun tiedoissa on vikaa"))
 
-  (maksut-queries/create-payment db pt-params)
+    ;TODO only send email once, but if 1st success was a failure, then notify? should be able to send the email also
+    ;TODO add some check for due-date, with maybe 1day grace-period (but basically user should not be able to initiate Paytrail payment themselves)
 
-  )
+    (maksut-queries/create-payment db pt-params)
+  ))
 
 
 (defrecord PaymentService [config db]

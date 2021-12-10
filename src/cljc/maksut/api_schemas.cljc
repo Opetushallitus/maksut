@@ -31,7 +31,7 @@
     PaytrailCallbackRequest
     TutuPassthruCallbackRequest))
 
-(s/defschema LaskuStatus
+(s/defschema PaymentStatus
   (s/enum
     :active
     :paid
@@ -46,6 +46,7 @@
    :last-name s/Str
    :email s/Str
    :amount s/Str
+   (s/optional-key :due_date) (s/maybe s/Str)
    :index (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
    })
 
@@ -54,11 +55,15 @@
    :first-name s/Str
    :last-name s/Str
    :email s/Str
-   ; java.math.BigDecimal - Does not port to CLJS
    :amount s/Str
    :due-days (s/constrained s/Int #(> % 0) 'positive-due-days)
    :origin s/Str
    :reference s/Str})
+
+(s/defschema LaskuStatus
+  {:order-id s/Str
+   :reference s/Str
+   :status PaymentStatus})
 
 ;(s/defschema TutuLaskuList
 ;  {:application-key s/Str ;TODO validate proper oid-syntax
@@ -67,7 +72,7 @@
 
 ;(s/defschema MaksutResponse
 ;  {:secret s/Str
-;   :status LaskuStatus
+;   :status PaymentStatus
 ;   :email s/Str})
 
 (s/defschema ErrorResponse
@@ -82,14 +87,10 @@
    :last_name s/Str
    :amount s/Str ; java.math.BigDecimal - Does not port to CLJS
    :due_date s/Str ;java.time.LocalDate - Does not port to CLJS
-   :status LaskuStatus
+   :status PaymentStatus
    (s/optional-key :secret) s/Str
    (s/optional-key :paid_at) s/Str  ;java.time.LocalDate - Does not port to CLJS
    })
-
-; for quick debugging
-(s/defschema Any
-  s/Any)
 
 (s/defschema Laskut
   [Lasku])
