@@ -12,6 +12,7 @@
             [maksut.config :as c]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
+            ;[maksut.email.tutu-payment-confirmation :as email-confirmation]
             ;[maksut.email.email-service-protocol :as email-protocol]
             [maksut.health-check :as health-check]
             [maksut.oph-url-properties :as oph-urls]
@@ -85,8 +86,6 @@
            :handler    (fn [{{{:as query} :query} :parameters}]
                          (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
                             (payment-protocol/process-success-callback payment-service params false))
-                         ;TODO lähetä vain yksi email per prosessoitu maksu
-                         ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
                          (log/warn "Paytrail success " query)
                          ;TODO handle locale (vai pitäiskö se olla tallennettuna jo maksuun?)
                          (response/permanent-redirect (str "/maksut/?secret=" (:tutusecret query))))}}]
@@ -224,6 +223,19 @@
 ;                :handler    (fn [{session :session {order-id :path} :parameters}]
 ;                                ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
 ;                                (response/ok (maksut-protocol/get-lasku maksut-service session (:order-id order-id))))}}]
+;        ]
+
+;       ["/lasku/test"
+;        [""
+;         {:get {;No authentication for TEST
+;                 :tags       ["Test"]
+;                 :summary    "Test"
+;                 :handler    (fn [{session :session}]
+;                               (log/info "TEST")
+;                               (let [{:keys [subject from body]} (email-confirmation/create-decision-email "dude@oph.fi")]
+;                               (email-protocol/send-email email-service from ["test@test.oph.fi"] subject body)
+;                               (response/ok body)
+;                                 ))}}]
 ;        ]
 
        ["/lasku/:order-id/maksa"

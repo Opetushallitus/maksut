@@ -6,7 +6,10 @@
             [maksut.api-schemas :as api-schemas]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.payment.payment-service-protocol :as payment-service-protocol]
+            [maksut.email.tutu-payment-confirmation :as email-confirmation]
+            [maksut.email.email-service-protocol :as email-protocol]
             [maksut.config :as c]
+            [maksut.schemas.class-pred :as p]
             [re-frame.core :refer [dispatch]]
             [com.stuartsierra.component :as component]
             [taoensso.timbre :refer [error info]]
@@ -196,7 +199,22 @@
          (info "test config value " this)
          (generate-form-data (get-paytrail-config this) p)))
 
-(defn- process-success-callback [this db pt-params notify?]
+
+(defn- handle-tutu-confirmation-email [email-service email order-id reference]
+  (when-let [msg (cond
+                   (str/ends-with? order-id "-1") (email-confirmation/create-processing-email email reference)
+                   (str/ends-with? order-id "-2") (email-confirmation/create-decision-email email))]
+    (let [{:keys [subject from body]} msg]
+      (info "Sending email to " subject " to " email)
+      (email-protocol/send-email email-service from [email] subject body))))
+
+;TODO add robustness here, maybe background-job with retry?
+(defn- handle-confirmation-email [email-service {:keys [action order-id email origin reference]}]
+  (case origin
+    "tutu" (handle-tutu-confirmation-email email-service email order-id reference)
+    nil))
+
+(defn- process-success-callback [this db email-service pt-params notify?]
   (s/validate api-schemas/PaytrailCallbackRequest pt-params)
 
   (let [{:keys [STATUS]} pt-params
@@ -208,17 +226,19 @@
     ;TODO only send email once, but if 1st success was a failure, then notify? should be able to send the email also
     ;TODO add some check for due-date, with maybe 1day grace-period (but basically user should not be able to initiate Paytrail payment themselves)
 
-    (maksut-queries/create-payment db pt-params)
-  ))
+    (when-let [result (maksut-queries/create-payment db pt-params)]
+      (handle-confirmation-email email-service result)
+      result)))
 
 
-(defrecord PaymentService [config db]
+(defrecord PaymentService [config email-service db]
   component/Lifecycle
   (start [this]
     ;(s/validate (s/pred #(instance? DataSource %)) (:datasource db))
     (s/validate c/MaksutConfig config)
     ;(s/validate (p/extends-class-pred cas-ticket-client-protocol/CasTicketClientProtocol) cas-ticket-validator)
     ;(s/validate (p/extends-class-pred kayttooikeus-protocol/KayttooikeusService) kayttooikeus-service)
+    (s/validate (p/extends-class-pred email-protocol/EmailServiceProtocol) email-service)
     ;(s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
     ;(s/validate s/Str (url/resolve-url :cas.failure config))
 
@@ -236,7 +256,7 @@
   (tutu-payment [this params]
     (tutu-payment this db params))
   (process-success-callback [this params notify?]
-    (process-success-callback this db params notify?))
+    (process-success-callback this db email-service params notify?))
   (form-data-for-payment [this params]
     (generate-form-data this params))
   (authentic-response? [this form-data]

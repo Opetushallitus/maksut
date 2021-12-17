@@ -33,6 +33,8 @@
                  [com.layerware/hugsql "0.5.1"]
                  [re-frame "1.2.0"]
                  [reagent "1.0.0"]
+                 [markdown-clj "1.10.4"]
+                 [com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer "20191001.1" :exclusions [com.google.guava/guava]]
                  [com.fasterxml.jackson.core/jackson-core "2.12.1"]
                  [com.fasterxml.jackson.core/jackson-databind "2.12.1"]
                  [ring/ring-defaults "0.3.2"]

@@ -88,8 +88,12 @@
                             {:invoice-id lasku-id
                              :payment-id payment-id
                              :amount     (bigdec (:AMOUNT pt-params))
-                             :timestamp  (:TIMESTAMP pt-params)})
-           ;epoch seconds
+                             :timestamp  (:TIMESTAMP pt-params)}) ;epoch seconds
+           {:action    :created
+            :order-id  (:order_id lasku)
+            :email     (:email lasku)
+            :origin    (:origin lasku)
+            :reference (:reference lasku)}
            ))))))
 
 (defn create-or-update-lasku [db lasku]

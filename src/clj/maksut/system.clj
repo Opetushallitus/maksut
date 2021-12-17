@@ -34,6 +34,7 @@
                            :payment-service (component/using
                                              (payment-service/map->PaymentService {:config config})
                                              [:audit-logger
+                                              :email-service
                                               :db])
 
                            :health-checker (component/using

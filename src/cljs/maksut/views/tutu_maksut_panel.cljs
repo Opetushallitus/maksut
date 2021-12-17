@@ -170,15 +170,15 @@
      :invalid-secret [:<>]
      :kasittely-maksamatta [:<>
        [:div (use-style header-active) "Käsittelymaksu"]
-       [:div (use-style header-passive) "Hakemusten käsittely"]]
+       [:div (use-style header-passive) "Hakemuksen käsittely"]]
      :kasittely-maksettu [:<>
        [:div (use-style header-passive) "Käsittelymaksu"]
-       [:div (use-style header-active) "Hakemusten käsittely"]]
+       [:div (use-style header-active) "Hakemuksen käsittely"]]
      :paatos-maksamatta [:<>
-       [:div (use-style header-active) "Hakemusten käsittely"]
+       [:div (use-style header-active) "Hakemuksen käsittely"]
        [:div (use-style header-passive) "Päätösmaksu"]]
      :paatos-maksettu [:<>
-       [:div (use-style header-passive) "Hakemusten käsittely"]
+       [:div (use-style header-passive) "Hakemuksen käsittely"]
        [:div (use-style header-active) "Päätösmaksu"]])
 
    ]))
