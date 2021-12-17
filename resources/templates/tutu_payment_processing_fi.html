@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title></title>
+  </head>
+  <body style="margin: 0; font-family: 'Open Sans', Arial, sans-serif;">
+    <table style="width: 600px;">
+      <tr>
+        <td style="padding-left: 20px; padding-top: 10px; font-size: 24px;">
+          Käsittelymaksusi on vastaanotettu
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px; padding-top: 20px;">
+          Olet maksanut käsittelymaksun. Voit käydä tarkastelemassa maksusi tietoja aiemmin sähköpostitse saamasi linkin kautta. Linkki toimii 14 vuorokauden ajan siitä, kun lähetimme maksupyynnön. Sen jälkeen linkki sulkeutuu tietosuojasyistä.
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px; padding-top: 20px;">
+          Hakemusnumero: {{application-id}}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px; padding-top: 40px; font-size: 20px;">
+          Hakemuksen käsittely ja myöhemmin maksettava päätösmaksu
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px; padding-top: 20px;">
+          Hakemuksesi siirtyy seuraavaksi käsittelyyn. Olemme sinuun tarvittaessa yhteydessä sähköpostitse. Hakemusten keskimääräinen käsittelyaika on 2–3 kuukautta.
+          <br><br>
+          Kun olemme tehneet päätöksen hakemuksestasi, lähetämme sinulle maksuohjeet päätösmaksusta. Lähetämme päätöksen vasta, kun olet maksanut päätösmaksun. Maksu on ulosottokelpoinen ilman tuomiota tai päätöstä (valtion maksuperustelaki (150/1992) 11§ 1.mom.). Lisätietoja hakemisesta ja maksuista on nettisivuillamme:
+        </td>
+      </tr>
+      {% if information-url|not-empty %}
+      <tr>
+        <td style="padding-left: 20px; padding-top: 20px;">
+          <a style="color: #0093C4;" href="{{information-url|safe}}">{{information-url|safe}}</a>
+        </td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td style="padding-left: 20px; padding-top: 40px;">
+          Älä vastaa tähän viestiin. Jos sinulla on kysyttävää, lähetä meille sähköpostia osoitteeseen <a href="mailto:{{information-email|safe}}">{{information-email|safe}}</a>.
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px; padding-top: 40px;">
+          Ystävällisin terveisin<br><br>
+          Opetushallitus
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
