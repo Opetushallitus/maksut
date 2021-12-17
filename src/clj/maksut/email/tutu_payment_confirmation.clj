@@ -63,14 +63,14 @@
 ;(defn ->safe-html
 ;  [content]
 ;  (.sanitize html-policy (md/md-to-html-string content)))
-;
-;(defn- processing-template-filename
-;  [lang]
-;  (str "templates/tutu_payment_processing_" (name lang) ".html"))
-;
-;(defn- decision-template-filename
-;  [lang]
-;  (str "templates/tutu_payment_decision_" (name lang) ".html"))
+
+(defn- processing-template-filename
+  [lang]
+  (str "templates/tutu_payment_processing_" (name lang) ".html"))
+
+(defn- decision-template-filename
+  [lang]
+  (str "templates/tutu_payment_decision_" (name lang) ".html"))
 
 ;(defn- modify-link [secret]
 ;  (-> config
