@@ -27,6 +27,7 @@
             [ring.middleware.defaults :as defaults]
             [ring.middleware.json :as wrap-json]
             [ring.middleware.reload :as reload]
+            [ring.util.http-response :as response]
             [schema.core :as s]
             [taoensso.timbre :as log]
             [muuntaja.core :as m])
@@ -54,6 +55,11 @@
       m/default-options
       [:formats "application/json" :decoder-opts :bigdecimals]
       true)))
+
+(defn- wrap-referrer-policy
+  [handler policy]
+  (fn [request]
+    (response/header (handler request) "Referrer-Policy" policy)))
 
 (defn router [args]
   (ring/router
@@ -94,6 +100,7 @@
                     "/access_maksut"
                     (when (:hostname env) (str "_" (:hostname env))))})
       (wrap-json/wrap-json-response)
+      (wrap-referrer-policy "same-origin")
       (defaults/wrap-defaults (-> defaults/site-defaults
                                   (dissoc :static)
                                   (update :security dissoc :anti-forgery)))))
