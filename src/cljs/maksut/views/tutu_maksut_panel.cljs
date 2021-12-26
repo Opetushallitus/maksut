@@ -8,7 +8,7 @@
             [maksut.styles.styles-colors :as colors]
             [maksut.events.maksut-events :as maksut-events]
             [maksut.subs.maksut-subs :as maksut-subs]
-            [maksut.haku-utils :refer [format-iso-date]]
+            [maksut.dates.date-parser :refer [format-date]]
             [schema.core :as s]
             [re-frame.core :refer [dispatch subscribe]]
             [reagent.dom :refer [dom-node]]
@@ -218,15 +218,15 @@
               :active
               [:<>
                 [:span "Eräpäivä"]
-                [:span (use-style value-style) due_date]]
+                [:span (use-style value-style) (format-date due_date)]]
               :paid
               [:<>
                 [:span "Maksupäivä"]
-                [:span (use-style value-style) paid_at]]
+                [:span (use-style value-style) (format-date paid_at)]]
               :overdue
               [:<>
                 [:span "Eräpäivä"]
-                [:span (use-style value-style) due_date]]
+                [:span (use-style value-style) (format-date due_date)]]
               )
         ]
        ])))
