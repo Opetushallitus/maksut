@@ -100,7 +100,7 @@
                     "/access_maksut"
                     (when (:hostname env) (str "_" (:hostname env))))})
       (wrap-json/wrap-json-response)
-      (wrap-referrer-policy "same-origin")
+      (wrap-referrer-policy "no-referrer")
       (defaults/wrap-defaults (-> defaults/site-defaults
                                   (dissoc :static)
                                   (update :security dissoc :anti-forgery)))))
