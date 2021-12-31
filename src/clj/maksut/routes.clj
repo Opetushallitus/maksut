@@ -12,8 +12,6 @@
             [maksut.config :as c]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
-            ;[maksut.email.tutu-payment-confirmation :as email-confirmation]
-            ;[maksut.email.email-service-protocol :as email-protocol]
             [maksut.health-check :as health-check]
             [maksut.oph-url-properties :as oph-urls]
             [maksut.schemas.class-pred :as p]
@@ -74,9 +72,7 @@
 
 
 ; --- Routes ---
-(defn- payment-routes [{:keys [mock-dispatcher config payment-service
-                               ;email-service
-                               ]}]
+(defn- payment-routes [{:keys [mock-dispatcher config payment-service]}]
   ["/payment"
    ;TODO catchaa näissä tapahtuneet exceptionit koska ne näytetään nyt rumasti käyttäjälle
    ;TODO  => ja lisää ?error=error-code
@@ -132,7 +128,7 @@
      ["/favicon.ico"
       {:get {:no-doc  true
              :handler (fn [_]
-                        (-> (response/resource-response "images/rich.jpg" {:root "public"})
+                        (-> (response/resource-response "maksut/images/favicon-32x32.png" {:root "public"})
                             (response/content-type "image/x-icon")))}}]
 
      ["/maksut"
