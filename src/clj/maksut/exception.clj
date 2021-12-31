@@ -7,6 +7,7 @@
 (defn- json-error-handler [exception request]
   (log/error exception)
   {:status 500
+   :headers {"Cache-Control" "no-store"}
    :body (merge {:error true
                  :message (.getMessage exception)}
                 (ex-data exception))})

@@ -21,6 +21,7 @@
             [maksut.health-check :as health-check]
             [maksut.oph-url-properties :as oph-urls]
             [maksut.schemas.class-pred :as p]
+            [maksut.util.cache-control :as cache-control]
             [clj-access-logging]
             [clj-stdout-access-logging]
             [clj-timbre-access-logging]
@@ -101,6 +102,7 @@
                     (when (:hostname env) (str "_" (:hostname env))))})
       (wrap-json/wrap-json-response)
       (wrap-referrer-policy "no-referrer")
+      (cache-control/wrap-cache-control)
       (defaults/wrap-defaults (-> defaults/site-defaults
                                   (dissoc :static)
                                   (update :security dissoc :anti-forgery)))))
