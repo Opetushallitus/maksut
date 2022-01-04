@@ -26,9 +26,8 @@
 
 (defn format-date
   [iso-date-str]
-  (->> iso-date-str
-       (iso-date-str->date)
-       (f/unparse fi-formatter)))
+  (when-let [date (iso-date-str->date iso-date-str)]
+    (f/unparse fi-formatter date)))
 
 ;(defn iso-time-str->date [time-str]
 ;  (when-not (string/blank? time-str)
