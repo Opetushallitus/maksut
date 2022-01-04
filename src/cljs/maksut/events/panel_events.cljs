@@ -23,15 +23,12 @@
                        :default nil)]
     (concat
       (make-fn parameters)
-      ;translation-dispatches
-      []
-    )
-    ))
+      translation-dispatches
+      [])))
 
 (events/reg-event-fx-validating
   :panel/set-active-panel
   (fn-traced [{db :db} [active-panel]]
-             (prn "SET-ACTIVE-PANEL " active-panel)
              (let [dispatches (make-dispatches active-panel)]
                (cond-> {:db (assoc db :active-panel active-panel)}
                        (seq dispatches)

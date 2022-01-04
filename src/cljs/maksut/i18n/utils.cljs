@@ -23,4 +23,5 @@
 (defn get-translation [lang translations tx-key]
   (let [[namespace-key name-key] (->> ((juxt namespace name) tx-key)
                                       (map #(-> % csk/->kebab-case keyword)))]
+    (prn "TEXT " tx-key (-> translations namespace-key name-key lang))
     (-> translations namespace-key name-key lang)))

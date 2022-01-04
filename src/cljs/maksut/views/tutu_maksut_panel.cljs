@@ -24,31 +24,6 @@
    :justify-items "center"
    :grid-gap "15px"})
 
-;(defn on-save-button-click [input-value saved-operation-type] ;TODO saved-operation-type - add schema for possible vals, [:create :rename]
-;  (case saved-operation-type
-;        :create (dispatch [hakukohderyhma-events/hakukohderyhma-persisted input-value])
-;        :rename (dispatch [hakukohderyhma-events/hakukohderyhma-renamed input-value])))
-
-;(defn on-delete-button-click [deleted-hakukohderyhma]
-;  (dispatch [hakukohderyhma-events/hakukohderyhma-deleted deleted-hakukohderyhma]))
-
-;Stylejä mitä vielä tarttee
-;(def trash-can-icon (svg/img-icon "trash-can" {:height "20px"
-;                                               :width  "16px"
-;                                               :margin "6px 5px 0px 5px"}))
-
-;(defn- hakukohderyhma-link [{:keys [cypressid
-;                                    style-prefix
-;                                    label
-;                                    on-click
-;                                    disabled?]}]
-;  [:span
-;   [button/text-button {:cypressid    cypressid
-;                   :disabled?    disabled?
-;                   :style-prefix style-prefix
-;                   :label        label
-;                   :on-click     on-click}]])
-
 (def ^:private lasku-style
   {:border-radius "3px"
    :padding "20px"
@@ -80,11 +55,7 @@
                     :background-color (:background-color c)
                     :color (:text c)}
         dot (:dot c)
-        status-text (case status
-                          :active "Avoinna"
-                          :paid "Maksettu"
-                          :overdue "Erääntynyt"
-                          (str status))]
+        status-text @(subscribe [:translation (keyword :maksu-tila status)])]
                   [:div (use-style style)
                     [:div (use-style dot-style)]
                     status-text]
@@ -169,17 +140,17 @@
      :loading [:<>]
      :invalid-secret [:<>]
      :kasittely-maksamatta [:<>
-       [:div (use-style header-active) "Käsittelymaksu"]
-       [:div (use-style header-passive) "Hakemuksen käsittely"]]
+       [:div (use-style header-active) @(subscribe [:translation :tutu-panel/tila-käsittelymaksu])]
+       [:div (use-style header-passive) @(subscribe [:translation :tutu-panel/tila-käsittely])]]
      :kasittely-maksettu [:<>
-       [:div (use-style header-passive) "Käsittelymaksu"]
-       [:div (use-style header-active) "Hakemuksen käsittely"]]
+       [:div (use-style header-passive) @(subscribe [:translation :tutu-panel/tila-käsittelymaksu])]
+       [:div (use-style header-active) @(subscribe [:translation :tutu-panel/tila-käsittely])]]
      :paatos-maksamatta [:<>
-       [:div (use-style header-active) "Hakemuksen käsittely"]
-       [:div (use-style header-passive) "Päätösmaksu"]]
+       [:div (use-style header-active) @(subscribe [:translation :tutu-panel/tila-käsittely])]
+       [:div (use-style header-passive) @(subscribe [:translation :tutu-panel/tila-päätösmaksu])]]
      :paatos-maksettu [:<>
-       [:div (use-style header-passive) "Hakemuksen käsittely"]
-       [:div (use-style header-active) "Päätösmaksu"]])
+       [:div (use-style header-passive) @(subscribe [:translation :tutu-panel/tila-käsittely])]
+       [:div (use-style header-active) @(subscribe [:translation :tutu-panel/tila-päätösmaksu])]])
 
    ]))
 
@@ -204,12 +175,12 @@
                           :justify-content "space-between"
                           :grid-template-columns "1fr 1fr"})
 
-        [:span "Tila"]
+        [:span @(subscribe [:translation :tutu-panel/maksu-tila])]
         [:div (use-style value-style) [invoice-status-indicator status]]
 
         [:span (use-style separator-style)]
 
-        [:span "Määrä"]
+        [:span @(subscribe [:translation :tutu-panel/maksu-summa])]
         [:span (use-style (merge h/h3-styles value-style {:padding-top "0px"})) (str amount "€")]
 
         [:span (use-style separator-style)]
@@ -217,15 +188,15 @@
         (case status
               :active
               [:<>
-                [:span "Eräpäivä"]
+                [:span @(subscribe [:translation :tutu-panel/maksu-eräpäivä])]
                 [:span (use-style value-style) (format-date due_date)]]
               :paid
               [:<>
-                [:span "Maksupäivä"]
+                [:span @(subscribe [:translation :tutu-panel/maksu-maksupäivä])]
                 [:span (use-style value-style) (format-date paid_at)]]
               :overdue
               [:<>
-                [:span "Eräpäivä"]
+                [:span @(subscribe [:translation :tutu-panel/maksu-eräpäivä])]
                 [:span (use-style value-style) (format-date due_date)]]
               )
         ]
@@ -261,6 +232,7 @@
                (and (not has-paatos) kasittely-paid) :kasittely-maksettu
                (and has-paatos (not paatos-paid)) :paatos-maksamatta
                (and has-paatos paatos-paid) :paatos-maksettu)
+        state-text (subscribe [:translation (keyword :tutu-panel-ohje state)])
 
         pay-id (cond
                   (and (= state :kasittely-maksamatta) (= kasittely-status :active)) (:order_id kasittely)
@@ -285,24 +257,18 @@
      (when show-process [process-map state kasittely-status paatos-status])
       [h/heading {:cypressid (str "laskut-state-header")
                   :level     :h4}
-        (case state
-          :loading ""
-          :invalid-secret ""
-          :kasittely-maksamatta "Sinun tulee maksaa käsittelymaksu, ennen kuin hakemuksesi otetaan käsittelyyn. Huomaathan että sinun tulee myös maksaa erikseen päätösmaksu ennen kuin saat päätöksen."
-          :kasittely-maksettu "Käsittelymaksusi on maksettu onnistuneesti. Tapahtumasta on lähetetty sinulle myös vahvistus sähköpostiin. Huomaathan että sinun tulee myös maksaa erikseen päätösmaksu ennen kuin saat päätöksen. Saat sähköpostiin ilmoituksen kun hakemuksesi on käsitelty."
-          :paatos-maksamatta "Hakemuksesi on nyt käsitelty. Siirry maksamaan päätösmaksu."
-          :paatos-maksettu "Hakemuksesi päätösmaksu on maksettu. Tapahtumasta on lähetetty sinulle myös vahvistus sähköpostiin.")]
+         (or @state-text "")]
 
       [:div (stylefy/use-style lasku-container-style)
         (when kasittely
-          [invoice-item "Käsittelymaksu" kasittely])
+          [invoice-item @(subscribe [:translation :tutu-panel/maksulaatikko-otsikko-käsittely]) kasittely])
 
         (when paatos
-          [invoice-item "Päätösmaksu" paatos])]
+          [invoice-item @(subscribe [:translation :tutu-panel/maksulaatikko-otsikko-päätös]) paatos])]
 
       (if (some? pay-id)
         [:span (use-style button-style {:on-click #(on-maksa-click pay-id)})
-          "Siirry maksamaan"
+          @(subscribe [:translation :tutu-panel/maksu-nappula])
           [:span (use-style {:margin-left "7px"
                              :vertical-align "middle"}) [icon/trending_flat]]]
         [:div (use-style {:margin-top "30px"})])
@@ -313,29 +279,25 @@
      ]))
 
 (defn lasku-container []
-  (let [;hakukohteet-label (subscribe [:translation :hakukohderyhma/hakukohteet])
+  (let [aliotsikko (subscribe [:translation :tutu-panel/aliotsikko])
         invoices (subscribe [maksut-subs/maksut-invoice])]
     (fn []
       (let []
-
         [:<>
          [h/heading {:cypressid (str "sub-heading")
                      :level     :h2}
-                    "Tutkinnon tunnustaminen"]
+                    @aliotsikko]
 
          ;[:span (use-style {:grid-row 1 :grid-column "1 / 3"}) @hakukohteet-label]
 
          [laskut-container @invoices]
-
-
-
          ]))))
 
 (defn tutu-maksut-panel []
   (let [fullname (subscribe [maksut-subs/maksut-invoice-fullname])]
     [p/panel
       {:cypressid "tutu-maksut-panel"}
-      "Maksutapahtumat"
+      @(subscribe [:translation :tutu-panel/otsikko])
       @fullname
       [:div (use-style grid-styles)
         [lasku-container]]]))

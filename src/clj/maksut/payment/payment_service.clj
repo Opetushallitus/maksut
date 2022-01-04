@@ -196,7 +196,6 @@
          (when (not= (:status lasku) "active")
                (maksut-error :invoice-not-active "Maksua ei voi enää maksaa"))
 
-         (info "test config value " this)
          (generate-form-data (get-paytrail-config this) p)))
 
 
