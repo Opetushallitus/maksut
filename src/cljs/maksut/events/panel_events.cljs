@@ -7,8 +7,12 @@
     [maksut.events.translation-events :as transl-events]))
 
 (defn- make-tutu-asetukset-dispatches [{:keys [query]}]
-  (let [{:keys [secret payment]} query]
-    [(when (some? secret) [maksut-events/set-maksut-secret secret])
+  (let [{:keys [secret locale payment]} query
+        valid-locale (case locale
+                           ("fi" "sv" "en") locale
+                           "fi")]
+    [[maksut-events/set-locale (keyword valid-locale)]
+     (when (some? secret) [maksut-events/set-maksut-secret secret])
      (when (= payment "cancel") [alert-events/payment-canceled])
      [maksut-events/get-invoices-by-secret secret]]))
 

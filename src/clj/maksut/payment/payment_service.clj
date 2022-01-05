@@ -10,6 +10,7 @@
             [maksut.email.email-service-protocol :as email-protocol]
             [maksut.config :as c]
             [maksut.schemas.class-pred :as p]
+            [maksut.util.url-encoder :refer [encode]]
             [re-frame.core :refer [dispatch]]
             [com.stuartsierra.component :as component]
             [taoensso.timbre :refer [error info]]
@@ -22,12 +23,9 @@
             ;[oti.boundary.api-client-access :as api]
             )
   (:import [java.time LocalDateTime]
-           [java.net URLEncoder URLDecoder]
            [java.time.format DateTimeFormatter]
            [java.util Locale]
-           [org.apache.commons.codec.net URLCodec]
            [org.apache.commons.codec.digest DigestUtils]))
-
 
 (defn- blank->nil [s]
   (when-not (str/blank? s)
@@ -144,10 +142,8 @@
 ;  {:pre  [(s/valid? ::os/pt-payment-params params)]
 ;   :post [(s/valid? ::os/pt-payment-form-data %)]}
   ;Paytrail does not support sending back the LOCALE we sent
-  (let [params-in "MERCHANT_ID,LOCALE,URL_SUCCESS,URL_CANCEL,URL_NOTIFY,AMOUNT,ORDER_NUMBER,MSG_SETTLEMENT_PAYER,MSG_UI_MERCHANT_PANEL,PARAMS_IN,PARAMS_OUT"
+  (let [params-in "MERCHANT_ID,LOCALE,URL_SUCCESS,URL_CANCEL,URL_NOTIFY,AMOUNT,ORDER_NUMBER,PARAMS_IN,PARAMS_OUT"
         params-out "ORDER_NUMBER,PAYMENT_ID,AMOUNT,TIMESTAMP,STATUS"
-        encoder (new URLCodec)
-        encode #(.encode encoder %)
         query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
         form-params {:MERCHANT_ID  merchant-id
                      :LOCALE       (case language-code "fi" "fi_FI" "sv" "sv_SE" "en" "en_US")
@@ -156,9 +152,6 @@
                      :URL_NOTIFY   (str callback-uri "/notify" query)
                      :AMOUNT       (format-number-us-locale amount)
                      :ORDER_NUMBER order-number
-                     ;:REFERENCE_NUMBER reference-number
-                     :MSG_SETTLEMENT_PAYER msg
-                     :MSG_UI_MERCHANT_PANEL msg
                      :PARAMS_IN params-in
                      :PARAMS_OUT params-out}
         authcode (calculate-authcode form-params merchant-secret)]
@@ -174,19 +167,17 @@
       :callback-uri (-> config :callback-uri)}))
 
 ;Instead of directly searching by order-id, use secret to prevent order-id brute-forcing
-(defn- tutu-payment [this db {:keys [order-id secret]}]
+(defn- tutu-payment [this db {:keys [order-id locale secret]}]
        (let [laskut (maksut-queries/get-laskut-by-secret db secret)
              lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))
-             p {:language-code    "fi" ;(keyword "fi") ;TODO hard-coded
+             lang (case locale
+                        ("fi" "sv" "en") locale
+                        "fi")
+             p {:language-code    lang
                 :amount           (:amount lasku)
-                ;:reference-number oid  ;TODO ask if this is really needed
                 :order-number     order-id
                 :secret           secret
-                :msg              "Viesti"
-                ;(loc/t localisation lang "payment-name")
                 }]
-
-         ;TODO make sure language/locale is validated (before or at latest here)
 
          (cond
             (not (some? lasku)) (maksut-error :invoice-notfound "Laskua ei löydy")

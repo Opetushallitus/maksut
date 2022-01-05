@@ -232,8 +232,13 @@
                (and (not has-paatos) kasittely-paid) :kasittely-maksettu
                (and has-paatos (not paatos-paid)) :paatos-maksamatta
                (and has-paatos paatos-paid) :paatos-maksettu)
-        state-text (subscribe [:translation (keyword :tutu-panel-ohje state)])
-
+        show-process (case state
+                           :invalid-secret false
+                           :loading false
+                           true)
+        state-text (if show-process
+                     @(subscribe [:translation (keyword :tutu-panel-ohje state)])
+                     "")
         pay-id (cond
                   (and (= state :kasittely-maksamatta) (= kasittely-status :active)) (:order_id kasittely)
                   (and (= state :paatos-maksamatta) (= paatos-status :active)) (:order_id paatos))
@@ -257,7 +262,7 @@
      (when show-process [process-map state kasittely-status paatos-status])
       [h/heading {:cypressid (str "laskut-state-header")
                   :level     :h4}
-         (or @state-text "")]
+         state-text]
 
       [:div (stylefy/use-style lasku-container-style)
         (when kasittely

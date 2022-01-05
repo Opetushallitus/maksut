@@ -9,11 +9,13 @@
 (def maksut-invoice (conj root-maksut-path :invoice))
 (def maksut-payment-form (conj root-maksut-path :payment-form))
 (def maksut-secret (conj root-maksut-path :secret))
+;(def maksut-locale (conj root-maksut-path :locale))
 
 ;; Events
 (def get-invoices-by-secret :maksut/get-invoices-by-secret)
 (def get-payment-form :maksut/get-payment-form)
 (def set-maksut-secret :maksut/set-maksut-secret)
+(def set-locale :maksut/set-locale)
 ;(def clear-invoice :maksut/clear-invoice)
 ;(def clear-payment-form :maksut/clear-payment-form)
 ;(def clear-db-after-payment :maksut/clear-db-after-payment)
@@ -76,12 +78,13 @@
  get-payment-form
  (fn-traced [{db :db} [order-id]]
             (let [http-request-id get-payment-form
+                  locale (-> db :lang name)
                   secret (-> db :maksut :secret)]
               {:db   (update db :requests (fnil conj #{}) http-request-id)
                :http {:method           :get
                       :http-request-id  http-request-id
                       :path             (str "/maksut/api/lasku/" order-id "/maksa") ;TODO HC, do url-encoding
-                      :search-params    [[:secret secret]]
+                      :search-params    [[:secret secret][:locale locale]]
                       ;:response-schema  schemas/Laskut
                       :response-handler [handle-get-payment-form]
                       :error-handler    [alert-events/http-request-failed]}})))
@@ -91,6 +94,7 @@
  (fn-traced [db [secret]]
             (assoc-in db maksut-secret secret)))
 
-
-
-
+(events/reg-event-db-validating
+ set-locale
+ (fn-traced [db [locale]]
+            (assoc db :lang locale)))

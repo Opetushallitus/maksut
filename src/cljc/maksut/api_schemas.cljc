@@ -3,6 +3,12 @@
             [schema-tools.core :as st]
             [maksut.common-schemas :as c]))
 
+(s/defschema Locale
+  (s/enum
+    "fi"
+    "sv"
+    "en"))
+
 (s/defschema LocalizationEntity
   {:id       s/Int
    :category s/Str

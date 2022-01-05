@@ -16,6 +16,7 @@
             [maksut.oph-url-properties :as oph-urls]
             [maksut.schemas.class-pred :as p]
             [maksut.session-timeout :as session-timeout]
+            [maksut.util.url-encoder :refer [encode]]
             [clj-access-logging]
             [ring.middleware.session :as ring-session]
             [ring.util.http-response :as response]
@@ -79,19 +80,18 @@
    ["/paytrail"
     ["/success"
     {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
-           :handler    (fn [{{{:as query} :query} :parameters}]
+           :handler    (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                          (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
                             (payment-protocol/process-success-callback payment-service params false))
                          (log/warn "Paytrail success " query)
-                         ;TODO handle locale (vai pitäiskö se olla tallennettuna jo maksuun?)
-                         (response/permanent-redirect (str "/maksut/?secret=" (:tutusecret query))))}}]
+                         (response/permanent-redirect (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale))))}}]
 
     ["/cancel"
      {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
-            :handler (fn [{{{:as query} :query} :parameters}]
+            :handler (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                         (log/warn "Paytrail cancel " query)
                         ;Canceling does not really need to be processed in any way, lets just direct back to payment view
-                        (response/permanent-redirect (str "/maksut/?secret=" (:tutusecret query) "&payment=cancel"))
+                        (response/permanent-redirect (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) "&payment=cancel"))
                         )}}]
 
     ["/notify"
@@ -217,21 +217,7 @@
 ;                :responses  {200 {:body schema/Lasku}}
 ;                :parameters {:path {:order-id s/Str}}
 ;                :handler    (fn [{session :session {order-id :path} :parameters}]
-;                                ;(email-protocol/send-email email-service "noreply@oph.fi" ["test@test.oph.fi"] "Maksu vastaanotettu" "Maksu vastaanotettu!")
 ;                                (response/ok (maksut-protocol/get-lasku maksut-service session (:order-id order-id))))}}]
-;        ]
-
-;       ["/lasku/test"
-;        [""
-;         {:get {;No authentication for TEST
-;                 :tags       ["Test"]
-;                 :summary    "Test"
-;                 :handler    (fn [{session :session}]
-;                               (log/info "TEST")
-;                               (let [{:keys [subject from body]} (email-confirmation/create-decision-email "dude@oph.fi")]
-;                               (email-protocol/send-email email-service from ["test@test.oph.fi"] subject body)
-;                               (response/ok body)
-;                                 ))}}]
 ;        ]
 
        ["/lasku/:order-id/maksa"
@@ -240,12 +226,13 @@
                  :tags       ["Maksa"]
                  :summary    "Palauttaa form-kentät joilla aloitetaan Paytrail -maksuprosessi"
                  ;:responses  {200 {:body nil}}
-                 ;TODO lisää secret tähän ettei voi randomilla maksaa muiden laskuja
                  :parameters {:path {:order-id s/Str}
-                              :query {:secret s/Str}}
-                 :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret]} :query} :parameters}]
-                               (log/info "maksa xxx " order-id secret)
+                              :query {:secret s/Str
+                                      (s/optional-key :locale) s/Str}}
+                 :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters}]
+                               (log/info "maksa xxx " order-id locale secret)
                                (response/ok (payment-protocol/tutu-payment payment-service {:order-id order-id
+                                                                                            :locale locale
                                                                                             :secret secret}
                                                                                     )))}}]
         ]

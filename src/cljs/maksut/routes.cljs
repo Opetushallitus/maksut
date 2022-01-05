@@ -10,29 +10,13 @@
 
 (def default-panel (:default-panel c/config))
 
-(def routes2
-  [["/"
-    {:redirect :panel/tutu-maksut}]
-   ;{:redirect default-panel}]
-   ;["/maksut"
-   ; {:redirect default-panel}]
-   ;["/maksut/"
-   ; {:redirect default-panel}]
-   ;["/maksut/"
-   ; {:redirect :panel/tutu-maksut}]
-   ["/maksut/"
-    {:name :panel/tutu-maksut
-    :parameters {:query {:secret string?}}}]
-   ["/maksut/tutu"
-    {:name :panel/tutu-maksut
-     :parameters {:query {:secret string?}}}]])
-
 (def routes
   [["/"
     {:redirect :panel/tutu-maksut}]
    ["/maksut/"
     {:name :panel/tutu-maksut
      :parameters {:query {(s/optional-key :secret) s/Str
+                          (s/optional-key :locale) s/Str
                           (s/optional-key :payment) s/Str}}}]
     ])
 
@@ -48,16 +32,7 @@
              {:keys [path query]
               :or   {path {} query {}}} :parameters}
             m]
-        (prn "NAVIGATE1 " name redirect "path" path "query" query) ; @redirect @path @query)
-        ;(prn "NAVIGATE2 " path js->clj pr-str) (-> query js->clj pr-str))
 
-
-        ;(re-frame/dispatch [:panel/set-active-panel
-        ;                    {:panel      name
-        ;                     :parameters {:path  (keys->kebab-case path)
-        ;                                  :query (keys->kebab-case query)}}])
-
-        ;(comment
           (cond redirect
               (rfe/replace-state redirect)
 
@@ -66,7 +41,5 @@
                                   {:panel      name
                                    :parameters {:path  (keys->kebab-case path)
                                                 :query (keys->kebab-case query)}}]))
-         ;)
-
         ))
     {:use-fragment false}))
