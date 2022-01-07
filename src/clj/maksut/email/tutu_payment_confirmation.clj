@@ -38,8 +38,8 @@
    :template-params template-params})
 
 
-(defn- create-email [recipient trans-ns template-file & {:as params}]
-   (let [lang                            :fi
+(defn- create-email [recipient locale trans-ns template-file & {:as params}]
+   (let [lang                            (keyword locale)
          trans                           (partial get-translation lang)
          subject                         (str (trans :email/subject-prefix) ": " (trans (keyword (name trans-ns) (name :otsikko))))
          template-params                 (merge params
@@ -55,14 +55,16 @@
        render-file-fn)))
 
 
-(defn create-processing-email [recipient application-id]
+(defn create-processing-email [recipient locale application-id]
   (create-email recipient
+                locale
                 :email-käsittely
                 "templates/tutu_payment_processing.html"
                 :application-id application-id))
 
-(defn create-decision-email [recipient]
+(defn create-decision-email [recipient locale]
   (create-email recipient
+                locale
                 :email-päätös
                 "templates/tutu_payment_decision.html"))
 

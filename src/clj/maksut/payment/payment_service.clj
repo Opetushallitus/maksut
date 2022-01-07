@@ -190,21 +190,21 @@
          (generate-form-data (get-paytrail-config this) p)))
 
 
-(defn- handle-tutu-confirmation-email [email-service email order-id reference]
+(defn- handle-tutu-confirmation-email [email-service email locale order-id reference]
   (when-let [msg (cond
-                   (str/ends-with? order-id "-1") (email-confirmation/create-processing-email email reference)
-                   (str/ends-with? order-id "-2") (email-confirmation/create-decision-email email))]
+                   (str/ends-with? order-id "-1") (email-confirmation/create-processing-email email locale reference)
+                   (str/ends-with? order-id "-2") (email-confirmation/create-decision-email email locale))]
     (let [{:keys [subject from body]} msg]
       (info "Sending email to " subject " to " email)
       (email-protocol/send-email email-service from [email] subject body))))
 
 ;TODO add robustness here, maybe background-job with retry?
-(defn- handle-confirmation-email [email-service {:keys [action order-id email origin reference]}]
+(defn- handle-confirmation-email [email-service locale {:keys [action order-id email origin reference]}]
   (case origin
-    "tutu" (handle-tutu-confirmation-email email-service email order-id reference)
+    "tutu" (handle-tutu-confirmation-email email-service email locale order-id reference)
     nil))
 
-(defn- process-success-callback [this db email-service pt-params notify?]
+(defn- process-success-callback [this db email-service pt-params locale notify?]
   (s/validate api-schemas/PaytrailCallbackRequest pt-params)
 
   (let [{:keys [STATUS]} pt-params
@@ -217,7 +217,7 @@
     ;TODO add some check for due-date, with maybe 1day grace-period (but basically user should not be able to initiate Paytrail payment themselves)
 
     (when-let [result (maksut-queries/create-payment db pt-params)]
-      (handle-confirmation-email email-service result)
+      (handle-confirmation-email email-service locale result)
       result)))
 
 
@@ -245,8 +245,8 @@
   payment-service-protocol/PaymentServiceProtocol
   (tutu-payment [this params]
     (tutu-payment this db params))
-  (process-success-callback [this params notify?]
-    (process-success-callback this db email-service params notify?))
+  (process-success-callback [this params locale notify?]
+    (process-success-callback this db email-service params locale notify?))
   (form-data-for-payment [this params]
     (generate-form-data this params))
   (authentic-response? [this form-data]

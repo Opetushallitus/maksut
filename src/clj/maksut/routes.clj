@@ -82,7 +82,7 @@
     {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
            :handler    (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                          (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
-                            (payment-protocol/process-success-callback payment-service params false))
+                            (payment-protocol/process-success-callback payment-service params tutulocale false))
                          (log/warn "Paytrail success " query)
                          (response/permanent-redirect (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale))))}}]
 
@@ -96,10 +96,10 @@
 
     ["/notify"
      {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
-            :handler (fn [{{{:as query} :query} :parameters}]
+            :handler (fn [{{{:keys [tutulocale] :as query} :query} :parameters}]
                        (log/warn "Paytrail notify " query)
                        (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
-                         (payment-protocol/process-success-callback payment-service params true))
+                         (payment-protocol/process-success-callback payment-service params tutulocale true))
                         (response/ok {}))}}]
 
    ]])
