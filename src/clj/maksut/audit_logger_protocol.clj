@@ -13,11 +13,14 @@
   (log [this user operation target changes]))
 
 (s/defn ->user [session :- auth-schema/Session]
-  (new User
-    (new Oid (get-in session [:identity :oid]))
-    (InetAddress/getByName (:client-ip session))
-    (:key session)
-    (:user-agent session)))
+  (User.
+    (when-let [oid (-> session :identity :oid)]
+      (Oid. oid))
+    (if-let [ip (:client-ip session)]
+      (InetAddress/getByName ip)
+      (InetAddress/getLocalHost))
+    (or (:key session) "no session")
+    (or (:user-agent session) "no user agent")))
 
 (s/defn ->operation [name-str :- s/Str]
   (proxy [Operation] [] (name [] name-str)))

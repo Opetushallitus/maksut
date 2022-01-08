@@ -7,7 +7,7 @@
   (:import [fi.vm.sade.auditlog ApplicationType Audit]))
 
 (defn- ^Audit create-audit-log [base-path]
-  (cta-audit-log/create-audit-logger "maksut" base-path ApplicationType/VIRKAILIJA))
+  (cta-audit-log/create-audit-logger "maksut" base-path ApplicationType/OPPIJA))
 
 (defrecord AuditLogger [config]
   component/Lifecycle
@@ -22,3 +22,6 @@
   audit-logger-protocol/AuditLoggerProtocol
   (log [this user operation target changes]
     (.log (:audit-log this) user operation target changes)))
+
+(defn audit-logger [config]
+  (map->AuditLogger config))

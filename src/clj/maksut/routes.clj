@@ -228,14 +228,14 @@
                  ;:responses  {200 {:body nil}}
                  :parameters {:path {:order-id s/Str}
                               :query {:secret s/Str
-                                      (s/optional-key :locale) s/Str}}
-                 :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters}]
+                                      (s/optional-key :locale) (s/maybe schema/Locale)}}
+                 :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters :as request}]
                                (log/info "maksa xxx " order-id locale secret)
-                               (response/ok (payment-protocol/tutu-payment payment-service {:order-id order-id
-                                                                                            :locale locale
-                                                                                            :secret secret}
-                                                                                    )))}}]
-        ]
+                               (response/ok (payment-protocol/tutu-payment payment-service
+                                                                           session
+                                                                           {:order-id order-id
+                                                                            :locale locale
+                                                                            :secret secret})))}}]]
 
        ["/laskut-by-secret"
         [""

@@ -1,6 +1,5 @@
 (ns maksut.maksut.maksut-service
-  (:require [maksut.audit-logger-protocol :as audit]
-            [maksut.error :refer [maksut-error]]
+  (:require [maksut.error :refer [maksut-error]]
             [maksut.maksut.maksut-service-protocol :refer [MaksutServiceProtocol]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.api-schemas :as api-schemas]
@@ -11,12 +10,6 @@
             [ring.util.http-response :as response]
             [taoensso.timbre :as log])
   (:import [java.time LocalDate]))
-
-(def maksut-create (audit/->operation "MaksutCreate"))
-
-;(defn log-return [arg]
-;            (log/info "LOGGED " (pr-str arg))
-;            arg)
 
 ;Näin koska CLJS ei tue BigDecimal/LocalDate tyyppejä
 (defn Lasku->json [lasku]
@@ -56,12 +49,6 @@
           ;(<= (.compareTo (:amount lasku) 0M) 0) (maksut-error :invoice-createerror-invalidamount "Laskun summa ei ole sallittu")))
 
           ; Why is the date 3 hours off (is DB in UTC Timezone?)
-
-          ;(audit/log audit-logger
-          ;           (audit/->user session)
-          ;           maksut-create
-          ;           (audit/->target {:oid (:oid hkr)})
-          ;           (audit/->changes {} hkr))
 
           (maksut-queries/create-or-update-lasku db lasku)
           ;returns created/changed fields from view (including generated fields)

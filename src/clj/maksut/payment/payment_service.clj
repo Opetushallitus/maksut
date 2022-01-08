@@ -9,6 +9,7 @@
             [maksut.email.tutu-payment-confirmation :as email-confirmation]
             [maksut.email.email-service-protocol :as email-protocol]
             [maksut.config :as c]
+            [maksut.audit-logger-protocol :as audit]
             [maksut.schemas.class-pred :as p]
             [maksut.util.url-encoder :refer [encode]]
             [re-frame.core :refer [dispatch]]
@@ -30,6 +31,14 @@
 (defn- blank->nil [s]
   (when-not (str/blank? s)
     s))
+
+(def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
+
+(defn Lasku->AuditJson [lasku]
+  (assoc
+   (select-keys lasku [:order_id :first_name :last_name :email :origin :reference])
+   :amount (str (:amount lasku))
+   :due_date (str (:due_date lasku))))
 
 
 (def response-keys [:ORDER_NUMBER :PAYMENT_ID :AMOUNT :TIMESTAMP :STATUS])
@@ -127,13 +136,10 @@
 (defn- format-number-us-locale [n]
   (String/format (Locale. "us"), "%.2f", (to-array [(double n)])))
 
-; removed REFERENCE_NUMBER
 (defn- calculate-authcode [{:keys [MERCHANT_ID LOCALE URL_SUCCESS URL_CANCEL URL_NOTIFY
-                                   AMOUNT ORDER_NUMBER MSG_SETTLEMENT_PAYER
-                                   MSG_UI_MERCHANT_PANEL PARAMS_IN PARAMS_OUT]} secret]
+                                   AMOUNT ORDER_NUMBER PARAMS_IN PARAMS_OUT]} secret]
   (let [plaintext (str/join "|" (->> [secret MERCHANT_ID LOCALE URL_SUCCESS URL_CANCEL URL_NOTIFY
-                                      AMOUNT ORDER_NUMBER MSG_SETTLEMENT_PAYER
-                                      MSG_UI_MERCHANT_PANEL PARAMS_IN PARAMS_OUT]
+                                      AMOUNT ORDER_NUMBER PARAMS_IN PARAMS_OUT]
                                      (remove nil?)))]
     (-> plaintext (.getBytes "ISO-8859-1") DigestUtils/sha256Hex str/upper-case)))
 
@@ -141,7 +147,7 @@
                            {:keys [language-code amount order-number secret reference-number msg] :as params}]
 ;  {:pre  [(s/valid? ::os/pt-payment-params params)]
 ;   :post [(s/valid? ::os/pt-payment-form-data %)]}
-  ;Paytrail does not support sending back the LOCALE we sent
+  ;Paytrail does not support sending back the LOCALE we sent, so need redundant field for that
   (let [params-in "MERCHANT_ID,LOCALE,URL_SUCCESS,URL_CANCEL,URL_NOTIFY,AMOUNT,ORDER_NUMBER,PARAMS_IN,PARAMS_OUT"
         params-out "ORDER_NUMBER,PAYMENT_ID,AMOUNT,TIMESTAMP,STATUS"
         query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
@@ -155,39 +161,47 @@
                      :PARAMS_IN params-in
                      :PARAMS_OUT params-out}
         authcode (calculate-authcode form-params merchant-secret)]
-    {:uri       paytrail-host
-                :params (assoc form-params :AUTHCODE authcode)}
-    ))
+    {:uri    paytrail-host
+     :params (assoc form-params :AUTHCODE authcode)}))
 
 (defn- get-paytrail-config [this]
   (let [config (:config this)]
-    { :paytrail-host (-> config :paytrail-config :host)
-      :merchant-id (-> config :paytrail-config :merchant-id)
-      :merchant-secret (-> config :paytrail-config :merchant-secret)
-      :callback-uri (-> config :callback-uri)}))
+    {:paytrail-host   (-> config :paytrail-config :host)
+     :merchant-id     (-> config :paytrail-config :merchant-id)
+     :merchant-secret (-> config :paytrail-config :merchant-secret)
+     :callback-uri    (-> config :callback-uri)}))
 
 ;Instead of directly searching by order-id, use secret to prevent order-id brute-forcing
-(defn- tutu-payment [this db {:keys [order-id locale secret]}]
-       (let [laskut (maksut-queries/get-laskut-by-secret db secret)
-             lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))
-             lang (case locale
-                        ("fi" "sv" "en") locale
-                        "fi")
-             p {:language-code    lang
-                :amount           (:amount lasku)
-                :order-number     order-id
-                :secret           secret
-                }]
+(defn- tutu-payment [this db audit-logger session {:keys [order-id locale secret]}]
+  (let [laskut (maksut-queries/get-laskut-by-secret db secret)
+        lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))
+        lang (or locale "fi")
+        p {:language-code    lang
+           :amount           (:amount lasku)
+           :order-number     order-id
+           :secret           secret
+           }]
 
-         (cond
-            (not (some? lasku)) (maksut-error :invoice-notfound "Laskua ei löydy")
-            (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue "Lasku on erääntynyt")
-            (= (:status lasku) "paid") (maksut-error :invoice-invalidstate-paid "Lasku on jo maksettu"))
+    (cond
+      (not (some? lasku)) (maksut-error :invoice-notfound "Laskua ei löydy")
+      (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue "Lasku on erääntynyt")
+      (= (:status lasku) "paid") (maksut-error :invoice-invalidstate-paid "Lasku on jo maksettu"))
 
-         (when (not= (:status lasku) "active")
-               (maksut-error :invoice-not-active "Maksua ei voi enää maksaa"))
+    (when (not= (:status lasku) "active")
+          (maksut-error :invoice-not-active "Maksua ei voi enää maksaa"))
 
-         (generate-form-data (get-paytrail-config this) p)))
+    (let [data (generate-form-data (get-paytrail-config this) p)
+          audit-data (Lasku->AuditJson lasku)]
+
+      (prn "session" session)
+
+      (audit/log audit-logger
+                 (audit/->user session)
+                 op-payment-redirect
+                 (audit/->target {:email (:email lasku)})
+                 (audit/->changes {} audit-data))
+
+      data)))
 
 
 (defn- handle-tutu-confirmation-email [email-service email locale order-id reference]
@@ -221,30 +235,26 @@
       result)))
 
 
-(defrecord PaymentService [config email-service db]
+(defrecord PaymentService [config audit-logger email-service db]
   component/Lifecycle
   (start [this]
     ;(s/validate (s/pred #(instance? DataSource %)) (:datasource db))
     (s/validate c/MaksutConfig config)
-    ;(s/validate (p/extends-class-pred cas-ticket-client-protocol/CasTicketClientProtocol) cas-ticket-validator)
-    ;(s/validate (p/extends-class-pred kayttooikeus-protocol/KayttooikeusService) kayttooikeus-service)
     (s/validate (p/extends-class-pred email-protocol/EmailServiceProtocol) email-service)
-    ;(s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
-    ;(s/validate s/Str (url/resolve-url :cas.failure config))
+    (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
 
     ;(s/validate s/Str (get-in config [:payment :paytrail-config :host]))
     ;(s/validate s/Int (get-in config [:payment :paytrail-config :merchant-id]))
 
-    (assoc this :config (:payment config)
-           ))
+    (assoc this :config (:payment config)))
   (stop [this]
     (assoc this
            :config nil
            ))
 
   payment-service-protocol/PaymentServiceProtocol
-  (tutu-payment [this params]
-    (tutu-payment this db params))
+  (tutu-payment [this session params]
+    (tutu-payment this db audit-logger session params))
   (process-success-callback [this params locale notify?]
     (process-success-callback this db email-service params locale notify?))
   (form-data-for-payment [this params]
