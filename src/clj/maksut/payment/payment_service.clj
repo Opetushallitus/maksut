@@ -193,8 +193,6 @@
     (let [data (generate-form-data (get-paytrail-config this) p)
           audit-data (Lasku->AuditJson lasku)]
 
-      (prn "session" session)
-
       (audit/log audit-logger
                  (audit/->user session)
                  op-payment-redirect

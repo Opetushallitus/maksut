@@ -4,8 +4,10 @@
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.api-schemas :as api-schemas]
             [maksut.config :as c]
+            [maksut.util.date :refer [iso-date-str->date]]
             [clojure.string :as str]
             [com.stuartsierra.component :as component]
+            [clj-time.core :as time]
             [schema.core :as s]
             [ring.util.http-response :as response]
             [taoensso.timbre :as log])
@@ -32,28 +34,26 @@
   (s/validate (s/constrained s/Str #(>= (bigdec %) 0.65M) 'valid-payment-amount) (:amount lasku))
   (assoc
    (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference])
+   :due-date (or
+               (iso-date-str->date (:due-date lasku))
+               (time/plus (time/today) (time/days (:due-days lasku))))
    :amount (.setScale (bigdec (:amount lasku)) 2 BigDecimal/ROUND_HALF_UP)))
 
 (defn- create [_ session db lasku-input]
-        (s/validate api-schemas/LaskuCreate lasku-input)
-        (let [lasku (json->LaskuCreate lasku-input)
-              hkr "1.2.3.testi.muuta"
-              order-id (:order-id lasku)
-              current (maksut-queries/get-lasku db order-id)]
+  (s/validate api-schemas/LaskuCreate lasku-input)
+  (let [lasku (json->LaskuCreate lasku-input)
+        {:keys [order-id due-date]} lasku]
 
-          (log/info "Lasku" lasku)
-          (log/info "Current" current)
-          ;TODO validate input: valid email, fields set
-          ;schemassa validoidaan jo
-          ;(<= (:due-days lasku) 0) (maksut-error :invoice-createerror-invalidduedays "Eräpäivien lukumäärä ei ole sallittu")
-          ;(<= (.compareTo (:amount lasku) 0M) 0) (maksut-error :invoice-createerror-invalidamount "Laskun summa ei ole sallittu")))
+    (log/info "Lasku" lasku)
+    (log/info "Current" (maksut-queries/get-lasku db order-id))
+    ;TODO validate input: valid email, fields set
 
-          ; Why is the date 3 hours off (is DB in UTC Timezone?)
+    (when-not (time/before? (time/today) due-date)
+      (maksut-error :invoice-createerror-duedateinpast "Due-date needs to be in future." :status-code 422))
 
-          (maksut-queries/create-or-update-lasku db lasku)
-          ;returns created/changed fields from view (including generated fields)
-          ;TODO tarvitaan secret mukaan
-          (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
+    (maksut-queries/create-or-update-lasku db lasku)
+    ;returns created/changed fields from view (including generated fields)
+    (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
 
 (defrecord MaksutService [audit-logger config db]
   component/Lifecycle
@@ -71,7 +71,7 @@
 
   (create-tutu [this session lasku]
     (s/validate api-schemas/TutuLaskuCreate lasku)
-    (let [{:keys [application-key index]} lasku
+    (let [{:keys [application-key due-date index]} lasku
           trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
                         (this (subs str 1))
                         str))
@@ -81,9 +81,9 @@
           order-id (str prefix aid "-" index)]
       (create this session db
               (assoc
-                (select-keys lasku [:first-name :last-name :email :amount])
+                (select-keys lasku [:first-name :last-name :email :amount :due-date])
                 :order-id order-id
-                :due-days 14  ;TODO fetch this from config
+                :due-days 14 ;if due-date not defined
                 :origin (get-in this [:config :lasku-origin])
                 :reference application-key))))
 

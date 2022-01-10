@@ -18,7 +18,7 @@ VALUES (
     :amount,
     :origin,
     :reference,
-    CURRENT_DATE + INTERVAL '1 day' * :due-days
+    :due-date
 )
 RETURNING *;
 

@@ -44,7 +44,6 @@
   java.sql.Date
   (result-set-read-column [v _ _] (sql-date->LocalDate v))
 
-  ;Note. Converts Timestamps to just the date, if we need times too this needs to be modified
   java.sql.Timestamp
   (result-set-read-column [v _ _] (sql-date-Timestamp->LocalDate v))
 
@@ -52,11 +51,10 @@
   (result-set-read-column [v _ _]
     (vec (.getArray v))))
 
-;TODO replace this with java.util.LocalDate handling if need to pass dates also
-;(extend-type org.joda.time.DateTime
-;  jdbc/ISQLParameter
-;  (set-parameter [v ^PreparedStatement stmt idx]
-;    (.setTimestamp stmt idx (clj-time-coerce/to-sql-time v))))
+(extend-type org.joda.time.LocalDate
+  jdbc/ISQLParameter
+  (set-parameter [v ^PreparedStatement stmt idx]
+    (.setDate stmt idx (clj-time-coerce/to-sql-date v))))
 
 (defrecord DbPool [config]
   component/Lifecycle

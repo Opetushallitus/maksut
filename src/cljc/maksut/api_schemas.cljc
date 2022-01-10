@@ -47,12 +47,12 @@
   {:keys [s/Str]})
 
 (s/defschema TutuLaskuCreate
-  {:application-key s/Str ;TODO validate proper oid-syntax
+  {:application-key s/Str
    :first-name s/Str
    :last-name s/Str
    :email s/Str
    :amount s/Str
-   (s/optional-key :due_date) (s/maybe s/Str)
+   (s/optional-key :due-date) (s/maybe s/Str)
    :index (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
    })
 
@@ -62,6 +62,7 @@
    :last-name s/Str
    :email s/Str
    :amount s/Str
+   (s/optional-key :due-date) (s/maybe s/Str) ;If not defined, then due-days used
    :due-days (s/constrained s/Int #(> % 0) 'positive-due-days)
    :origin s/Str
    :reference s/Str})

@@ -6,11 +6,13 @@
 
 (defn- json-error-handler [exception request]
   (log/error exception)
-  {:status 500
-   :headers {"Cache-Control" "no-store"}
-   :body (merge {:error true
-                 :message (.getMessage exception)}
-                (ex-data exception))})
+  (let [status (or (:http-status (ex-data exception)) 500)
+        data   (dissoc (ex-data exception) :http-status)]
+    {:status status
+     :headers {"Cache-Control" "no-store"}
+     :body (merge {:error true
+                   :message (.getMessage exception)}
+                  data)}))
 
 (def exception-middleware
   (ring-exception/create-exception-middleware

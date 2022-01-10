@@ -193,9 +193,9 @@
                   ;:responses  {200 {:body [schema/LaskuStatus]}}
                   :parameters {:body schema/LaskuRefList}
                   :handler    (fn [{session :session {input :body} :parameters}]
-                                (prn "CHECK-TUTU " (type input) input)
+                                (prn "Check invoice statuses for" (count input) "keys")
                                 (let [x (maksut-protocol/check-status-tutu maksut-service session input)]
-                                  (prn "RESULT" x)
+                                  (prn "Results" x)
                                   (response/ok x)))}}]]
 
        ["/lasku-tutu/:application-key"
