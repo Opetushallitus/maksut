@@ -15,13 +15,13 @@
 
 ;Tutu maksut näkymän yllä olevat pallurat
 (def process-circle-border "#aeaeae")
-(def process-circle-border-selected "#007373")
-(def process-circle-bg-selected "#007373")
+(def process-circle-border-selected "#3A7A10")
+(def process-circle-bg-selected "#3A7A10")
 (def process-circle-bg "#ffffff")
 (def process-circle-fg "#101010")
 (def process-circle-fg-selected "#ffffff")
 (def process-circle-text "#353535")
-(def process-circle-text-selected "#006969")
+(def process-circle-text-selected "#3A7A10")
 
 
 (def invoice-bg "#f5f7f9")

@@ -253,7 +253,7 @@
                                :justify-content "center" }
         button-style {:margin-top "20px"
                       :margin-bottom "30px"
-                      :background-color "#007373"
+                      :background-color "#3A7A10"
                       ::stylefy/mode {:hover {:background-color "#254905"}} ; Green-900
                       :padding "10px 25px 10px 25px"
                       :cursor "pointer"
