@@ -24,7 +24,7 @@
                                                          :sv "Fakturans summa är inte tillåten."}
                     :invoice-createerror-duedateinpast  {:fi "Eräpäivän tulee olla tulevaisuudessa"
                                                          :en "Due-date needs to be in future."
-                                                         :sv "Förfallodagarnas antal är inte tillåtet."
+                                                         :sv "Förfallodagarnas antal är inte tillåtet."}
                     :invoice-createerror-invalidduedays {:fi "Eräpäivien lukumäärä ei ole sallittu"
                                                          :en "The amount of the due dates is not allowed."
                                                          :sv "Förfallodagarnas antal är inte tillåtet."}}
