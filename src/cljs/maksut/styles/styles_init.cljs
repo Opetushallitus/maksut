@@ -28,11 +28,6 @@
     (doseq [weight [vars/font-weight-regular
                     vars/font-weight-medium
                     vars/font-weight-bold]]
-      ;USING INSTEAD'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif
-      ;(stylefy/font-face {:font-family "Roboto"
-      ;                    :src         (gstring/format "url('/maksut/fonts/roboto-%d.%s') format('%s')" weight format format)
-      ;                    :font-weight weight
-      ;                    :font-style  "normal"})
       (stylefy/font-face {:font-family "Material Icons"
                           :src         (gstring/format "url('/maksut/fonts/MaterialIcons-Regular.%s') format('%s')" format format)
                           :font-weight weight

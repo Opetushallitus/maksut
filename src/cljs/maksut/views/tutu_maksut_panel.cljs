@@ -6,6 +6,7 @@
             [maksut.components.common.material-icons :as icon]
             [maksut.components.common.svg :as svg]
             [maksut.styles.styles-colors :as colors]
+            [maksut.styles.styles-init :refer [media-small]]
             [maksut.events.maksut-events :as maksut-events]
             [maksut.subs.maksut-subs :as maksut-subs]
             [maksut.dates.date-parser :refer [format-date]]
@@ -28,6 +29,7 @@
   {:border-radius "3px"
    :padding "20px"
    :min-width "320px"
+   ::stylefy/media {media-small { :min-width "280px" }}
    :background-color colors/invoice-bg})
 
 (def ^:private dot-style
@@ -117,6 +119,9 @@
   [:div (use-style {:display "grid"
                     :width "400px"
                     :grid-template-columns "200px 200px"
+                    ::stylefy/media {media-small {
+                      :width "300px"
+                      :grid-template-columns "150px 150px"}}
                     :grid-row "auto auto"
                     :grid-row-gap "10px"
                     })

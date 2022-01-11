@@ -1,11 +1,13 @@
 (ns maksut.components.common.headings
   (:require [maksut.styles.styles-colors :as colors]
             [maksut.styles.styles-fonts :as vars]
+            [maksut.styles.styles-init :refer [media-small]]
             [stylefy.core :as stylefy]))
 
 (def h1-styles
   {:color       colors/black
    :font-size   "48px"
+   ::stylefy/media {media-small { :font-size "28px" }}
    :font-weight vars/font-weight-bold
    :text-align "center"
    :line-height "24px"})
@@ -13,6 +15,7 @@
 (def h2-styles
   {:color       colors/black
    :font-size   "28px"
+   ::stylefy/media {media-small { :font-size "24px" }}
    :font-weight vars/font-weight-bold
    :line-height "24px"})
 
