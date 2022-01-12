@@ -311,37 +311,35 @@
            "invoice-decision-oldsecret"
            "invoice-notfound-oldsecret")
           [:<>
-           [header "Linkki laskuun on vanhentunut"]]
-           ;Tähän voisi lisätä pidemmän selitetekstin jos haluaa, käytännössä lasku on jo maksettu, ja linkki on yli 14pv vanha
+           [header @(subscribe [:translation :invoice-not-found/paid-oldsecret-header])]]
 
           "invoice-processing-overdue"
           [:<>
-           [header "Hakemuksesi käsittelymaksun eräpäivä on mennyt umpeen"]
+           [header @(subscribe [:translation :invoice-not-found/processing-overdue-header])]
            [text
-            "Et ole suorittanut 70 euron käsittelymaksua eräpäivään mennessä. Hakemuksesi on rauennut.
-             Jos haluat edelleen hakea tutkintosi tunnustamista, täytä hakulomake uudelleen."
+             @(subscribe [:translation :invoice-not-found/processing-overdue-text-1])
              [:br][:br]
-             "Jos sinulla on kysyttävää, lähetä sähköpostia osoitteeseen " email-tag "."
+             @(subscribe [:translation :invoice-not-found/processing-overdue-text-2]) email-tag "."
              [:br][:br]
-             "Linkki tutkintojen tunnustamisen etusivulle: " link-tag]]
+             @(subscribe [:translation :invoice-not-found/processing-overdue-text-3]) link-tag]]
 
           "invoice-decision-overdue"
           [:<>
-           [header "Hakemuksesi päätösmaksun eräpäivä on mennyt umpeen"]
+           [header @(subscribe [:translation :invoice-not-found/decision-overdue-header])]
            [text
-            "Et ole suorittanut päätösmaksua eräpäivään mennessä. Lähetämme sinulle päätösmaksusta erillisen laskun. Hakemasi päätös lähetetään sinulle vasta päätösmaksun suorittamisen jälkeen."
+            @(subscribe [:translation :invoice-not-found/decision-overdue-text-1])
             [:br][:br]
-            "Maksu perustuu opetus- ja kulttuuriministeriön voimassa olevaan asetukseen Opetushallituksen suoritteiden maksullisuudesta. Maksu on ulosottokelpoinen ilman tuomiota tai päätöstä (valtion maksuperustelaki (150/1992) 11§ 1.mom.)."
+            @(subscribe [:translation :invoice-not-found/decision-overdue-text-2])
             [:br][:br]
-            "Laskuun liittyvissä kysymyksissä voit olla suoraan yhteydessä Opetushallituksen myyntilaskutukseen osoitteessa " myynti-email-tag "."
+            @(subscribe [:translation :invoice-not-found/decision-overdue-text-3]) myynti-email-tag "."
             [:br][:br]
-            "Lisätietoja saat sähköpostitse osoitteesta " email-tag "."]]
+            @(subscribe [:translation :invoice-not-found/decision-overdue-text-4]) email-tag "."]]
 
           ;:else "invoice-notfound-secret"
           [:<>
-           [header "Maksun tietoja ei löydy"]
+           [header @(subscribe [:translation :invoice-not-found/invalid-secret-header])]
            [text
-             "Maksusi tila ei ole nähtävissä. Tilanteen selvittämiseksi ota yhteyttä Opetushallituksen Tutkintojen ja kieliosaamisen tunnustaminen -yksikköön sähköpostitse osoitteessa "
+             @(subscribe [:translation :invoice-not-found/invalid-secret-text])
              email-tag
              "." ]])))
 

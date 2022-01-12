@@ -84,6 +84,44 @@
                                :en "Expired"
                                :sv "Förfallen"}}
 
+   :invoice-not-found {:paid-oldsecret-header     {:fi "Linkki laskuun on vanhentunut"
+                                                   :en ""
+                                                   :sv "Länk till betalning är för gammal"}
+                       :processing-overdue-header {:fi "Hakemuksesi käsittelymaksun eräpäivä on mennyt umpeen"
+                                                   :en ""
+                                                   :sv "Förfallodagen för behandlingsavgiften för din ansökan har gått ut"}
+                       :processing-overdue-text-1 {:fi "Et ole suorittanut 70 euron käsittelymaksua eräpäivään mennessä. Hakemuksesi on rauennut. Jos haluat edelleen hakea tutkintosi tunnustamista, täytä hakulomake uudelleen."
+                                                   :en ""
+                                                   :sv "Du har inte betalt behandlingsavgiften på 70 euro före förfallodagen. Din ansökan har förfallit. Om du vill ännu ansöka om erkännande av din examen, lämna in en ny ansökan."}
+                       :processing-overdue-text-2 {:fi "Jos sinulla on kysyttävää, lähetä sähköpostia osoitteeseen "
+                                                   :en ""
+                                                   :sv "Om du har frågor, kontakta oss per e-post "}
+                       :processing-overdue-text-3 {:fi "Linkki tutkintojen tunnustamisen etusivulle: "
+                                                   :en ""
+                                                   :sv "Länk till webbsidor för erkännande av examina: "}
+                       :decision-overdue-header   {:fi "Hakemuksesi päätösmaksun eräpäivä on mennyt umpeen"
+                                                   :en ""
+                                                   :sv "Förfallodagen för beslutsavgiften för din ansökan har gått ut."}
+                       :decision-overdue-text-1   {:fi "Et ole suorittanut päätösmaksua eräpäivään mennessä. Lähetämme sinulle päätösmaksusta erillisen laskun. Hakemasi päätös lähetetään sinulle vasta päätösmaksun suorittamisen jälkeen."
+                                                   :en ""
+                                                   :sv "Du har inte betalt beslutsavgiften före förfallodagen. Vi skickar dig en separat faktura för beslutsavgiften. Vi skickar dig beslutet först då du har betalat beslutsavgiften."}
+                       :decision-overdue-text-2   {:fi "Maksu perustuu opetus- ja kulttuuriministeriön voimassa olevaan asetukseen Opetushallituksen suoritteiden maksullisuudesta. Maksu on ulosottokelpoinen ilman tuomiota tai päätöstä (valtion maksuperustelaki (150/1992) 11§ 1.mom.)."
+                                                   :en ""
+                                                   :sv "Avgiften är baserad på undervisnings- och kulturministeriets gällande förordning om Utbildningsstyrelsens avgiftsbelagda prestationer. Avgiften från indrivas utan dom eller beslut (lag om grunderna för avgifter till staten (150/1992 11 § 1 mom.)."}
+                       :decision-overdue-text-3   {:fi "Laskuun liittyvissä kysymyksissä voit olla suoraan yhteydessä Opetushallituksen myyntilaskutukseen osoitteessa "
+                                                   :en ""
+                                                   :sv "Om du har frågor om fakturan, vänligen kontakta Utbildningsstyrelsens fakturering per e-post "}
+                       :decision-overdue-text-4   {:fi "Lisätietoja saat sähköpostitse osoitteesta "
+                                                   :en ""
+                                                   :sv "Mer information får du per e-post "}
+                       :invalid-secret-header     {:fi "Maksun tietoja ei löydy"
+                                                   :en ""
+                                                   :sv "Uppgifterna om avgiften hittades inte"}
+                       :invalid-secret-text       {:fi "Maksusi tila ei ole nähtävissä. Tilanteen selvittämiseksi ota yhteyttä Opetushallituksen Tutkintojen ja kieliosaamisen tunnustaminen -yksikköön sähköpostitse osoitteessa "
+                                                   :en ""
+                                                   :sv "Status för avgiften är inte tillgänglig. För att reda ut situationen, kontakta Utbildningsstyrelsens enhet för erkännande av examina och språkkunskaper per e-post "}}
+
+
    :tutu-panel-ohje {:kasittely-maksamatta {:fi "Sinun tulee maksaa käsittelymaksu, ennen kuin hakemuksesi otetaan käsittelyyn. Huomaathan että sinun tulee myös maksaa erikseen päätösmaksu ennen kuin saat päätöksen."
                                             :en "You need to pay the processing fee before your application is taken into processing. Please note, that you also need to pay a separate decision fee before the decision is sent to you."
                                             :sv "Du måste betala behandlingsavgiften före din ansökan tas till behandling. Kom ihåg att du måste också betala en separat beslutsavgift före du får beslutet."}
