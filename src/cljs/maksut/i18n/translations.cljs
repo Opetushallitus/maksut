@@ -122,7 +122,7 @@
                                                    :sv "Status för avgiften är inte tillgänglig. För att reda ut situationen, kontakta Utbildningsstyrelsens enhet för erkännande av examina och språkkunskaper per e-post "}}
 
 
-   :tutu-panel-ohje {:kasittely-maksamatta {:fi "Sinun tulee maksaa käsittelymaksu, ennen kuin hakemuksesi otetaan käsittelyyn. Huomaathan että sinun tulee myös maksaa erikseen päätösmaksu ennen kuin saat päätöksen."
+   :tutu-panel-ohje {:kasittely-maksamatta {:fi "Sinun tulee maksaa käsittelymaksu ennen kuin hakemuksesi otetaan käsittelyyn. Huomaathan, että sinun tulee myös maksaa erikseen päätösmaksu ennen kuin saat päätöksen."
                                             :en "You need to pay the processing fee before your application is taken into processing. Please note, that you also need to pay a separate decision fee before the decision is sent to you."
                                             :sv "Du måste betala behandlingsavgiften före din ansökan tas till behandling. Kom ihåg att du måste också betala en separat beslutsavgift före du får beslutet."}
                      :kasittely-maksettu   {:fi "Olet maksanut käsittelymaksun. Hakemuksesi siirtyy seuraavaksi käsittelyyn. Kun olemme tehneet päätöksen hakemuksestasi, lähetämme sinulle sähköpostitse maksuohjeet päätösmaksusta. Lähetämme päätöksen vasta, kun olet maksanut päätösmaksun. Hakemusten keskimääräinen käsittelyaika on 2–3 kuukautta. Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
