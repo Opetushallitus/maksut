@@ -28,10 +28,6 @@
            [java.util Locale]
            [org.apache.commons.codec.digest DigestUtils]))
 
-(defn- blank->nil [s]
-  (when-not (str/blank? s)
-    s))
-
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
 
 (defn Lasku->AuditJson [lasku]
@@ -54,84 +50,7 @@
       (= return-authcode calculated-authcode))
     (error "Tried to authenticate message, but the map contained no :RETURN_AUTHCODE key. Data:" form-data)))
 
-
-(defn- process-response! [{:keys [paytrail-payment db]} form-data db-fn]
-  (let [db-params {:order-number (:ORDER_NUMBER form-data)
-                   :pay-id (blank->nil (:PAYMENT_ID form-data))
-                   :payment-method (blank->nil (:PAYMENT_METHOD form-data))}]
-    (if (and (return-authcode-valid? paytrail-payment form-data) (:order-number db-params))
-      (do (db-fn db db-params)
-          true)
-      (error "Could not verify payment response message:" form-data))))
-
-(defn- send-confirmation-email! [config {:keys [ORDER_NUMBER] :as payment-data} lang]
-  (if (not-any? str/blank? [ORDER_NUMBER])
-    (prn "send-confirmation-email!")
-    ;(some->> (user-data/participant-data config ORDER_NUMBER lang)
-    ;         (registration/send-confirmation-email! config lang))
-    (error "Can't send confirmation email because of missing data. Payment data:" payment-data)))
-
-;(defn confirm-payment! [config form-data lang]
-;  (when (process-response! config form-data prn);dba/confirm-registration-and-payment!)
-;    ;    (audit/log :app :admin
-;    ;               :on :payment
-;    ;               :op :update
-;    ;               :id (:ORDER_NUMBER form-data)
-;    ;               :before {:state states/pmt-unpaid}
-;    ;               :after {:state states/pmt-ok}
-;    ;               :msg "Payment has been confirmed.")
-;    (try
-;      (send-confirmation-email! config form-data lang)
-;      (catch Throwable t
-;        (error t "Could not send confirmation email. Payment data:" form-data)))
-;    :confirmed))
-
-;(defn cancel-payment! [config form-data]
-;  (when (process-response! config form-data prn) ;dba/cancel-registration-and-payment!)
-;    ;    (audit/log :app :admin
-;    ;               :on :payment
-;    ;               :op :update
-;    ;               :id (:ORDER_NUMBER form-data)
-;    ;               :before {:state states/pmt-unpaid}
-;    ;               :after {:state states/pmt-error}
-;    ;               :msg "Payment has been cancelled.")
-;    :cancelled))
-
-;(defn- cancel-payment-by-order-number! [db {:keys [state order_number]}]
-;    ;  (audit/log :app :admin
-;    ;             :on :payment
-;    ;             :op :update
-;    ;             :id order_number
-;    ;             :before {:state state}
-;    ;             :after {:state states/pmt-error}
-;    ;             :msg "Payment has been cancelled.")
-;  ;(dba/cancel-registration-and-payment! db {:order-number order_number})
-;  :cancelled)
-
-;(defn confirm-payment-manually! [{:keys [db] :as config} order-number user-lang session]
-;  {:pre [order-number user-lang]}
-;    ;  (audit/log :app :admin
-;    ;             :who (get-in session [:identity :oid])
-;    ;             :ip (get-in session [:identity :ip])
-;    ;             :user-agent (get-in session [:identity :user-agent])
-;    ;             :on :payment
-;    ;             :op :update
-;    ;             :id order-number
-;    ;             :before {:state states/pmt-error}
-;    ;             :after {:state states/pmt-ok}
-;    ;             :msg "Payment and related registration has been approved.")
-;  (when (= 1 1;(dba/confirm-registration-and-payment! db {:order-number order-number})
-;           )
-;    ;    (some->> (user-data/participant-data config order-number user-lang)
-;    ;             (registration/send-confirmation-email! config user-lang))
-;    true))
-
-;(defn cancel-obsolete-payments! [db]
-;  (info "Cancelled obsolete payments" ;(dba/cancel-obsolete-registrations-and-payments! db)
-;        ))
-
 ; -----
-
 
 (defn- format-number-us-locale [n]
   (String/format (Locale. "us"), "%.2f", (to-array [(double n)])))

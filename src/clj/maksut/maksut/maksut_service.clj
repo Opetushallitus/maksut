@@ -1,5 +1,6 @@
 (ns maksut.maksut.maksut-service
-  (:require [maksut.error :refer [maksut-error]]
+  (:require [clojure.core.match :refer [match]]
+            [maksut.error :refer [maksut-error]]
             [maksut.maksut.maksut-service-protocol :refer [MaksutServiceProtocol]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.api-schemas :as api-schemas]
@@ -54,6 +55,20 @@
     (maksut-queries/create-or-update-lasku db lasku)
     ;returns created/changed fields from view (including generated fields)
     (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
+
+(defn- throw-specific-old-secret-error [prefix laskut]
+  (let [order-id-matcher #(first (filter (fn [x] (and
+                                                    (str/starts-with? (:order_id x) prefix)
+                                                    (str/ends-with? (:order_id x) %))) laskut))
+        processing (order-id-matcher "-1")
+        decision (order-id-matcher "-2")
+        output #(maksut-error % "Linkki on vanhentunut")]
+    (match [(:status processing) (:status decision)]
+           ["paid"    nil] (output :invoice-processing-oldsecret)
+           ["overdue" nil] (output :invoice-processing-overdue)
+           [_ "paid"]      (output :invoice-decision-oldsecret)
+           [_ "overdue"]   (output :invoice-decision-overdue)
+           :else (maksut-error :invoice-notfound-oldsecret "Linkki on vanhentunut"))))
 
 (defrecord MaksutService [audit-logger config db]
   component/Lifecycle
@@ -112,7 +127,7 @@
       (Lasku->json lasku)
       (response/not-found! "Lasku not found")))
 
-  (get-laskut-by-secret [_ session secret]
+  (get-laskut-by-secret [this session secret]
     (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
       (let [now (. LocalDate (now))
             passed? #(.isAfter now %)
@@ -120,7 +135,7 @@
         ;do not let user to the page if all due_dates for all (linked) invoices has passed
         (log/info "laskut " laskut)
         (if all-passed?
-          (maksut-error :invoice-notfound-oldsecret "Linkki on vanhentunut")
+          (throw-specific-old-secret-error (get-in this [:config :order-id-prefix]) laskut)
           (map Lasku->json laskut)))
       (maksut-error :invoice-notfound-secret "Linkki on väärä tai vanhentunut"))))
 

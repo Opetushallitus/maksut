@@ -6,6 +6,7 @@
             [maksut.components.common.material-icons :as icon]
             [maksut.components.common.svg :as svg]
             [maksut.styles.styles-colors :as colors]
+            [maksut.styles.styles-fonts :as vars]
             [maksut.styles.styles-init :refer [media-small]]
             [maksut.events.maksut-events :as maksut-events]
             [maksut.subs.maksut-subs :as maksut-subs]
@@ -288,6 +289,62 @@
 
      ]))
 
+
+(defn error-container [error]
+  (let [code (:code error)
+        link    "https://www.oph.fi/fi/palvelut/tutkintojen-tunnustaminen"
+        link-tag [:a {:href link} link]
+        email   "recognition@oph.fi"
+        email-tag [:a {:href (str "mailto:" email)} email]
+        myynti-email "myyntilaskutus@oph.fi"
+        myynti-email-tag [:a {:href (str "mailto:" myynti-email)} myynti-email]
+        header (fn [header] [h/heading {:cypressid "error-header"
+                            :level     :h2}
+                            header])
+        text-style {:color       colors/black
+                    :font-size   "16px"
+                    :font-weight vars/font-weight-regular
+                    :line-height "24px"}
+        text (fn [& text] (into [] (concat [:span (stylefy/use-style text-style)] text)))]
+    (case code
+          ("invoice-processing-oldsecret"
+           "invoice-decision-oldsecret"
+           "invoice-notfound-oldsecret")
+          [:<>
+           [header "Linkki laskuun on vanhentunut"]]
+           ;Tähän voisi lisätä pidemmän selitetekstin jos haluaa, käytännössä lasku on jo maksettu, ja linkki on yli 14pv vanha
+
+          "invoice-processing-overdue"
+          [:<>
+           [header "Hakemuksesi käsittelymaksun eräpäivä on mennyt umpeen"]
+           [text
+            "Et ole suorittanut 70 euron käsittelymaksua eräpäivään mennessä. Hakemuksesi on rauennut.
+             Jos haluat edelleen hakea tutkintosi tunnustamista, täytä hakulomake uudelleen."
+             [:br][:br]
+             "Jos sinulla on kysyttävää, lähetä sähköpostia osoitteeseen " email-tag "."
+             [:br][:br]
+             "Linkki tutkintojen tunnustamisen etusivulle: " link-tag]]
+
+          "invoice-decision-overdue"
+          [:<>
+           [header "Hakemuksesi päätösmaksun eräpäivä on mennyt umpeen"]
+           [text
+            "Et ole suorittanut päätösmaksua eräpäivään mennessä. Lähetämme sinulle päätösmaksusta erillisen laskun. Hakemasi päätös lähetetään sinulle vasta päätösmaksun suorittamisen jälkeen."
+            [:br][:br]
+            "Maksu perustuu opetus- ja kulttuuriministeriön voimassa olevaan asetukseen Opetushallituksen suoritteiden maksullisuudesta. Maksu on ulosottokelpoinen ilman tuomiota tai päätöstä (valtion maksuperustelaki (150/1992) 11§ 1.mom.)."
+            [:br][:br]
+            "Laskuun liittyvissä kysymyksissä voit olla suoraan yhteydessä Opetushallituksen myyntilaskutukseen osoitteessa " myynti-email-tag "."
+            [:br][:br]
+            "Lisätietoja saat sähköpostitse osoitteesta " email-tag "."]]
+
+          ;:else "invoice-notfound-secret"
+          [:<>
+           [header "Maksun tietoja ei löydy"]
+           [text
+             "Maksusi tila ei ole nähtävissä. Tilanteen selvittämiseksi ota yhteyttä Opetushallituksen Tutkintojen ja kieliosaamisen tunnustaminen -yksikköön sähköpostitse osoitteessa "
+             email-tag
+             "." ]])))
+
 (defn lasku-container []
   (let [aliotsikko (subscribe [:translation :tutu-panel/aliotsikko])
         invoices (subscribe [maksut-subs/maksut-invoice])]
@@ -298,16 +355,17 @@
                      :level     :h2}
                     @aliotsikko]
 
-         ;[:span (use-style {:grid-row 1 :grid-column "1 / 3"}) @hakukohteet-label]
-
          [laskut-container @invoices]
          ]))))
 
 (defn tutu-maksut-panel []
-  (let [fullname (subscribe [maksut-subs/maksut-invoice-fullname])]
+  (let [fullname (subscribe [maksut-subs/maksut-invoice-fullname])
+        error    @(subscribe [maksut-subs/maksut-invoice-error])]
     [p/panel
       {:cypressid "tutu-maksut-panel"}
-      @(subscribe [:translation :tutu-panel/otsikko])
+      (when-not error @(subscribe [:translation :tutu-panel/otsikko]))
       @fullname
       [:div (use-style grid-styles)
-        [lasku-container]]]))
+        (if error
+          [error-container error]
+          [lasku-container])]]))

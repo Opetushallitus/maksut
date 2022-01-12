@@ -5,6 +5,7 @@
 
 ;; Subscriptions
 (def maksut-invoice :maksut/invoice)
+(def maksut-invoice-error :maksut/invoice-error)
 (def maksut-invoice-fullname :maksut/invoice-fullname)
 (def maksut-is-loading :maksut/is-loading)
 (def maksut-payment-form :maksut/payment-form)
@@ -19,6 +20,11 @@
  maksut-invoice
  (fn [db _]
    (get-in db maksut-events/maksut-invoice)))
+
+(re-frame/reg-sub
+ maksut-invoice-error
+ (fn [db _]
+   (get-in db maksut-events/maksut-invoice-error)))
 
 (re-frame/reg-sub
  maksut-invoice-fullname

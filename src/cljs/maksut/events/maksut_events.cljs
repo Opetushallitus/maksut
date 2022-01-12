@@ -9,6 +9,7 @@
 (def maksut-invoice (conj root-maksut-path :invoice))
 (def maksut-payment-form (conj root-maksut-path :payment-form))
 (def maksut-secret (conj root-maksut-path :secret))
+(def maksut-invoice-error (conj root-maksut-path :invoice-error))
 ;(def maksut-locale (conj root-maksut-path :locale))
 
 ;; Events
@@ -20,6 +21,7 @@
 ;(def clear-payment-form :maksut/clear-payment-form)
 ;(def clear-db-after-payment :maksut/clear-db-after-payment)
 (def handle-get-invoices-response :maksut/handle-get-invoices-response)
+(def handle-get-invoices-error :maksut/handle-get-invoices-error)
 (def handle-get-payment-form :maksut/handle-get-payment-form)
 
 ;; Käsittelijät
@@ -30,6 +32,23 @@
                response
                (assoc-in db maksut-invoice))))
 
+(events/reg-event-fx-validating
+ handle-get-invoices-error
+ (fn-traced [{db :db} [error]]
+            (let [error-code (:code error)]
+              (case error-code
+                    ("invoice-notfound-oldsecret"
+                     "invoice-processing-oldsecret"
+                     "invoice-processing-overdue"
+                     "invoice-decision-oldsecret"
+                     "invoice-decision-overdue"
+                     "invoice-notfound-secret")
+                     {:db (assoc-in db maksut-invoice-error error)}
+
+                    {:dispatch [alert-events/http-request-failed error]}
+                    ))))
+
+
 (events/reg-event-db-validating
  handle-get-payment-form
  (fn-traced [db [response]]
@@ -38,27 +57,6 @@
              response
              (assoc-in db maksut-payment-form))))
 
-;(events/reg-event-db-validating
-; clear-invoice
-; (fn-traced [{db :db}]
-;            (prn "clear-invoice " )
-;            {:db       (update-in db maksut-invoice (constantly nil))}
-;            ))
-;
-;(events/reg-event-db-validating
-; clear-payment-form
-; (fn-traced [{db :db}]
-;            (prn "clear-payment-form " )
-;            {:db       (update-in db maksut-payment-form (constantly nil))}
-;            ))
-;
-;(events/reg-event-db-validating
-; clear-db-after-payment
-; (fn-traced []
-;            (prn "clear-db-after-payment " )
-;            {:dispatch-n [[clear-invoice]
-;                          [clear-payment-form]]}
-;            ))
 
 (events/reg-event-fx-validating
  get-invoices-by-secret
@@ -72,7 +70,7 @@
                       :search-params    [[:secret secret]]
                       :response-schema  schemas/Laskut
                       :response-handler [handle-get-invoices-response]
-                      :error-handler    [alert-events/http-request-failed]}})))
+                      :error-handler    [handle-get-invoices-error]}})))
 
 (events/reg-event-fx-validating
  get-payment-form

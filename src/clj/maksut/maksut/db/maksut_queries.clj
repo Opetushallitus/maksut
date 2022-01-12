@@ -52,7 +52,7 @@
         same-origin (= (:origin old-ai) (:origin new))]
     (cond
      (= status :overdue) (maksut-error :invoice-invalidstate-overdue "Ei voi muuttaa, eräpäivä mennyt")
-     (= status :paid)    (maksut-error :invoice-invalidstate-paid "Ei voi muuttaa, eräpäivä mennyt")
+     (= status :paid)    (maksut-error :invoice-invalidstate-paid "Ei voi muuttaa, lasku on jo maksettu")
      (not same-origin)   (maksut-error :invoice-createerror-originclash "Sama lasku eri lähteestä on jo olemassa"))
     true))
 
