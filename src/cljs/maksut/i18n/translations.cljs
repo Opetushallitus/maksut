@@ -74,9 +74,9 @@
                                            :sv "Behandlingsavgift"}
                      }
 
-   :maksu-tila      {:active  {:fi "Avoinna"
-                               :en "Open"
-                               :sv "Öppen"}
+   :maksu-tila      {:active  {:fi "Maksamatta"
+                               :en "Unpaid"
+                               :sv "Obetald"}
                      :paid    {:fi "Maksettu"
                                :en "Paid"
                                :sv "Betald"}
