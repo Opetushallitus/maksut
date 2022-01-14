@@ -85,40 +85,40 @@
                                :sv "Förfallen"}}
 
    :invoice-not-found {:paid-oldsecret-header     {:fi "Linkki laskuun on vanhentunut"
-                                                   :en ""
+                                                   :en "Link to the payment is too old"
                                                    :sv "Länk till betalning är för gammal"}
                        :processing-overdue-header {:fi "Hakemuksesi käsittelymaksun eräpäivä on mennyt umpeen"
-                                                   :en ""
+                                                   :en "The due date for the processing fee of your application has passed"
                                                    :sv "Förfallodagen för behandlingsavgiften för din ansökan har gått ut"}
                        :processing-overdue-text-1 {:fi "Et ole suorittanut 70 euron käsittelymaksua eräpäivään mennessä. Hakemuksesi on rauennut. Jos haluat edelleen hakea tutkintosi tunnustamista, täytä hakulomake uudelleen."
-                                                   :en ""
+                                                   :en "You have not paid the processing fee of EUR 70 by the due date. Your application has expired. If you still wish to apply for recognition of your qualification, please fill out the application form again."
                                                    :sv "Du har inte betalt behandlingsavgiften på 70 euro före förfallodagen. Din ansökan har förfallit. Om du vill ännu ansöka om erkännande av din examen, lämna in en ny ansökan."}
                        :processing-overdue-text-2 {:fi "Jos sinulla on kysyttävää, lähetä sähköpostia osoitteeseen "
-                                                   :en ""
+                                                   :en "If you have any questions, please contact us by email at "
                                                    :sv "Om du har frågor, kontakta oss per e-post "}
                        :processing-overdue-text-3 {:fi "Linkki tutkintojen tunnustamisen etusivulle: "
-                                                   :en ""
+                                                   :en "Link to the homepage of recognition of qualifications: "
                                                    :sv "Länk till webbsidor för erkännande av examina: "}
                        :decision-overdue-header   {:fi "Hakemuksesi päätösmaksun eräpäivä on mennyt umpeen"
-                                                   :en ""
+                                                   :en "The due date for the decision fee of your application has passed"
                                                    :sv "Förfallodagen för beslutsavgiften för din ansökan har gått ut."}
                        :decision-overdue-text-1   {:fi "Et ole suorittanut päätösmaksua eräpäivään mennessä. Lähetämme sinulle päätösmaksusta erillisen laskun. Hakemasi päätös lähetetään sinulle vasta päätösmaksun suorittamisen jälkeen."
-                                                   :en ""
+                                                   :en "You have not paid the decision fee by the due date. We will send you a separate invoice for the decision fee. We will not send the decision until after you have paid the decision fee."
                                                    :sv "Du har inte betalt beslutsavgiften före förfallodagen. Vi skickar dig en separat faktura för beslutsavgiften. Vi skickar dig beslutet först då du har betalat beslutsavgiften."}
                        :decision-overdue-text-2   {:fi "Maksu perustuu opetus- ja kulttuuriministeriön voimassa olevaan asetukseen Opetushallituksen suoritteiden maksullisuudesta. Maksu on ulosottokelpoinen ilman tuomiota tai päätöstä (valtion maksuperustelaki (150/1992) 11§ 1.mom.)."
-                                                   :en ""
+                                                   :en "The fee is based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education. The fee is enforceable without a judgement or a decision (Act on Criteria for Charges Payable to the State 150/1992, section 11, subsection 1)."
                                                    :sv "Avgiften är baserad på undervisnings- och kulturministeriets gällande förordning om Utbildningsstyrelsens avgiftsbelagda prestationer. Avgiften från indrivas utan dom eller beslut (lag om grunderna för avgifter till staten (150/1992 11 § 1 mom.)."}
                        :decision-overdue-text-3   {:fi "Laskuun liittyvissä kysymyksissä voit olla suoraan yhteydessä Opetushallituksen myyntilaskutukseen osoitteessa "
-                                                   :en ""
+                                                   :en "With questions regarding the invoices, please contact our invoicing services directly at "
                                                    :sv "Om du har frågor om fakturan, vänligen kontakta Utbildningsstyrelsens fakturering per e-post "}
                        :decision-overdue-text-4   {:fi "Lisätietoja saat sähköpostitse osoitteesta "
-                                                   :en ""
+                                                   :en "For more information, please contact us by email at "
                                                    :sv "Mer information får du per e-post "}
                        :invalid-secret-header     {:fi "Maksun tietoja ei löydy"
-                                                   :en ""
+                                                   :en "The details of your payment cannot be found"
                                                    :sv "Uppgifterna om avgiften hittades inte"}
                        :invalid-secret-text       {:fi "Maksusi tila ei ole nähtävissä. Tilanteen selvittämiseksi ota yhteyttä Opetushallituksen Tutkintojen ja kieliosaamisen tunnustaminen -yksikköön sähköpostitse osoitteessa "
-                                                   :en ""
+                                                   :en "The status of your payment is not available. To clear up the situation, please contact the Finnish National Agency for Education’s unit for recognition of qualifications and language proficiency, please contact us by email at "
                                                    :sv "Status för avgiften är inte tillgänglig. För att reda ut situationen, kontakta Utbildningsstyrelsens enhet för erkännande av examina och språkkunskaper per e-post "}}
 
 
