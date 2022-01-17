@@ -40,18 +40,18 @@
    :email-päätös    {:otsikko             {:fi "Päätösmaksusi on vastaanotettu"
                                            :en "Your decision fee has been received"
                                            :sv "Din beslutsavgift har emottagits"}
-                     :päätös-selitys      {:fi "Olet maksanut päätösmaksun. Lähetämme päätöksen sinulle mahdollisimman pian."
-                                           :en "You have paid the decision fee. We will send the decision to you as soon as possible."
-                                           :sv "Du har betalat beslutsavgiften. Vi skickar dig beslutet så snart som möjligt."}
+                     :päätös-selitys      {:fi "Olet maksanut päätösmaksun. Lähetämme päätöksen sinulle mahdollisimman pian. Jos et ole saanut päätöstä kolmen työpäivän sisällä, ota meihin yhteyttä sähköpostitse osoitteessa recognition@oph.fi."
+                                           :en "You have paid the decision fee. We will send the decision to you as soon as possible. If you have not received the decision in three working days, please contact us by email at recognition@oph.fi."
+                                           :sv "Du har betalat beslutsavgiften. Vi skickar beslutet till dig så snart som möjligt. Om du inte har fått beslutet inom tre arbetsdagar, vänligen kontakta oss per e-post: recognition@oph.fi."}
                      :tarkastelu-teksti   {:fi "Voit käydä tarkastelemassa maksusi tietoja aiemmin sähköpostitse saamasi linkin kautta. Linkki toimii 14 vuorokauden ajan siitä, kun lähetimme maksupyynnön. Sen jälkeen linkki sulkeutuu tietosuojasyistä."
-                                           :en "You can view the details of your payment before that through the link you have received in your email. The link will work for 14 days from the date when we sent the payment request to you. After that, the link will be closed for data protection reasons."
+                                           :en "You can view the details of your payment through the link you have received in your email. The link will work for 14 days from the date when we sent the payment request to you. After that the link will be closed for data protection reasons."
                                            :sv "Du kan kontrollera uppgifterna om den betalda avgiften via länken som du har fått tidigare med e-post. Länken fungerar i 14 dygn efter att vi har skickat dig begäran om beslutsavgiften. Därefter stängs länken på grund av datasäkerhetsskäl."}
-                     :älä-vastaa-emailaa  {:fi "Älä vastaa tähän viestiin. Jos sinulla on kysyttävää, lähetä meille sähköpostia osoitteeseen"
+                     :älä-vastaa-emailaa  {:fi "Älä vastaa tähän viestiin – viesti on lähetetty automaattisesti. Jos sinulla on kysyttävää, otathan meihin yhteyttä sähköpostitse osoitteessa"
                                            :en "This is an automatically generated email, please do not reply. If you have any questions, please send us an email at"
-                                           :sv "Svara inte på detta meddelande, det har skickats automatiskt. Om du har frågor, vänligen kontakta oss per epost via"}
+                                           :sv "Svara inte på detta meddelande, det har skickats automatiskt. Om du har frågor, vänligen kontakta oss per e-post:"}
                      :allekirjoitus-alku  {:fi "Ystävällisin terveisin"
                                            :en "Best regards"
-                                           :sv "Med vänliga hälsningar,"}
+                                           :sv "Med vänliga hälsningar"}
                      :allekirjoitus-loppu {:fi "Opetushallitus"
                                            :en "Finnish National Agency for Education"
                                            :sv "Utbildningsstyrelsen"}}
