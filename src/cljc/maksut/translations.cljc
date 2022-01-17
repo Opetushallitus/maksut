@@ -13,7 +13,7 @@
                                          :en "https://www.oph.fi/en/services/recognition-and-international-comparability-qualifications"
                                          :sv "https://www.oph.fi/sv/tjanster/erkannande-av-examina"}
                      :käsittely-selitys {:fi "Olet maksanut käsittelymaksun. Voit käydä tarkastelemassa maksusi tietoja aiemmin sähköpostitse saamasi linkin kautta. Linkki toimii 14 vuorokauden ajan siitä, kun lähetimme maksupyynnön. Sen jälkeen linkki sulkeutuu tietosuojasyistä."
-                                         :en "You have paid the processing fee. You can view the details of your payment before that through the link you have received in your email. The link will work for 14 days from the date when we sent the payment request to you. After that, the link will be closed for data protection reasons."
+                                         :en "You have paid the processing fee. You can view the details of your payment through the link you have received in your email. The link will work for 14 days from the date when we sent the payment request to you. After that the link will be closed for data protection reasons."
                                          :sv "Du har betalat behandlingsavgiften. Du kan kontrollera uppgifterna om den betalda avgiften via länken som du har fått tidigare med e-post. Länken fungerar i 14 dygn efter att vi har skickat dig begäran om behandlingsavgiften. Därefter stängs länken på grund av datasäkerhetsskäl."}
                      :hakemusnumero     {:fi "Hakemusnumero"
                                          :en "Application number"

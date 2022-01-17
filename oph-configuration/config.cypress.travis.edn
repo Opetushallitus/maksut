@@ -1,0 +1,27 @@
+{:server               {:http {:port 19033}}
+ :log                  {:base-path "/root/logs"}
+ :db                   {:username      "postgres_user"
+                        :password      "postgres_password"
+                        :database-name "maksut"
+                        :host          "localhost"
+                        :port          5432}
+ :payment              {:paytrail-config {:host             "http://localhost:12345"
+                                          :merchant-id      12345
+                                          :merchant-secret  "sikrot"}
+                        :callback-uri       "http://localhost:19033/maksut/payment/paytrail"
+                        :order-id-prefix    "MKS"
+                        :currency           "EUR"}
+ :tutu                 {:lasku-origin       "tutu"
+                        :order-id-prefix    "TTU"}
+ :cas                  {:username "cas_username"
+                        :password "cas_password"
+                        :services {:kayttooikeus    {:service-url-property :cas.service.kayttooikeus-service
+                                                     :session-cookie-name  "JSESSIONID"}
+                                   :email           {:service-url-property :cas.service.ryhmasahkoposti-service
+                                                     :session-cookie-name  "JSESSIONID"}}}
+ :urls                 {:virkailija-baseurl        "http://localhost"
+                        :maksut-url                "http://localhost:19033/maksut/"}
+ :oph-organisaatio-oid "1.2.246.562.10.00000000001"
+ :public-config        {:environment   :it
+                        :default-panel :panel/tutu-maksut
+                        :caller-id     "1.2.246.562.10.00000000001.maksut.frontend"}}

@@ -80,6 +80,11 @@
 
                            :kayttooikeus-service (kayttooikeus-service/->FakeKayttooikeusService)
 
+                           :mock-email-service-list (atom '())
+
+                           :email-service (component/using (email-service/map->MockEmailService {:config config}) ;->MockEmailService)
+                                                           [:mock-email-service-list])
+
                            :mock-dispatcher (component/using
                                               (mock-dispatcher/map->MockDispatcher {:config config})
                                               {:ataru-service-request-map        :mock-ataru-cas-request-map})]

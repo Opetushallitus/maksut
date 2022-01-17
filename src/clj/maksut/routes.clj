@@ -75,16 +75,18 @@
 ; --- Routes ---
 (defn- payment-routes [{:keys [mock-dispatcher config payment-service]}]
   ["/payment"
-   ;TODO catchaa näissä tapahtuneet exceptionit koska ne näytetään nyt rumasti käyttäjälle
-   ;TODO  => ja lisää ?error=error-code
+   ;TODO catchaa näissä tapahtuneet exceptionit koska ne näkyy nyt rumasti käyttäjälle
    ["/paytrail"
     ["/success"
     {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
            :handler    (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
-                         (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
-                            (payment-protocol/process-success-callback payment-service params tutulocale false))
                          (log/warn "Paytrail success " query)
-                         (response/permanent-redirect (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale))))}}]
+                         (let [params   (st/select-schema query schema/PaytrailCallbackRequest)
+                               response (payment-protocol/process-success-callback payment-service params tutulocale false)
+                               action   (or (:action response) :error)
+                               uri-end  (if (= action :error) "&payment=error" "")
+                               uri      (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) uri-end)]
+                              (response/permanent-redirect uri)))}}]
 
     ["/cancel"
      {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}

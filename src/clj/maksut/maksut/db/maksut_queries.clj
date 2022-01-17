@@ -51,8 +51,8 @@
   (let [status      (:status old-ai)
         same-origin (= (:origin old-ai) (:origin new))]
     (cond
-     (= status :overdue) (maksut-error :invoice-invalidstate-overdue "Ei voi muuttaa, eräpäivä mennyt")
-     (= status :paid)    (maksut-error :invoice-invalidstate-paid "Ei voi muuttaa, lasku on jo maksettu")
+     (= status "overdue") (maksut-error :invoice-invalidstate-overdue "Ei voi muuttaa, eräpäivä mennyt")
+     (= status "paid")    (maksut-error :invoice-invalidstate-paid "Ei voi muuttaa, lasku on jo maksettu")
      (not same-origin)   (maksut-error :invoice-createerror-originclash "Sama lasku eri lähteestä on jo olemassa"))
     true))
 
@@ -69,19 +69,21 @@
 (defn check-laskut-statuses-by-reference [db origin refs]
   (get-linked-lasku-statuses-by-reference db {:origin origin :refs refs}))
 
-;TODO return what happened: not-found, created, not-modified OR error
 (defn create-payment [db pt-params]
   (with-db-transaction
    [tx db]
-   (when-let [lasku (get-lasku-locked tx {:order-id (:ORDER_NUMBER pt-params)})]
-     (log/info "process succ3 " lasku)
+   (if-let [lasku (get-lasku-locked tx {:order-id (:ORDER_NUMBER pt-params)})]
      (let [lasku-id    (:id lasku)
            payment-id  (:PAYMENT_ID pt-params)
-           old-payment (select-payment tx {:invoice-id lasku-id :payment-id payment-id})]
-       (log/info "process succ4 " lasku-id " p-id " payment-id)
+           old-payment (select-payment tx {:invoice-id lasku-id :payment-id payment-id})
+           response    {:order-id  (:order_id lasku)
+                        :email     (:email lasku)
+                        :origin    (:origin lasku)
+                        :reference (:reference lasku)}]
        (if (some? old-payment)
          (do
-           (log/warn "Old payment with same payment-id found, duplicate notification " old-payment))
+           (log/warn "Old payment with same payment-id found, duplicate notification " old-payment)
+           (assoc response :action :not-modified))
          (do
            (log/warn "New payment found, adding new for")
            (insert-payment! tx
@@ -89,12 +91,13 @@
                              :payment-id payment-id
                              :amount     (bigdec (:AMOUNT pt-params))
                              :timestamp  (:TIMESTAMP pt-params)}) ;epoch seconds
-           {:action    :created
-            :order-id  (:order_id lasku)
-            :email     (:email lasku)
-            :origin    (:origin lasku)
-            :reference (:reference lasku)}
-           ))))))
+           (assoc response :action :created))))
+     (do
+       (log/error "Payment cannot be processed as invoice not found for order_number " (:ORDER_NUMBER pt-params))
+       ;Not throwing exception or returning non-success http-status as otherwise Paytrail will not
+       ;accept this notify as received and will do the same request again multiple times
+       {:action    :error
+        :code      :invoice-notfound}))))
 
 (defn create-or-update-lasku [db lasku]
   (with-db-transaction

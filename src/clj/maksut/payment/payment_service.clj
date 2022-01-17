@@ -1,7 +1,5 @@
 (ns maksut.payment.payment-service
-  (:require ;[oti.boundary.db-access :as dba]
-            ;[oti.boundary.payment :as payment-util]
-            ;[clojure.tools.logging :refer [error info]]
+  (:require [clojure.core.match :refer [match]]
             [maksut.error :refer [maksut-error]]
             [maksut.api-schemas :as api-schemas]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
@@ -16,13 +14,7 @@
             [com.stuartsierra.component :as component]
             [taoensso.timbre :refer [error info]]
             [clojure.string :as str]
-            [schema.core :as s]
-            ;[oti.service.user-data :as user-data]
-            ;[oti.service.registration :as registration]
-            ;[oti.util.logging.audit :as audit]
-            ;[oti.db-states :as states]
-            ;[oti.boundary.api-client-access :as api]
-            )
+            [schema.core :as s])
   (:import [java.time LocalDateTime]
            [java.time.format DateTimeFormatter]
            [java.util Locale]
@@ -47,6 +39,7 @@
                              (str/join "|"))
                         (str "|" merchant-secret))
           calculated-authcode (-> plaintext DigestUtils/sha256Hex str/upper-case)]
+      ;(prn "GOTT" calculated-authcode)
       (= return-authcode calculated-authcode))
     (error "Tried to authenticate message, but the map contained no :RETURN_AUTHCODE key. Data:" form-data)))
 
@@ -64,8 +57,6 @@
 
 (defn- generate-form-data [{:keys [paytrail-host callback-uri merchant-id merchant-secret]}
                            {:keys [language-code amount order-number secret reference-number msg] :as params}]
-;  {:pre  [(s/valid? ::os/pt-payment-params params)]
-;   :post [(s/valid? ::os/pt-payment-form-data %)]}
   ;Paytrail does not support sending back the LOCALE we sent, so need redundant field for that
   (let [params-in "MERCHANT_ID,LOCALE,URL_SUCCESS,URL_CANCEL,URL_NOTIFY,AMOUNT,ORDER_NUMBER,PARAMS_IN,PARAMS_OUT"
         params-out "ORDER_NUMBER,PAYMENT_ID,AMOUNT,TIMESTAMP,STATUS"
@@ -100,7 +91,6 @@
            :order-number     order-id
            :secret           secret
            }]
-
     (cond
       (not (some? lasku)) (maksut-error :invoice-notfound "Laskua ei löydy")
       (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue "Lasku on erääntynyt")
@@ -139,29 +129,39 @@
   (s/validate api-schemas/PaytrailCallbackRequest pt-params)
 
   (let [{:keys [STATUS]} pt-params
-        pt-config (get-paytrail-config this)]
-    (cond
-      (not (return-authcode-valid? pt-config pt-params)) (maksut-error :payment-invalid-status "Maksun tiedoissa on vikaa")
-      (not= STATUS "PAID") (maksut-error :payment-invalid-status "Maksun tiedoissa on vikaa"))
+        pt-config (get-paytrail-config this)
+        return-error (fn [code msg]
+                       (error (str "Payment handling error " code " " msg " " pt-params))
+                       {:action :error
+                        :code code})]
 
-    ;TODO only send email once, but if 1st success was a failure, then notify? should be able to send the email also
-    ;TODO add some check for due-date, with maybe 1day grace-period (but basically user should not be able to initiate Paytrail payment themselves)
+    ;due-date is not checked here again, as it might take up to 5-7 days for Paytrail to
+    ;manually process payments where the first redirect-callback was skipped
 
-    (when-let [result (maksut-queries/create-payment db pt-params)]
-      (handle-confirmation-email email-service locale result)
-      result)))
-
+    (let [auth-ok (return-authcode-valid? pt-config pt-params)
+          status-ok (= STATUS "PAID")]
+      (match [auth-ok status-ok]
+             [false _] (return-error :payment-invalid-status "Maksun tiedoissa on vikaa")
+             [_ false] (return-error :payment-invalid-status "Maksun tiedoissa on virhe")
+             [true true] (if-let [result (maksut-queries/create-payment db pt-params)]
+                                 (do
+                                   (case (:action result)
+                                          :created (handle-confirmation-email email-service locale result)
+                                          nil)
+                                   result)
+                                 (return-error :payment-failed "Maksun luominen epäonnistui"))
+             ))))
 
 (defrecord PaymentService [config audit-logger email-service db]
   component/Lifecycle
   (start [this]
-    ;(s/validate (s/pred #(instance? DataSource %)) (:datasource db))
     (s/validate c/MaksutConfig config)
     (s/validate (p/extends-class-pred email-protocol/EmailServiceProtocol) email-service)
     (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
 
-    ;(s/validate s/Str (get-in config [:payment :paytrail-config :host]))
-    ;(s/validate s/Int (get-in config [:payment :paytrail-config :merchant-id]))
+    (s/validate s/Str (get-in config [:payment :paytrail-config :host]))
+    (s/validate s/Int (get-in config [:payment :paytrail-config :merchant-id]))
+    (s/validate s/Str (get-in config [:payment :paytrail-config :merchant-secret]))
 
     (assoc this :config (:payment config)))
   (stop [this]

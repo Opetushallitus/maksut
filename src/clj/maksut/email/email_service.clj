@@ -57,3 +57,13 @@
 
 (defn email-service [config]
   (map->EmailService config))
+
+(defrecord MockEmailService [config mock-email-service-list]
+  EmailServiceProtocol
+  (send-email [this from recipients subject body]
+    (reset! mock-email-service-list
+            (conj @mock-email-service-list
+                  {:from       from
+                   :recipients recipients
+                   :subject    subject
+                   :body       body}))))
