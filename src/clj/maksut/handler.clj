@@ -91,11 +91,20 @@
 
 (def reloader #'reload/reloader)
 
+(defn wrapper-if
+  [f enable? middleware]
+  (let [wrapped (middleware f)]
+    (fn [request]
+      (if enable?
+          (wrapped request)
+          (f request)))))
+
 (s/defn make-production-handler
-  [args :- MakeHandlerArgs]
+  [{config :config :as args} :- MakeHandlerArgs]
   (-> (create-handler args)
       (clj-access-logging/wrap-access-logging)
-      (clj-stdout-access-logging/wrap-stdout-access-logging)
+      (wrapper-if (not (c/production-environment? config))
+        clj-stdout-access-logging/wrap-stdout-access-logging)
       (clj-timbre-access-logging/wrap-timbre-access-logging
         {:path (str (-> args :config :log :base-path)
                     "/access_maksut"
