@@ -266,9 +266,15 @@
                       :color "#ffffff"}]
     [:<>
      (when show-process [process-map state kasittely-status paatos-status])
+      [:div (use-style {:margin-top "10px"})]
       [h/heading {:cypressid (str "laskut-state-header")
-                  :level     :h4}
+                  :level     :text}
          state-text]
+      (when (or (= state :kasittely-maksettu) (= state :paatos-maksettu))
+            [h/heading {:cypressid (str "laskut-state-sharedcomp-tip")
+                        :level     :text}
+             @(subscribe [:translation :tutu-panel-ohje/yhteiskaytto-ohje])])
+      [:div (use-style {:margin-bottom "10px"})]
 
       [:div (stylefy/use-style lasku-container-style)
         (when kasittely
