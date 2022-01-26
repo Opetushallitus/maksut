@@ -4,7 +4,6 @@
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.cas.cas-authenticating-client :as authenticating-client]
             [maksut.cas.cas-ticket-client :as cas-ticket-validator]
-            [maksut.cas.mock.mock-authenticating-client :as mock-authenticating-client]
             [maksut.config :as c]
             [maksut.db :as db]
             [maksut.maksut.maksut-service :as maksut-service]

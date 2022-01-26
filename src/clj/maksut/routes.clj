@@ -7,7 +7,6 @@
             [reitit.swagger :as swagger]
             [maksut.api-schemas :as schema]
             [maksut.authentication.auth-routes :as auth-routes]
-            [maksut.cas.mock.mock-authenticating-client-schemas :as mock-cas]
             [maksut.config :as c]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]

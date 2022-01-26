@@ -11,7 +11,6 @@
             [maksut.api-schemas :as schema]
             [maksut.routes :refer [routes]]
             [maksut.authentication.auth-routes :as auth-routes]
-            [maksut.cas.mock.mock-authenticating-client-schemas :as mock-cas]
             [maksut.config :as c]
             [maksut.exception :as exception]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
