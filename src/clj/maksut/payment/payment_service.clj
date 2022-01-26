@@ -39,7 +39,6 @@
                              (str/join "|"))
                         (str "|" merchant-secret))
           calculated-authcode (-> plaintext DigestUtils/sha256Hex str/upper-case)]
-      ;(prn "GOTT" calculated-authcode)
       (= return-authcode calculated-authcode))
     (error "Tried to authenticate message, but the map contained no :RETURN_AUTHCODE key. Data:" form-data)))
 

@@ -20,7 +20,6 @@
                        maksut-service
                        payment-service
                        email-service
-                       mock-dispatcher
                        auth-routes-source]
   component/Lifecycle
 
@@ -30,17 +29,14 @@
     (s/validate (p/extends-class-pred auth-routes/AuthRoutesSource) auth-routes-source)
     (let [port   (-> config :server :http :port)
           server (jetty/run-jetty (h/make-handler
-                                    (cond-> {:config                 config
+                                            {:config                 config
                                              :db                     db
                                              :health-checker         health-checker
                                              :maksut-service         maksut-service
                                              :payment-service        payment-service
                                              :email-service          email-service
-                                             :auth-routes-source     auth-routes-source}
-                                            (some? mock-dispatcher)
-                                            (assoc :mock-dispatcher mock-dispatcher)))
+                                             :auth-routes-source     auth-routes-source})
                                   {:port         port
-                                   ;:host         "0.0.0.0" ; Needed for Windows 127.0.0.1 to work from WSL, might need to remove/configurize for prod
                                    :join?        false
                                    :configurator (fn [server]
                                                    (.setErrorHandler server jetty-error-handler))})]

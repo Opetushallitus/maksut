@@ -8,7 +8,6 @@
             [maksut.api-schemas :as schema]
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.cas.mock.mock-authenticating-client-schemas :as mock-cas]
-            [maksut.cas.mock.mock-dispatcher-protocol :as mock-dispatcher-protocol]
             [maksut.config :as c]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
@@ -73,9 +72,8 @@
 
 
 ; --- Routes ---
-(defn- payment-routes [{:keys [mock-dispatcher config payment-service]}]
+(defn- payment-routes [{:keys [config payment-service]}]
   ["/payment"
-   ;TODO catchaa näissä tapahtuneet exceptionit koska ne näkyy nyt rumasti käyttäjälle
    ["/paytrail"
     ["/success"
     {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
@@ -105,21 +103,6 @@
                         (response/ok {}))}}]
 
    ]])
-
-(defn- integration-test-routes [{:keys [mock-dispatcher config]}]
-  (when (c/integration-environment? config)
-    ["/mock"
-     ["/authenticating-client"
-      {:post {:summary    "Mockaa yhden CAS-autentikoituvalla clientilla tehdyn HTTP-kutsun"
-              :parameters {:body mock-cas/MockCasAuthenticatingClientRequest}
-              :handler    (fn [{{spec :body} :parameters}]
-                            (.dispatch-mock mock-dispatcher spec)
-                            (response/ok {}))}}]
-     ["/reset"
-      {:post {:summary "Resetoi mockatut HTTP-kutsumääritykset"
-              :handler (fn [_]
-                         (.reset-mocks mock-dispatcher)
-                         (response/ok {}))}}]]))
 
 (defn routes [{:keys [health-checker config db auth-routes-source maksut-service payment-service email-service] :as args}]
   (let [auth (auth-middleware config db)]
@@ -181,7 +164,6 @@
                   :responses  {200 {:body schema/Lasku}}
                   :parameters {:body schema/TutuLaskuCreate}
                   :handler    (fn [{session :session {lasku :body} :parameters}]
-                                (prn "LASKU-TUTU " (type lasku) lasku)
                                 (response/ok (maksut-protocol/create-tutu maksut-service session lasku)))}}]
 
         ]
@@ -191,13 +173,11 @@
          {:post { :middleware auth
                   :tags       ["Lasku"]
                   :summary    "Palauttaa usemman Tutu -laskun statuksen"
-                  ;TODO enable this once order-id vs. order_id is refactored everywhere, otherwise this will return status=500
                   ;:responses  {200 {:body [schema/LaskuStatus]}}
                   :parameters {:body schema/LaskuRefList}
                   :handler    (fn [{session :session {input :body} :parameters}]
                                 (prn "Check invoice statuses for" (count input) "keys")
                                 (let [x (maksut-protocol/check-status-tutu maksut-service session input)]
-                                  (prn "Results" x)
                                   (response/ok x)))}}]]
 
        ["/lasku-tutu/:application-key"
@@ -250,9 +230,7 @@
                                (response/ok (maksut-protocol/get-laskut-by-secret maksut-service session (:secret secret))))}}]
         ]
 
-       (payment-routes args)
-
-       (integration-test-routes args)]
+       (payment-routes args)]
       ["/auth"
        {:middleware (conj auth session-client/wrap-session-client-headers)}
        ["/cas"

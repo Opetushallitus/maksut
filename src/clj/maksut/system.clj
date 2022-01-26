@@ -5,7 +5,6 @@
             [maksut.cas.cas-authenticating-client :as authenticating-client]
             [maksut.cas.cas-ticket-client :as cas-ticket-validator]
             [maksut.cas.mock.mock-authenticating-client :as mock-authenticating-client]
-            [maksut.cas.mock.mock-dispatcher :as mock-dispatcher]
             [maksut.config :as c]
             [maksut.db :as db]
             [maksut.maksut.maksut-service :as maksut-service]
@@ -50,15 +49,14 @@
 
                            :http-server (component/using
                                           (http/map->HttpServer {:config config})
-                                          (cond-> [:db
+                                                  [:db
                                                    :migrations
                                                    :health-checker
                                                    :maksut-service
                                                    :payment-service
                                                    :email-service
-                                                   :auth-routes-source]
-                                                  it-profile?
-                                                  (conj :mock-dispatcher)))]
+                                                   :auth-routes-source])]
+
         production-system [:kayttooikeus-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :kayttooikeus
                                                                                                                      :config  config})
 
@@ -74,20 +72,15 @@
                                             :email-authenticating-client])
 
                            :cas-ticket-validator (cas-ticket-validator/map->CasTicketClient {:config config})]
-        mock-system       [:mock-ataru-cas-request-map (atom {})
-
-                           :cas-ticket-validator (cas-ticket-validator/map->FakeCasTicketClient {})
+        mock-system       [:cas-ticket-validator (cas-ticket-validator/map->FakeCasTicketClient {})
 
                            :kayttooikeus-service (kayttooikeus-service/->FakeKayttooikeusService)
 
                            :mock-email-service-list (atom '())
 
-                           :email-service (component/using (email-service/map->MockEmailService {:config config}) ;->MockEmailService)
+                           :email-service (component/using (email-service/map->MockEmailService {:config config})
                                                            [:mock-email-service-list])
-
-                           :mock-dispatcher (component/using
-                                              (mock-dispatcher/map->MockDispatcher {:config config})
-                                              {:ataru-service-request-map        :mock-ataru-cas-request-map})]
+                           ]
         system            (into base-system
                                 (if it-profile?
                                   mock-system

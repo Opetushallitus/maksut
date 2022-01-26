@@ -5,7 +5,6 @@
 
 (def csrf-value "maksut")
 
-;todo maybe only add csrf cookie to PUT POST DELETE?
 (defn enrich-with-mandatory-headers-and-common-settings [opts]
   (-> opts
       (update :connection-timeout (fnil identity 60000))

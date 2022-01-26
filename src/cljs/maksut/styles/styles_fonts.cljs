@@ -1,6 +1,5 @@
 (ns maksut.styles.styles-fonts)
 
-;(def font-family "'Roboto', sans-serif")
 (def font-family "'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif")
 
 (def font-weight-regular 400)

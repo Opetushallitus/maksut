@@ -72,16 +72,6 @@
    :reference s/Str
    :status PaymentStatus})
 
-;(s/defschema TutuLaskuList
-;  {:application-key s/Str ;TODO validate proper oid-syntax
-;   (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
-;   })
-
-;(s/defschema MaksutResponse
-;  {:secret s/Str
-;   :status PaymentStatus
-;   :email s/Str})
-
 (s/defschema ErrorResponse
   {:error s/Bool
    :type s/Keyword

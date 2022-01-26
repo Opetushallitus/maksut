@@ -4,7 +4,6 @@
             [schema.core :as s]))
 
 (defn- validate-app-db [db]
-  ;Tämä vaan ei toiminut eikä antanut mitään kunnon virheilmoa, katso myöhemmin jos tämän saisi taas toimimaan
   ;(s/validate schema/AppDb db)
   db
   )

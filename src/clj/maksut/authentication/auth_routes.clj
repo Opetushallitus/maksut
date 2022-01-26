@@ -31,12 +31,8 @@
 
 (defn- login-success [audit-logger request response virkailija username ticket]
   (let [session (merged-session request response virkailija)]
-    (log/info "SESSION" session)
-
     (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
-    ;(s/validate kayttooikeus-protocol/Virkailija virkailija)
     (s/validate s/Str ticket)
-    ;(s/validate schema/Session session) ;at least my test-user does not have all the fields set
     (assoc response :session session)))
 
 (defn- login-failed

@@ -11,7 +11,6 @@
    :requests                          #{}
    :lang                              :fi
    :translations                      translations/local-translations
-   ;TODO maksut does not have Schema yet
    :maksut                            {:invoice                  nil
                                        :payment-form             nil
                                        :secret                   nil}})

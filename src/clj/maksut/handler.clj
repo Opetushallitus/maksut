@@ -12,7 +12,6 @@
             [maksut.routes :refer [routes]]
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.cas.mock.mock-authenticating-client-schemas :as mock-cas]
-            [maksut.cas.mock.mock-dispatcher-protocol :as mock-dispatcher-protocol]
             [maksut.config :as c]
             [maksut.exception :as exception]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
@@ -44,8 +43,7 @@
    :auth-routes-source               (p/extends-class-pred auth-routes/AuthRoutesSource)
    :maksut-service                   (p/extends-class-pred maksut-protocol/MaksutServiceProtocol)
    :payment-service                  (p/extends-class-pred payment-protocol/PaymentServiceProtocol)
-   :email-service                    (p/extends-class-pred email-protocol/EmailServiceProtocol)
-   (s/optional-key :mock-dispatcher) (p/extends-class-pred mock-dispatcher-protocol/MockDispatcherProtocol)})
+   :email-service                    (p/extends-class-pred email-protocol/EmailServiceProtocol)})
 
 
 

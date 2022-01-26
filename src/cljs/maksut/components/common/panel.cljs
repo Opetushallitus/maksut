@@ -15,10 +15,6 @@
   {:background-color colors/white
    :filter           effects/drop-shadow-effect-black
    :padding          "15px 25px"
-
-   ;::stylefy/media {styles-init/media-small {
-   ;    :background-color "red"
-   ;    }}
    })
 
 (defn panel [{:keys [cypressid]} heading sub-header contents]

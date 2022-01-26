@@ -27,7 +27,7 @@
                                         :body    body}
                             :recipient wrapped-recipients}
         schemas            {:request-schema  nil
-                            :response-schema nil} ;TODO
+                            :response-schema nil}
         response            (authenticating-client/post cas-client {:url url :body body-content} schemas)
         ]
     (log/info "email url " url)

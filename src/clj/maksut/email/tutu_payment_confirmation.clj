@@ -1,24 +1,11 @@
 (ns maksut.email.tutu-payment-confirmation
-  (:require ;[ataru.background-job.email-job :as email-job]
-            ;[ataru.background-job.job :as job]
-            ;[maksut.config :as config]
-            [maksut.util.translation :refer [get-translation get-translation-ns]]
+  (:require [maksut.util.translation :refer [get-translation get-translation-ns]]
             [markdown.core :as md]
             [selmer.parser :as selmer]
             [taoensso.timbre :as log])
   (:import [org.owasp.html HtmlPolicyBuilder ElementPolicy]))
 
 (def from-address "no-reply@opintopolku.fi")
-
-;(defn ->safe-html
-;  [content]
-;  (.sanitize html-policy (md/md-to-html-string content)))
-
-;(defn- modify-link [secret]
-;  (-> config
-;      (get-in [:public-config :applicant :service_url])
-;      (str "/hakemus?modify=" secret)))
-
 
 (defn- make-email
   [email-data render-file-fn]
@@ -67,26 +54,4 @@
                 locale
                 :email-päätös
                 "templates/tutu_payment_decision.html"))
-
-
-;(defn start-email-job [job-runner email]
-;  (let [job-id (jdbc/with-db-transaction [connection {:datasource (db/get-datasource :db)}]
-;                 (job/start-job job-runner
-;                                connection
-;                                (:type email-job/job-definition)
-;                                email))]
-;    (log/info "Started application confirmation email job (to viestintäpalvelu) with job id" job-id ":")
-;    (log/info email)))
-;
-;(defn start-email-submit-confirmation-job
-;  [koodisto-cache tarjonta-service organization-service ohjausparametrit-service job-runner application-id payment-url]
-;  (dorun
-;    (for [email (create-submit-email koodisto-cache tarjonta-service
-;                  organization-service
-;                  ohjausparametrit-service
-;                  application-id
-;                  payment-url
-;                  true)]
-;      (start-email-job job-runner email))))
-
 

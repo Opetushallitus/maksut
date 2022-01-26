@@ -11,7 +11,6 @@
      panel]))
 
 (defn- show-panel [panel-name]
-  ;(js/console.log "show-panel" panel-name)
   [panels panel-name])
 
 (defn main-panel []
