@@ -2,7 +2,7 @@
   (:require
     [reagent.dom :as reagent]
     [re-frame.core :as re-frame]
-    [schema.core :as s]
+    ;[schema.core :as s]
     [maksut.events.core-events]
     [maksut.events.alert-events]
     [maksut.events.http-events]
@@ -16,8 +16,8 @@
     [maksut.subs.alert-subs]
     [maksut.subs.panel-subs]))
 
-(defn- turn-on-schema-validation []
-  (s/set-fn-validation! true))
+;(defn- turn-on-schema-validation []
+;  (s/set-fn-validation! true))
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)

@@ -1,6 +1,5 @@
 (ns maksut.subs.maksut-subs
   (:require [re-frame.core :as re-frame]
-            [maksut.i18n.utils :as i18n-utils]
             [maksut.events.maksut-events :as maksut-events]))
 
 ;; Subscriptions

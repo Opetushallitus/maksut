@@ -1,9 +1,6 @@
 (ns maksut.email.tutu-payment-confirmation
   (:require [maksut.util.translation :refer [get-translation get-translation-ns]]
-            [markdown.core :as md]
-            [selmer.parser :as selmer]
-            [taoensso.timbre :as log])
-  (:import [org.owasp.html HtmlPolicyBuilder ElementPolicy]))
+            [selmer.parser :as selmer]))
 
 (def from-address "no-reply@opintopolku.fi")
 

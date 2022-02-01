@@ -1,7 +1,6 @@
 (ns maksut.api-schemas
   (:require [schema.core :as s]
-            [schema-tools.core :as st]
-            [maksut.common-schemas :as c]))
+            [schema-tools.core :as st]))
 
 (s/defschema Locale
   (s/enum

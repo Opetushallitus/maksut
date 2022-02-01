@@ -71,7 +71,7 @@
 
 
 ; --- Routes ---
-(defn- payment-routes [{:keys [config payment-service]}]
+(defn- payment-routes [{:keys [payment-service]}]
   ["/payment"
    ["/paytrail"
     ["/success"
@@ -103,7 +103,7 @@
 
    ]])
 
-(defn routes [{:keys [health-checker config db auth-routes-source maksut-service payment-service email-service] :as args}]
+(defn routes [{:keys [health-checker config db auth-routes-source maksut-service payment-service] :as args}]
   (let [auth (auth-middleware config db)]
     [["/"
       {:get {:no-doc  true
@@ -210,8 +210,8 @@
                  :parameters {:path {:order-id s/Str}
                               :query {:secret s/Str
                                       (s/optional-key :locale) (s/maybe schema/Locale)}}
-                 :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters :as request}]
-                               (log/info "maksa xxx " order-id locale secret)
+                 :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters}]
+                               (log/info "Generate Paytrail form fields for " order-id locale secret)
                                (response/ok (payment-protocol/tutu-payment payment-service
                                                                            session
                                                                            {:order-id order-id

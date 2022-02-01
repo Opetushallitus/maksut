@@ -1,12 +1,10 @@
 (ns maksut.email.email-service
   "You can send any email with this, it's not tied to any particular email-type"
   (:require [maksut.oph-url-properties :as url]
-            [maksut.util.http-util :as http-util]
             [maksut.email.email-service-protocol :refer [EmailServiceProtocol]]
             [maksut.cas.cas-authenticating-client-protocol :as authenticating-client]
             [maksut.config :as c]
             [com.stuartsierra.component :as component]
-            [cheshire.core :as json]
             [schema.core :as s]
             [taoensso.timbre :as log]))
 
@@ -14,13 +12,6 @@
   (let [url                (get this :email-service-url)
         cas-client         (get this :cas-client)
         wrapped-recipients (mapv (fn [rcp] {:email rcp}) recipients)
-        old-body           {:headers      {"content-type" "application/json"}
-                            :query-params {:sanitize "false"}
-                            :body         (json/generate-string {:email     {:from    from
-                                                                             :subject subject
-                                                                             :isHtml  true
-                                                                             :body    body}
-                                                                 :recipient wrapped-recipients})}
         body-content       {:email     {:from    from
                                         :subject subject
                                         :isHtml  true
@@ -60,7 +51,7 @@
 
 (defrecord MockEmailService [config mock-email-service-list]
   EmailServiceProtocol
-  (send-email [this from recipients subject body]
+  (send-email [_ from recipients subject body]
     (reset! mock-email-service-list
             (conj @mock-email-service-list
                   {:from       from

@@ -1,6 +1,5 @@
 (ns maksut.i18n.utils
-  (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]))
+  (:require [camel-snake-kebab.core :as csk]))
 
 (defn get-translation [lang translations tx-key]
   (let [[namespace-key name-key] (->> ((juxt namespace name) tx-key)

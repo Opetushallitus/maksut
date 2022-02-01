@@ -1,6 +1,5 @@
 (ns maksut.util.date
-  (:require [clj-time.core :as time]
-            [clj-time.format :as format]
+  (:require [clj-time.format :as format]
             [clojure.string :as string]))
 
 (defonce date-formatter (format/formatters :date))

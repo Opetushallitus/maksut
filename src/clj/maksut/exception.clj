@@ -4,7 +4,7 @@
             [taoensso.timbre :as log])
   (:import [clojure.lang ExceptionInfo]))
 
-(defn- json-error-handler [exception request]
+(defn- json-error-handler [exception _]
   (log/error exception)
   (let [status (or (:http-status (ex-data exception)) 500)
         data   (dissoc (ex-data exception) :http-status)]

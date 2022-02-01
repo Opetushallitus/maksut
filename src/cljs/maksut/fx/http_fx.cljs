@@ -10,8 +10,7 @@
             [schema-tools.core :as st]
             [goog.net.cookies])
   (:require-macros [cljs.core.async.macros :refer [go]]
-                   [cljs.core.async.interop :refer [<p!]])
-  (:import [goog.net XhrIo]))
+                   [cljs.core.async.interop :refer [<p!]]))
 
 (defn- get-cookie-value [name]
   (.get goog.net.cookies name))

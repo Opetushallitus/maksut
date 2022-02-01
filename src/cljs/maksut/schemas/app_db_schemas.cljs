@@ -1,8 +1,7 @@
 (ns maksut.schemas.app-db-schemas
   (:require [clojure.string]
             [schema.core :as s]
-            [schema-tools.core :as st]
-            [maksut.api-schemas :as api-schemas]))
+            [schema-tools.core :as st]))
 
 (s/defschema TutuMaksutPanel
   {:panel      (s/eq :panel/tutu-maksut)

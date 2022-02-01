@@ -8,7 +8,6 @@
             [reitit.ring.coercion :as coercion]
             [reitit.ring :as ring]
             [environ.core :refer [env]]
-            [maksut.api-schemas :as schema]
             [maksut.routes :refer [routes]]
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.config :as c]
@@ -17,7 +16,6 @@
             [maksut.payment.payment-service-protocol :as payment-protocol]
             [maksut.email.email-service-protocol :as email-protocol]
             [maksut.health-check :as health-check]
-            [maksut.oph-url-properties :as oph-urls]
             [maksut.schemas.class-pred :as p]
             [maksut.util.cache-control :as cache-control]
             [clj-access-logging]
@@ -28,7 +26,6 @@
             [ring.middleware.reload :as reload]
             [ring.util.http-response :as response]
             [schema.core :as s]
-            [taoensso.timbre :as log]
             [muuntaja.core :as m])
   (:import [javax.sql DataSource]))
 

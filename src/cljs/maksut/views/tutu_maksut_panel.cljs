@@ -1,10 +1,7 @@
 (ns maksut.views.tutu-maksut-panel
-  (:require [maksut.components.common.button :as button]
-            [maksut.components.common.label :as label]
-            [maksut.components.common.panel :as p]
+  (:require [maksut.components.common.panel :as p]
             [maksut.components.common.headings :as h]
             [maksut.components.common.material-icons :as icon]
-            [maksut.components.common.svg :as svg]
             [maksut.styles.styles-colors :as colors]
             [maksut.styles.styles-fonts :as vars]
             [maksut.styles.styles-init :refer [media-small]]
@@ -12,6 +9,7 @@
             [maksut.subs.maksut-subs :as maksut-subs]
             [maksut.dates.date-parser :refer [format-date]]
             [schema.core :as s]
+            [clojure.string]
             [re-frame.core :refer [dispatch subscribe]]
             [reagent.dom :refer [dom-node]]
             [reagent.core :as reagent]
@@ -57,7 +55,6 @@
                     :margin-left "auto"
                     :background-color (:background-color c)
                     :color (:text c)}
-        dot (:dot c)
         status-text @(subscribe [:translation (keyword :maksu-tila status)])]
                   [:div (use-style style)
                     [:div (use-style dot-style)]
@@ -87,11 +84,7 @@
                          :min-width "30px"
                          :width "min-content"
                          :margin "auto"
-                         :color fg-color}
-        style {:padding "6px 15px 6px 15px"
-               :border-radius "2px"
-               :white-space "nowrap"
-               }]
+                         :color fg-color}]
      [:div (use-style dot-style)
       (if done
         [:span (use-style {:vertical-align "middle"}) [icon/done-bold]]
@@ -161,8 +154,7 @@
    ]))
 
 (defn invoice-item [header invoice]
-  (let [editing (reagent/atom false)
-        value-style {:text-align "right"
+  (let [value-style {:text-align "right"
                      :margin-bottom "10px"}
         separator-style {
                 :grid-column "span 2"
@@ -170,7 +162,7 @@
                 :margin-bottom "10px"
                 :padding-bottom "-20px"
                 }]
-    (fn [header {:keys [order_id first_name last_name amount due_date status paid_at]} invoice]
+    (fn [header {:keys [order_id amount due_date status paid_at]} invoice]
       ^{:key (:order_id order_id)}
       [:div (use-style lasku-style)
        [:div (use-style {:margin-bottom "20px"
@@ -353,14 +345,13 @@
   (let [aliotsikko (subscribe [:translation :tutu-panel/aliotsikko])
         invoices (subscribe [maksut-subs/maksut-invoice])]
     (fn []
-      (let []
         [:<>
          [h/heading {:cypressid (str "sub-heading")
                      :level     :h2}
                     @aliotsikko]
 
          [laskut-container @invoices]
-         ]))))
+         ])))
 
 (defn tutu-maksut-panel []
   (let [fullname (subscribe [maksut-subs/maksut-invoice-fullname])

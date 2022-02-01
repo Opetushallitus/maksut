@@ -7,8 +7,7 @@
             [clj-time.coerce :refer [to-sql-date]]
             [clojure.java.jdbc :as jdbc]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
-            [maksut.test-fixtures :as test-fixtures :refer [dispatch-mock
-                                                            test-system
+            [maksut.test-fixtures :as test-fixtures :refer [test-system
                                                             add-invoice!
                                                             get-emails
                                                             is-email-count

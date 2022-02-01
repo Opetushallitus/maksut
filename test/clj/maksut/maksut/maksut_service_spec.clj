@@ -4,7 +4,7 @@
             [clj-time.core :as time]
             [clj-time.format :as format]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
-            [maksut.test-fixtures :as test-fixtures :refer [dispatch-mock test-system]]
+            [maksut.test-fixtures :as test-fixtures :refer [test-system]]
             [maksut.api-schemas :as api-schemas]))
 
 

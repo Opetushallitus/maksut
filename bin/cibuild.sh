@@ -28,8 +28,8 @@ run-all-tests() {
     && test-e2e
 }
 
-run-test-nothing-for-now() {
-  echo ""
+create-uberjar() {
+  lein with-profile +prod uberjar
 }
 
 run-mocked-maksut() {
@@ -37,10 +37,6 @@ run-mocked-maksut() {
   docker run --name maksut-e2e-db -d -e POSTGRES_PASSWORD=postgres_password -e POSTGRES_USER=postgres_user -e POSTGRES_DB=maksut -p 5432:5432 postgres:12-alpine
   CONFIG=oph-configuration/config.cypress.travis.edn java -jar target/maksut.jar &
   ./bin/wait-for.sh localhost:19033 -t 30
-}
-
-run-create-uberjar() {
-  create-uberjar
 }
 
 run-all-tests-and-create-uberjar() {
@@ -57,9 +53,6 @@ COMMAND=$1
 case $COMMAND in
   "run-all-tests" )
     run-all-tests
-    ;;
-  "run-test-nothing-for-now" )
-    run-test-nothing-for-now
     ;;
   "run-all-tests-and-create-uberjar" )
     run-all-tests-and-create-uberjar

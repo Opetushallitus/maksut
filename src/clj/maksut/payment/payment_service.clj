@@ -10,14 +10,11 @@
             [maksut.audit-logger-protocol :as audit]
             [maksut.schemas.class-pred :as p]
             [maksut.util.url-encoder :refer [encode]]
-            [re-frame.core :refer [dispatch]]
             [com.stuartsierra.component :as component]
             [taoensso.timbre :refer [error info]]
             [clojure.string :as str]
             [schema.core :as s])
-  (:import [java.time LocalDateTime]
-           [java.time.format DateTimeFormatter]
-           [java.util Locale]
+  (:import [java.util Locale]
            [org.apache.commons.codec.digest DigestUtils]))
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
@@ -55,7 +52,7 @@
     (-> plaintext (.getBytes "ISO-8859-1") DigestUtils/sha256Hex str/upper-case)))
 
 (defn- generate-form-data [{:keys [paytrail-host callback-uri merchant-id merchant-secret]}
-                           {:keys [language-code amount order-number secret reference-number msg] :as params}]
+                           {:keys [language-code amount order-number secret]}]
   ;Paytrail does not support sending back the LOCALE we sent, so need redundant field for that
   (let [params-in "MERCHANT_ID,LOCALE,URL_SUCCESS,URL_CANCEL,URL_NOTIFY,AMOUNT,ORDER_NUMBER,PARAMS_IN,PARAMS_OUT"
         params-out "ORDER_NUMBER,PAYMENT_ID,AMOUNT,TIMESTAMP,STATUS"
@@ -119,12 +116,12 @@
       (email-protocol/send-email email-service from [email] subject body))))
 
 ;TODO add robustness here, maybe background-job with retry?
-(defn- handle-confirmation-email [email-service locale {:keys [action order-id email origin reference]}]
+(defn- handle-confirmation-email [email-service locale {:keys [order-id email origin reference]}]
   (case origin
     "tutu" (handle-tutu-confirmation-email email-service email locale order-id reference)
     nil))
 
-(defn- process-success-callback [this db email-service pt-params locale notify?]
+(defn- process-success-callback [this db email-service pt-params locale _]
   (s/validate api-schemas/PaytrailCallbackRequest pt-params)
 
   (let [{:keys [STATUS]} pt-params
@@ -136,6 +133,7 @@
 
     ;due-date is not checked here again, as it might take up to 5-7 days for Paytrail to
     ;manually process payments where the first redirect-callback was skipped
+    (info "Processing success callback")
 
     (let [auth-ok (return-authcode-valid? pt-config pt-params)
           status-ok (= STATUS "PAID")]

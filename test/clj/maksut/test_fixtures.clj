@@ -1,6 +1,5 @@
 (ns maksut.test-fixtures
-  (:require [maksut.cas.mock.mock-dispatcher-protocol :as mock-dispatcher-protocol]
-            [maksut.config :as c]
+  (:require [maksut.config :as c]
             [com.stuartsierra.component :as component]
             [maksut.system :as system]
             [clojure.test :refer [is]]
@@ -22,10 +21,6 @@
   (when @test-system
     (component/stop-system @test-system)
     (reset! test-system nil)))
-
-(defn dispatch-mock [spec]
-  (let [mock-dispatcher (:mock-dispatcher @test-system)]
-    (mock-dispatcher-protocol/dispatch-mock mock-dispatcher spec)))
 
 (defn get-emails []
   @(:mock-email-service-list @test-system))

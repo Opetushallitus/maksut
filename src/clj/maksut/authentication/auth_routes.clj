@@ -3,7 +3,6 @@
             [clj-ring-db-session.session.session-store :as oph-session]
             [com.stuartsierra.component :as component]
             [maksut.audit-logger-protocol :as audit]
-            [maksut.authentication.schema :as schema]
             [maksut.cas.cas-ticket-client-protocol :as cas-ticket-client-protocol]
             [maksut.config :as c]
             [maksut.kayttooikeus.kayttooikeus-protocol :as kayttooikeus-protocol]
@@ -23,13 +22,13 @@
 
 (def kirjautuminen (audit/->operation "kirjautuminen"))
 
-(defn- merged-session [request response virkailija]
+(defn- merged-session [request response _]
   (let [request-session (:session request)
         response-session (:session response)]
     (-> response-session
         (merge (select-keys request-session [:key :user-agent])))))
 
-(defn- login-success [audit-logger request response virkailija username ticket]
+(defn- login-success [audit-logger request response virkailija _ ticket]
   (let [session (merged-session request response virkailija)]
     (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
     (s/validate s/Str ticket)

@@ -40,7 +40,7 @@
                (time/plus (time/today) (time/days (:due-days lasku))))
    :amount (.setScale (bigdec (:amount lasku)) 2 BigDecimal/ROUND_HALF_UP)))
 
-(defn- create [_ session db lasku-input]
+(defn- create [_ _ db lasku-input]
   (s/validate api-schemas/LaskuCreate lasku-input)
   (let [lasku (json->LaskuCreate lasku-input)
         {:keys [order-id due-date]} lasku]
@@ -85,7 +85,7 @@
 
   (create-tutu [this session lasku]
     (s/validate api-schemas/TutuLaskuCreate lasku)
-    (let [{:keys [application-key due-date index]} lasku
+    (let [{:keys [application-key _ index]} lasku
           trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
                         (this (subs str 1))
                         str))
@@ -101,22 +101,21 @@
                 :origin (get-in this [:config :lasku-origin])
                 :reference application-key))))
 
-  (list-tutu [this session input]
-    (let [{:keys [application-key index]} input
+  (list-tutu [this _ input]
+    (let [{:keys [application-key]} input
           origin (get-in this [:config :lasku-origin])]
       (s/validate s/Str application-key)
       (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
         (map Lasku->json laskut)
         (maksut-error :invoice-notfound "Laskuja ei löytynyt"))))
 
-  (check-status-tutu [this session input]
+  (check-status-tutu [this _ input]
     (let [origin (get-in this [:config :lasku-origin])
-          keys (:keys input)]
-      (let [statuses (maksut-queries/check-laskut-statuses-by-reference db origin keys)]
-        (map LaskuStatus->json statuses)
-        )))
+          keys (:keys input)
+          statuses (maksut-queries/check-laskut-statuses-by-reference db origin keys)]
+          (map LaskuStatus->json statuses)))
 
-  (get-lasku [_ session order-id]
+  (get-lasku [_ _ order-id]
     (if-let [lasku (maksut-queries/get-lasku-by-order-id db {:order-id order-id})]
       ; Mikäli lasku tulee maksetuksi manuaalisesti (Paytrailin ulkopuolella), se tulee näkymään "past-due"
       ; täällä ja se merkataan maksetuksi virkailijan toimesta suoraan Ataru-lomakkeeseen
@@ -124,7 +123,7 @@
       (Lasku->json lasku)
       (response/not-found! "Lasku not found")))
 
-  (get-laskut-by-secret [this session secret]
+  (get-laskut-by-secret [this _ secret]
     (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
       (let [now (. LocalDate (now))
             passed? #(.isAfter now %)

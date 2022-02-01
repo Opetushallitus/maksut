@@ -1,7 +1,6 @@
-(ns maksut.error
-  (:require [taoensso.timbre :as log]))
+(ns maksut.error)
 
-(defn maksut-error [code msg &{:keys [status-code] :as params}]
+(defn maksut-error [code msg &{:keys [status-code]}]
   (throw
     (ex-info (or msg "Maksut operation failed")
              (-> {:type :maksut.error

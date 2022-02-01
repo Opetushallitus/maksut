@@ -1,7 +1,5 @@
 (ns maksut.dates.date-parser
-  (:require [cljs-time.coerce :as c]
-            [cljs-time.core :as t]
-            [cljs-time.format :as f]
+  (:require [cljs-time.format :as f]
             [clojure.string :as string]))
 
 (defonce date-formatter (f/formatters :date))

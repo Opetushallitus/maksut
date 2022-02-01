@@ -1,11 +1,8 @@
 (ns maksut.maksut.db.maksut-queries
-  (:import [org.joda.time LocalDate]
-           [org.postgresql.util PSQLException])
   (:require [maksut.error :refer [maksut-error]]
             [maksut.util.random :as random]
             [hugsql.core :as hugsql]
             [clojure.java.jdbc :refer [with-db-transaction]]
-            [clojure.data :refer [diff]]
             [taoensso.timbre :as log]))
 
 
@@ -17,6 +14,7 @@
 (declare insert-lasku!)
 (declare update-lasku!)
 (declare get-lasku-by-order-id)
+(declare get-linked-lasku-statuses-by-reference)
 (declare all-linked-laskut-by-secret)
 (declare all-linked-laskut-by-reference)
 (declare get-lasku-locked)

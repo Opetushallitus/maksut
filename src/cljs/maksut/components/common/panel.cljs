@@ -2,7 +2,6 @@
   (:require [maksut.components.common.headings :as h]
             [maksut.styles.styles-colors :as colors]
             [maksut.styles.styles-effects :as effects]
-            [maksut.styles.styles-init :as styles-init]
             [stylefy.core :as stylefy]))
 
 (def ^:private main-panel-style
