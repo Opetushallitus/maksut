@@ -1,6 +1,6 @@
 const config =
   process.env.CONFIG ||
-  '../local-environment/oph-configurations/pallero/oph-configuration/maksut.config.edn'
+  '../local-environment/oph-configurations/untuva/oph-configuration/maksut.config.edn'
 
 module.exports = {
   apps: [
