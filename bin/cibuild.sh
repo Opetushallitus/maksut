@@ -15,7 +15,7 @@ lint() {
 }
 
 test-e2e() {
-  #npm run cypress:run:travis
+  npm run cypress:run:travis
 }
 
 test-lein() {
@@ -44,7 +44,6 @@ run-all-tests-and-create-uberjar() {
     && lint \
     && create-uberjar \
     && run-mocked-maksut \
-    && test-e2e \
     && test-lein
 }
 
