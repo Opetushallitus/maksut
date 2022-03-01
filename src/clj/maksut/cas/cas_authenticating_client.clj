@@ -1,14 +1,11 @@
 (ns maksut.cas.cas-authenticating-client
   (:require [com.stuartsierra.component :as component]
-            [maksut.caller-id :as caller-id]
             [maksut.cas.cas-authenticating-client-protocol :as cas-authenticating-protocol]
             [maksut.cas.cas-client :as cas-client]
             [maksut.config :as c]
             [maksut.http :as http]
             [maksut.oph-url-properties :as url]
-            [schema.core :as s]
-            [taoensso.timbre :as log])
-  (:import [java.net URI]))
+            [schema.core :as s]))
 
 (def auth-fail-status #{302 401})
 (def error-status #{500 400})
@@ -25,7 +22,6 @@
                       :url                   s/Str
                       :method                http/HttpMethod
                       (s/optional-key :body) s/Any}
-   schemas :- http/HttpValidation
    config :- c/MaksutConfig]
   (let [request-params (cond-> {}
                                (some? body)
@@ -36,11 +32,6 @@
                                                                url
                                                                request-params)]
     response))
-
-(defn- create-uri [url-key config]
-  (s/validate c/MaksutConfig config)
-  (-> (url/resolve-url url-key config)
-      (URI/create)))
 
 (defrecord CasAuthenticatingClient [config service]
   component/Lifecycle
@@ -62,38 +53,32 @@
 
   (post [this
            {:keys [url body] :as opts}
-           schemas]
+           _]
       (s/validate PostOrPutOpts opts)
       (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                      :method              :post
                                      :url                 url
                                      :body                body}
-                                    schemas
                                     config))
 
   (http-put [this
         {:keys [url body] :as opts}
-        schemas]
+        _]
     (s/validate PostOrPutOpts opts)
     (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                    :method              :put
                                    :url                 url
                                    :body                body}
-                                  schemas
                                   config))
 
-  (get [this url response-schema]
+  (get [this url _]
     (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                    :method              :get
                                    :url                 url}
-                                  {:request-schema  nil
-                                   :response-schema response-schema}
                                   config))
 
-  (delete [this url response-schema]
+  (delete [this url _]
     (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                    :method              :delete
                                    :url                 url}
-                                  {:request-schema  nil
-                                   :response-schema response-schema}
                                   config)))

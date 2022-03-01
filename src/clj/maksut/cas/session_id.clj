@@ -1,12 +1,13 @@
 (ns maksut.cas.session-id
   (:require [maksut.oph-url-properties :refer [resolve-url]]
             [clj-http.client :as client]
-            [jsoup.soup :refer :all]
+            [maksut.caller-id :as cid]
+            [jsoup.soup :refer [parse attr $]]
             [taoensso.timbre :as log]
             [clojure.string :refer [blank?]]))
 
 (defn add-headers [options]
-  (let [caller-id "1.2.246.562.10.00000000001.maksut"]
+  (let [caller-id (cid/make-caller-id "1.2.246.562.10.00000000001")]
     (-> options
         (assoc-in [:headers "Caller-id"] caller-id)
         (assoc-in [:headers "CSRF"] caller-id)
