@@ -19,12 +19,16 @@
 
 
 (s/defn parse-and-validate
-  [response :- (st/open-schema {:body s/Str})
+  [response :- (st/open-schema {:body s/Any})
    response-schema]
-  (-> response
-      :body
-      (json/parse-string true)
-      (st/select-schema response-schema schema-util/extended-json-coercion-matcher)))
+  (let [body (:body response)]
+    (cond-> body
+
+            (string? body)
+            (json/parse-string true)
+
+            true
+            (st/select-schema response-schema schema-util/extended-json-coercion-matcher))))
 
 (s/defn do-request
   [{:keys [body] :as opts} :- (st/open-schema
