@@ -4,6 +4,7 @@
             [maksut.email.email-service-protocol :refer [EmailServiceProtocol]]
             [maksut.cas.cas-authenticating-client-protocol :as authenticating-client]
             [maksut.config :as c]
+            [cheshire.core :as json]
             [com.stuartsierra.component :as component]
             [schema.core :as s]
             [taoensso.timbre :as log]))
@@ -20,7 +21,10 @@
                               :recipient wrapped-recipients}
           schemas            {:request-schema  nil
                               :response-schema nil}
-          response            (authenticating-client/post cas-client {:url url :body body-content} schemas)
+          response            (authenticating-client/post cas-client
+                                                          {:url url
+                                                           :body (json/generate-string body-content)}
+                                                          schemas)
           ]
       (log/info "email url " url)
 
