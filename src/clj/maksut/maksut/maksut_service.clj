@@ -133,6 +133,7 @@
         (if all-passed?
           (throw-specific-old-secret-error (get-in this [:config :order-id-prefix]) laskut)
           (map Lasku->json laskut)))
-      (maksut-error :invoice-notfound-secret "Linkki on väärä tai vanhentunut"))))
+      (do (log/error (str "Linkki on väärä tai vanhentunut: " secret))
+          (maksut-error :invoice-notfound-secret "Linkki on väärä tai vanhentunut")))))
 
 
