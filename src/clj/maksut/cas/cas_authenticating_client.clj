@@ -58,7 +58,7 @@
       (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                      :method              :post
                                      :url                 url
-                                     :content-type        "application/json;charset=utf8"
+                                     :content-type        "application/json;charset=utf-8"
                                      :body                body}
                                     config))
 
@@ -69,7 +69,7 @@
     (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                    :method              :put
                                    :url                 url
-                                   :content-type        "application/json;charset=utf8"
+                                   :content-type        "application/json;charset=utf-8"
                                    :body                body}
                                   config))
 
