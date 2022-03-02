@@ -22,8 +22,9 @@
           schemas            {:request-schema  nil
                               :response-schema nil}
           response            (authenticating-client/post cas-client
-                                                          {:url url
-                                                           :body (json/generate-string body-content)}
+                                                          {:url          url
+                                                           :content-type "application/json; charset=utf-8"
+                                                           :body         (json/generate-string body-content)}
                                                           schemas)
           ]
       (log/info "email url " url)
