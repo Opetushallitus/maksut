@@ -18,14 +18,18 @@
   [{:keys [cas-client
            method
            url
-           body]} :- {:cas-client            s/Any
-                      :url                   s/Str
-                      :method                http/HttpMethod
-                      (s/optional-key :body) s/Any}
+           body
+           content-type]} :- {:cas-client            s/Any
+                              :url                   s/Str
+                              :method                http/HttpMethod
+                              (s/optional-key :body) s/Any
+                              (s/optional-key :content-type) s/Any}
    config :- c/MaksutConfig]
   (let [request-params (cond-> {}
                                (some? body)
-                               (assoc :body body))
+                               (assoc :body body)
+                               (some? content-type)
+                               (assoc :content-type content-type))
         response (cas-client/cas-authenticated-request-as-json config
                                                                cas-client
                                                                method
