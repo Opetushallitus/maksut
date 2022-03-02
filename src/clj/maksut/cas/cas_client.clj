@@ -48,8 +48,7 @@
    (let [method-name (upper-case (str method))]
      (log/debug method-name " => " url)
      (try
-       (let [response (cas-authenticated-request config cas-client method url (assoc opts :as :json
-                                                                                          :follow-redirects false
+       (let [response (cas-authenticated-request config cas-client method url (assoc opts :follow-redirects false
                                                                                           :throw-exceptions false))]
          (cas-session-id/handle-error url method-name response))
        (catch Exception e (cas-session-id/handle-error url method-name e) (throw e)))))
