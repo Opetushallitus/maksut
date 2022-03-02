@@ -23,7 +23,6 @@
                               :response-schema nil}
           response            (authenticating-client/post cas-client
                                                           {:url          url
-                                                           :content-type "application/json"
                                                            :body         (json/generate-string body-content)}
                                                           schemas)
           ]
