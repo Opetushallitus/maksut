@@ -4,28 +4,35 @@
             [maksut.email.email-service-protocol :refer [EmailServiceProtocol]]
             [maksut.cas.cas-authenticating-client-protocol :as authenticating-client]
             [maksut.config :as c]
+            [cheshire.core :as json]
             [com.stuartsierra.component :as component]
             [schema.core :as s]
             [taoensso.timbre :as log]))
 
 (defn- send-email [this from recipients subject body]
-  (let [url                (get this :email-service-url)
-        cas-client         (get this :cas-client)
-        wrapped-recipients (mapv (fn [rcp] {:email rcp}) recipients)
-        body-content       {:email     {:from    from
-                                        :subject subject
-                                        :isHtml  true
-                                        :body    body}
-                            :recipient wrapped-recipients}
-        schemas            {:request-schema  nil
-                            :response-schema nil}
-        response            (authenticating-client/post cas-client {:url url :body body-content} schemas)
-        ]
-    (log/info "email url " url)
+  (try
+    (let [url                (get this :email-service-url)
+          cas-client         (get this :cas-client)
+          wrapped-recipients (mapv (fn [rcp] {:email rcp}) recipients)
+          body-content       {:email     {:from    from
+                                          :subject subject
+                                          :isHtml  true
+                                          :body    body}
+                              :recipient wrapped-recipients}
+          schemas            {:request-schema  nil
+                              :response-schema nil}
+          response            (authenticating-client/post cas-client
+                                                          {:url          url
+                                                           :body         (json/generate-string body-content)}
+                                                          schemas)
+          ]
+      (log/info "email url " url)
 
-    (log/info "email response " response)
-    (when (not= 200 (:status response))
-      (throw (Exception. (str "Could not send email to " (apply str recipients)))))))
+      (log/info "email response " response)
+      (when (not= 200 (:status response))
+        (throw (Exception. (str "Could not send email to " (apply str recipients))))))
+    (catch Exception e (log/error "Sending email failed:" e)
+                       (throw e))))
 
 
 (defrecord EmailService [config email-authenticating-client]

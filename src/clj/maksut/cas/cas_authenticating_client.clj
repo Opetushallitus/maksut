@@ -1,166 +1,90 @@
 (ns maksut.cas.cas-authenticating-client
   (:require [com.stuartsierra.component :as component]
-            [maksut.caller-id :as caller-id]
             [maksut.cas.cas-authenticating-client-protocol :as cas-authenticating-protocol]
+            [maksut.cas.cas-client :as cas-client]
             [maksut.config :as c]
             [maksut.http :as http]
             [maksut.oph-url-properties :as url]
-            [schema.core :as s]
-            [taoensso.timbre :as log])
-  (:import [fi.vm.sade.javautils.cas CasSession ApplicationSession SessionToken]
-           [java.net.http HttpClient]
-           [java.time Duration]
-           [java.net CookieManager URI]))
+            [schema.core :as s]))
 
 (def auth-fail-status #{302 401})
 (def error-status #{500 400})
-
-(defn- invalidate-cas-session [^ApplicationSession application-session
-                               ^SessionToken session-token]
-  (when session-token
-    (.invalidateSession application-session session-token)))
-
-(defn- init-cas-session [^ApplicationSession application-session]
-  (-> application-session
-      .getSessionToken
-      .get))
 
 (s/defschema PostOrPutOpts
   {:url  s/Str
    :body s/Any})
 
-(defn retry-with-session-refresh [application-session session-token request-fn]
-  (invalidate-cas-session application-session session-token)
-  (let [new-session-token (init-cas-session application-session)]
-    (request-fn new-session-token)))
-
-(s/defn do-authenticated-json-request
-  [{:keys [method
-           body
-           session-token
-           url]} :- {:method                http/HttpMethod
-                     :session-token         SessionToken
-                     :url                   s/Str
-                     (s/optional-key :body) s/Any}
-   schemas :- http/HttpValidation
-   config :- c/MaksutConfig]
-  (let [cookie (.cookie session-token)]
-    (http/do-request {:method  method
-                      :url     url
-                      :body    body
-                      :cookies {(.getName cookie) {:path  (.getPath cookie)
-                                                   :value (.getValue cookie)}}}
-                     schemas
-                     config)))
-
 (s/defn do-cas-authenticated-request
-  [{:keys [application-session
+  [{:keys [cas-client
            method
            url
-           body]} :- {:application-session   ApplicationSession
-                      :url                   s/Str
-                      :method                http/HttpMethod
-                      (s/optional-key :body) s/Any}
-   schemas :- http/HttpValidation
+           body
+           content-type]} :- {:cas-client            s/Any
+                              :url                   s/Str
+                              :method                http/HttpMethod
+                              (s/optional-key :body) s/Any
+                              (s/optional-key :content-type) s/Any}
    config :- c/MaksutConfig]
-  (let [session-token  (some-> application-session
-                               .getSessionToken
-                               .get)
-        request-params (cond-> {:method method
-                                :url    url}
+  (let [request-params (cond-> {}
                                (some? body)
-                               (assoc :body body))
-        request-fn     (fn [session-token']
-                         (-> request-params
-                             (assoc :session-token session-token')
-                             (do-authenticated-json-request
-                               schemas
-                               config)))
-        response       (request-fn session-token)
-        status (:status response)]
-    (when (error-status status)
-      (log/error (str "CAS-authenticated request failed with status " status " on url " url)))
-    (cond
-      (auth-fail-status status) (retry-with-session-refresh application-session session-token request-fn)
-      :else response)))
-
-(defn- create-uri [url-key config]
-  (s/validate c/MaksutConfig config)
-  (-> (url/resolve-url url-key config)
-      (URI/create)))
+                               (assoc :body body)
+                               (some? content-type)
+                               (assoc :content-type content-type))
+        response (cas-client/cas-authenticated-request-as-json config
+                                                               cas-client
+                                                               method
+                                                               url
+                                                               request-params)]
+    response))
 
 (defrecord CasAuthenticatingClient [config service]
   component/Lifecycle
   (start [this]
     (s/validate c/MaksutConfig config)
     (s/validate s/Keyword service)
-    (let [{:keys [service-url-property
-                  session-cookie-name]} (-> config :cas :services service)
-          caller-id           (-> config :oph-organisaatio-oid caller-id/make-caller-id)
-          cookie-manager      (CookieManager.)
-          http-client         (-> (HttpClient/newBuilder)
-                                  (.cookieHandler cookie-manager)
-                                  (.connectTimeout (Duration/ofSeconds 120))
-                                  (.build))
-          cas-tickets-url     (create-uri :cas.tickets config)
-          {:keys [username
-                  password]} (-> config :cas)
-          application-session (ApplicationSession. http-client
-                                                   cookie-manager
-                                                   caller-id
-                                                   (Duration/ofSeconds 120)
-                                                   (CasSession. http-client
-                                                                (Duration/ofSeconds 120)
-                                                                caller-id
-                                                                cas-tickets-url
-                                                                username
-                                                                password)
-                                                   (url/resolve-url service-url-property
-                                                                    config)
-                                                   session-cookie-name)]
+    (let [{:keys [service-url-property]} (-> config :cas :services service)
+          cas-session (cas-client/init-session (url/resolve-url service-url-property
+                                                                config)
+                                               true)]
       (assoc this
-        :application-session application-session)))
+        :cas-client cas-session)))
 
   (stop [this]
     (assoc this
-      :application-session nil))
+      :cas-client nil))
 
   cas-authenticating-protocol/CasAuthenticatingClientProtocol
 
   (post [this
            {:keys [url body] :as opts}
-           schemas]
+           _]
       (s/validate PostOrPutOpts opts)
-      (do-cas-authenticated-request {:application-session (:application-session this)
+      (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                      :method              :post
                                      :url                 url
+                                     :content-type        "application/json;charset=utf-8"
                                      :body                body}
-                                    schemas
                                     config))
 
   (http-put [this
         {:keys [url body] :as opts}
-        schemas]
+        _]
     (s/validate PostOrPutOpts opts)
-    (do-cas-authenticated-request {:application-session (:application-session this)
+    (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                    :method              :put
                                    :url                 url
+                                   :content-type        "application/json;charset=utf-8"
                                    :body                body}
-                                  schemas
                                   config))
 
-  (get [this url response-schema]
-    (do-cas-authenticated-request {:application-session (:application-session this)
+  (get [this url _]
+    (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                    :method              :get
                                    :url                 url}
-                                  {:request-schema  nil
-                                   :response-schema response-schema}
                                   config))
 
-  (delete [this url response-schema]
-    (do-cas-authenticated-request {:application-session (:application-session this)
+  (delete [this url _]
+    (do-cas-authenticated-request {:cas-client          (:cas-client this)
                                    :method              :delete
                                    :url                 url}
-                                  {:request-schema  nil
-                                   :response-schema response-schema}
                                   config)))
