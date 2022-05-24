@@ -1,9 +1,9 @@
 {
   "scripts": {
     "cypress:open": "cypress open -C oph-configuration/cypress.local-environment.json --env POSTGRES_USER=postgres_user,POSTGRES_PASSWORD=postgres_password,POSTGRES_DATABASE=maksut,POSTGRES_PORT=15432",
-    "cypress:open:travis": "cypress open -C oph-configuration/cypress.travis.json",
+    "cypress:open:travis": "cypress open -C oph-configuration/cypress.github.json",
     "cypress:run:local-environment": "cypress run -C oph-configuration/cypress.local-environment.json --browser chrome --headless",
-    "cypress:run:travis": "cypress run -C oph-configuration/cypress.travis.json --browser chrome --headless --env POSTGRES_USER=postgres_user,POSTGRES_PASSWORD=postgres_password,POSTGRES_DATABASE=maksut,POSTGRES_PORT=5432",
+    "cypress:run:travis": "cypress run -C oph-configuration/cypress.github.json --browser chrome --headless --env POSTGRES_USER=postgres_user,POSTGRES_PASSWORD=postgres_password,POSTGRES_DATABASE=maksut,POSTGRES_PORT=5432",
     "lint:clj": "clj-kondo --config oph-configuration/clj-kondo.config.edn --fail-level error --lint src",
     "lint:clj:lint-staged": "clj-kondo --config oph-configuration/clj-kondo.config.edn --lint",
     "lint:js": "eslint --ignore-path \".eslintignore\" --ext .js,.ts \"cypress\"",
