@@ -7,7 +7,7 @@ on:
       - '**.md'
 
 jobs:
-  test:
+  test-and-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -39,8 +39,8 @@ jobs:
           path: target
           key: ${{ github.sha }}
 
-  deploy:
-    needs: [ test ]
+  deploy-container:
+    needs: [ test-and-build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
