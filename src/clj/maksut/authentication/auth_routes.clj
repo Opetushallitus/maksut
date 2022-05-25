@@ -88,6 +88,7 @@
                           :ticket               ticket
                           :success-redirect-url redirect-url
                           :datasource           (:datasource db)})]
+          (log/info "CAS RESPONSE: " response)
           (login-success audit-logger request response virkailija username ticket))
         (login-failed (:login-failure-url this)))
       (catch Exception e
