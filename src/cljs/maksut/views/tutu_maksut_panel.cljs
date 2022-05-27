@@ -248,8 +248,7 @@
                                             @(subscribe [:translation :tutu-panel-ohje/kasittely-maksettu-2])
                                             [:br] [:br]
                                             @(subscribe [:translation :tutu-panel-ohje/kasittely-maksettu-3])]
-                       @(subscribe [:translation (keyword :tutu-panel-ohje state)])
-                       )
+                       @(subscribe [:translation (keyword :tutu-panel-ohje state)]))
                      "")
         pay-id (cond
                   (and (= state :kasittely-maksamatta) (= kasittely-status :active)) (:order_id kasittely)
