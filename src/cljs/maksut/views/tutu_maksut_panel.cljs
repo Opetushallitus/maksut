@@ -235,7 +235,20 @@
                            :loading false
                            true)
         state-text (if show-process
-                     @(subscribe [:translation (keyword :tutu-panel-ohje state)])
+                     (case state
+                       :kasittely-maksamatta [:<>
+                                              @(subscribe [:translation :tutu-panel-ohje/kasittely-maksamatta-1])
+                                              [:br] [:br]
+                                              @(subscribe [:translation :tutu-panel-ohje/kasittely-maksamatta-2])
+                                              [:br] [:br]
+                                              @(subscribe [:translation :tutu-panel-ohje/kasittely-maksamatta-3])]
+                       :kasittely-maksettu [:<>
+                                            @(subscribe [:translation :tutu-panel-ohje/kasittely-maksettu-1])
+                                            [:br] [:br]
+                                            @(subscribe [:translation :tutu-panel-ohje/kasittely-maksettu-2])
+                                            [:br] [:br]
+                                            @(subscribe [:translation :tutu-panel-ohje/kasittely-maksettu-3])]
+                       @(subscribe [:translation (keyword :tutu-panel-ohje state)]))
                      "")
         pay-id (cond
                   (and (= state :kasittely-maksamatta) (= kasittely-status :active)) (:order_id kasittely)
