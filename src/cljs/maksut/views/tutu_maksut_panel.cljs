@@ -153,7 +153,7 @@
 
    ]))
 
-(defn invoice-item [header invoice]
+(defn invoice-item [_ _]
   (let [value-style {:text-align "right"
                      :margin-bottom "10px"}
         separator-style {
@@ -162,7 +162,7 @@
                 :margin-bottom "10px"
                 :padding-bottom "-20px"
                 }]
-    (fn [header {:keys [order_id amount due_date status paid_at]} invoice]
+    (fn [header {:keys [order_id amount due_date status paid_at]} _]
       ^{:key (:order_id order_id)}
       [:div (use-style lasku-style)
        [:div (use-style {:margin-bottom "20px"

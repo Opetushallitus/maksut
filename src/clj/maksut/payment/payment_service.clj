@@ -18,8 +18,7 @@
             [buddy.core.codecs :as codecs]
             [clojure.data.json :as json]
             [clj-http.client :as client]
-            [buddy.core.mac :as mac]
-            [taoensso.timbre :as log])
+            [buddy.core.mac :as mac])
   (:import [java.util UUID]))
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
