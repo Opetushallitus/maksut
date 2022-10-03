@@ -10,8 +10,7 @@
             [maksut.test-fixtures :as test-fixtures :refer [test-system
                                                             get-emails
                                                             is-email-count
-                                                            reset-emails!]]
-            [clj-http.client :as c])
+                                                            reset-emails!]])
   (:use clj-http.fake))
 
 
@@ -148,7 +147,6 @@
              (let [response       (payment-protocol/process-success-callback service params-2 locale false)
                    emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
                    first-subject  (-> emails-to-user first :subject)]
-               (prn "GOT RESPONSE " response)
                (is (= (:action response) :created))
                (is-email-count 1)
                (is (= (count emails-to-user) 1))
