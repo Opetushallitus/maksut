@@ -76,7 +76,11 @@
     {:get {:parameters {:query s/Any}
            :handler    (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                          (log/warn "Paytrail success " query)
-                         (let [response (payment-protocol/process-success-callback payment-service query tutulocale false)
+                         (let [now      (System/currentTimeMillis)
+                               response (payment-protocol/process-success-callback payment-service
+                                                                                   (assoc query :timestamp now)
+                                                                                   tutulocale
+                                                                                   false)
                                action   (or (:action response) :error)
                                uri-end  (if (= action :error) "&payment=error" "")
                                uri      (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) uri-end)]
@@ -213,8 +217,6 @@
                                                                                       {:order-id order-id
                                                                                        :locale   locale
                                                                                        :secret   secret})]
-                                 (log/info "response: " (keys paytrail-response))
-                                 (log/info "redirecting to: " (:href paytrail-response))
                                  (response/found (:href paytrail-response))))}}]]
 
        ["/laskut-by-secret"

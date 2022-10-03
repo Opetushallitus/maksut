@@ -107,12 +107,13 @@
           (maksut-error :invoice-not-active "Maksua ei voi enää maksaa"))
 
     (let [paytrail-config (get-paytrail-config this)
+          paytrail-host (:paytrail-host paytrail-config)
           merchant-id (:merchant-id paytrail-config)
           merchant-secret (:merchant-secret paytrail-config)
           authentication-headers (authentication-headers "POST" merchant-id nil)
           body (lasku-to-json lasku paytrail-config order-id locale secret)
           response (-> {:method           :post
-                        :url              "https://services.paytrail.com/payments"
+                        :url              paytrail-host
                         :content-type     "application/json; charset=utf-8"
                         :throw-exceptions true
                         :as               :json
@@ -147,24 +148,23 @@
 
 (defn- process-success-callback [this db email-service pt-params locale _]
   ;(s/validate api-schemas/PaytrailCallbackRequest pt-params)
-  (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp]} pt-params
+  (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp timestamp]} pt-params
         pt-config (get-paytrail-config this)
+        signed-headers (sign-request (:merchant-secret pt-config) (stringify-keys pt-params) nil)
         return-error (fn [code msg]
                        (error (str "Payment handling error " code " " msg " " pt-params))
                        {:action :error
-                        :code code})
-        signed-headers (sign-request (:merchant-secret pt-config) (stringify-keys pt-params) nil)]
+                        :code code})]
 
     ;due-date is not checked here again, as it might take up to 5-7 days for Paytrail to
     ;manually process payments where the first redirect-callback was skipped
     (info "Processing success callback")
-
     (let [auth-ok (= signed-headers (:signature pt-params))
           status-ok (= checkout-status "ok")]
       (match [auth-ok status-ok]
              [false _] (return-error :payment-invalid-status "Maksun tiedoissa on vikaa")
              [_ false] (return-error :payment-invalid-status "Maksun tiedoissa on virhe")
-             [true true] (if-let [result (maksut-queries/create-payment db checkout-reference checkout-stamp checkout-amount (System/currentTimeMillis))]
+             [true true] (if-let [result (maksut-queries/create-payment db checkout-reference checkout-stamp checkout-amount timestamp)]
                                  (do
                                    (case (:action result)
                                           :created (handle-confirmation-email email-service locale result)

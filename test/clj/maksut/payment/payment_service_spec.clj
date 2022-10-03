@@ -8,11 +8,11 @@
             [clojure.java.jdbc :as jdbc]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
             [maksut.test-fixtures :as test-fixtures :refer [test-system
-                                                            add-invoice!
                                                             get-emails
                                                             is-email-count
                                                             reset-emails!]]
-            [maksut.api-schemas :as api-schemas]))
+            [clj-http.client :as c])
+  (:use clj-http.fake))
 
 
 (use-fixtures :once test-fixtures/with-mock-system)
@@ -49,21 +49,21 @@
    :due_date (to-sql-date date)})
 
 (def params {
-  :ORDER_NUMBER "TTU123456-1"
-  :PAYMENT_ID "106173855345"
-  :AMOUNT "70.00"
-  :TIMESTAMP 1642348919
-  :STATUS "PAID"
-  :RETURN_AUTHCODE "937C2B1AD54A3460A54335137F55BE1CEC2374481214A9CDB013E5598EDB44DD" ;based on secret "sikrot"
+  :checkout-reference "TTU123456-1"
+  :checkout-stamp "106173855345"
+  :checkout-amount "70.00"
+  :timestamp 1642348919
+  :checkout-status "ok"
+  :signature "62ca36da9f1037cc7f1da087137095710968e9bbab69f3d529fdcbf4e846f9cd3e11b1f035013eda13b77227d4df90adc64628e5aec578fc128ae5d8fcf7af4c" ;based on secret "sikrot"
   })
 
 (def params-2 {
-  :ORDER_NUMBER "TTU123456-2"
-  :PAYMENT_ID "106173855345"
-  :AMOUNT "5000.12"
-  :TIMESTAMP 1642348919
-  :STATUS "PAID"
-  :RETURN_AUTHCODE "4DA539ADFDCAD3E9C4FE1F05974C2E165DC190CF74CF0B681D7DBA4A95CD7E4A" ;based on secret "sikrot"
+  :checkout-reference "TTU123456-2"
+  :checkout-stamp "106173855345"
+  :checkout-amount "5000.12"
+  :timestamp 1642348919
+  :checkout-status "ok"
+  :signature "0fd5b45cad31cb96b7fe4a9917e6f1ad1ecaf0072fa8de56110a1cb9830ad5c6a83a3d2e180cea58b792648d5afeded86a603c45698272ae6a39720a13ef31ac" ;based on secret "sikrot"
   })
 
 
@@ -81,27 +81,6 @@
     (reset-emails!)
     (jdbc/insert! db :secrets {:fk_invoice invoice-id
                                :secret secret})
-
-    (testing "Get Paytrail form-data"
-             (let [{:keys [uri params]} (payment-protocol/tutu-payment service
-                                                                       maksut-test-fixtures/fake-session
-                                                                       {:order-id (:order_id db-data)
-                                                                        :locale locale
-                                                                        :secret secret})]
-               (is (= (:LOCALE params) "fi_FI"))
-               (is (= (:ORDER_NUMBER params) (:order_id db-data)))
-               (is (= (:AUTHCODE params) "1FEDE4BB0D956DCA9D4FF19076E026FF6E202D6640B8056AF9D2C62225CE6B76"))
-               ))
-
-    (testing "Try to pay invoice with invalid secret"
-             (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                                         {:order-id (:order_id db-data)
-                                                                          :locale locale
-                                                                          :secret "eioikeasecret"}))
-                   data (:data exc)]
-               (is (= (:type data) :maksut.error))
-               (is (= (:code data) :invoice-notfound))
-               ))
 
     (testing "Payment success callback"
         (let [response  (payment-protocol/process-success-callback service params locale false)
@@ -127,7 +106,7 @@
 
     (testing "Payment with invalid AUTOCODE"
              (let [inv-params (assoc params
-                                     :RETURN_AUTHCODE
+                                     :signature
                                      "5DA539ADFDCAD3E9C4FE1F05974C2E165DC190CF74CF0B681D7DBA4A95CD7E4B")
                    response  (payment-protocol/process-success-callback service inv-params locale false)]
                (is (= (:action response) :error))
@@ -137,8 +116,8 @@
 
     (testing "Payment with invalid STATUS"
              (let [inv-params (-> params
-                                  (assoc :STATUS "CANCELLED")
-                                  (assoc :RETURN_AUTHCODE "62549431C803ADBBF4DE66BDCF927833AB5848DBAC686F37EF011807A789B2B0"))
+                                  (assoc :checkout-status "CANCELLED")
+                                  (assoc :signature "62549431C803ADBBF4DE66BDCF927833AB5848DBAC686F37EF011807A789B2B0"))
                    response  (payment-protocol/process-success-callback service inv-params locale false)]
                (is (= (:action response) :error))
                (is (= (:code response) :payment-invalid-status))
@@ -169,6 +148,7 @@
              (let [response       (payment-protocol/process-success-callback service params-2 locale false)
                    emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
                    first-subject  (-> emails-to-user first :subject)]
+               (prn "GOT RESPONSE " response)
                (is (= (:action response) :created))
                (is-email-count 1)
                (is (= (count emails-to-user) 1))
@@ -198,9 +178,9 @@
 
     (testing "Second payment is ok"
              (let [diff-params (-> params
-                                   (assoc :PAYMENT_ID "123456")
-                                   (assoc :AMOUNT "100.00")
-                                   (assoc :RETURN_AUTHCODE "41CB4448D9A47BB7AC299917E881E3D441728B45FE03A2FC2FEBCDECD621B162"))
+                                   (assoc :checkout-stamp "123456")
+                                   (assoc :checkout-amount "100.00")
+                                   (assoc :signature "3352f5b2cfc2abda5919bce3479bf5ad996749b5477b3d8cfa85611bd3b78f739bb37ba56db6839dce581fe0e9b7293c9ee554f1f589c473709a311f131f3187"))
                     response  (payment-protocol/process-success-callback service diff-params locale false)
                     total     (->
                                (jdbc/query db ["SELECT SUM(amount) AS total FROM payments WHERE fk_invoice = (SELECT id FROM invoices WHERE reference = '1.2.246.562.11.00000000000000123456' LIMIT 1)"])
@@ -307,12 +287,17 @@
                                :secret secret})
 
     (testing "Pay invoice at due-date"
-             (let [{:keys [params]} (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
+      (with-global-fake-routes {"http://localhost:12345" {:post (fn [_]
+                                                                  {:status 200
+                                                                   :headers {}
+                                                                   :body "{\"href\":\"http://esimerkkilinkki\"}"}
+                                                                  )}}
+             (let [{:keys [href]} (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
                                                            {:order-id (:order_id db-data)
                                                             :locale "fi"
                                                             :secret secret})]
-               (is (= (:ORDER_NUMBER params) (:order_id db-data)))
-               ))
+               (is (not-empty href))
+               )))
     ))
 
 (deftest try-to-change-invoice-after-paying
