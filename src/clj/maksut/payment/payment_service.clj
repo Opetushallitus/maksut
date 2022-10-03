@@ -1,7 +1,7 @@
 (ns maksut.payment.payment-service
   (:require [clojure.core.match :refer [match]]
             [maksut.error :refer [maksut-error]]
-            [maksut.api-schemas :as api-schemas]
+            [clojure.walk :refer [stringify-keys]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.payment.payment-service-protocol :as payment-service-protocol]
             [maksut.email.tutu-payment-confirmation :as email-confirmation]
@@ -13,9 +13,14 @@
             [com.stuartsierra.component :as component]
             [taoensso.timbre :refer [error info]]
             [clojure.string :as str]
-            [schema.core :as s])
-  (:import [java.util Locale]
-           [org.apache.commons.codec.digest DigestUtils]))
+            [clj-time.core :as time]
+            [schema.core :as s]
+            [buddy.core.codecs :as codecs]
+            [clojure.data.json :as json]
+            [clj-http.client :as client]
+            [buddy.core.mac :as mac]
+            [taoensso.timbre :as log])
+  (:import [java.util UUID]))
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
 
@@ -25,50 +30,24 @@
    :amount (str (:amount lasku))
    :due_date (str (:due_date lasku))))
 
-
-(def response-keys [:ORDER_NUMBER :PAYMENT_ID :AMOUNT :TIMESTAMP :STATUS])
-
-(defn- return-authcode-valid? [{:keys [merchant-secret]} form-data]
-  (if-let [return-authcode (:RETURN_AUTHCODE form-data)]
-    (let [plaintext (-> (->> response-keys
-                             (map #(% form-data))
-                             (remove nil?)
-                             (str/join "|"))
-                        (str "|" merchant-secret))
-          calculated-authcode (-> plaintext DigestUtils/sha256Hex str/upper-case)]
-      (= return-authcode calculated-authcode))
-    (error "Tried to authenticate message, but the map contained no :RETURN_AUTHCODE key. Data:" form-data)))
-
-; -----
-
-(defn- format-number-us-locale [n]
-  (String/format (Locale. "us"), "%.2f", (to-array [(double n)])))
-
-(defn- calculate-authcode [{:keys [MERCHANT_ID LOCALE URL_SUCCESS URL_CANCEL URL_NOTIFY
-                                   AMOUNT ORDER_NUMBER PARAMS_IN PARAMS_OUT]} secret]
-  (let [plaintext (str/join "|" (->> [secret MERCHANT_ID LOCALE URL_SUCCESS URL_CANCEL URL_NOTIFY
-                                      AMOUNT ORDER_NUMBER PARAMS_IN PARAMS_OUT]
-                                     (remove nil?)))]
-    (-> plaintext (.getBytes "ISO-8859-1") DigestUtils/sha256Hex str/upper-case)))
-
-(defn- generate-form-data [{:keys [paytrail-host callback-uri merchant-id merchant-secret]}
-                           {:keys [language-code amount order-number secret]}]
-  ;Paytrail does not support sending back the LOCALE we sent, so need redundant field for that
-  (let [params-in "MERCHANT_ID,LOCALE,URL_SUCCESS,URL_CANCEL,URL_NOTIFY,AMOUNT,ORDER_NUMBER,PARAMS_IN,PARAMS_OUT"
-        params-out "ORDER_NUMBER,PAYMENT_ID,AMOUNT,TIMESTAMP,STATUS"
-        query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
-        form-params {:MERCHANT_ID  merchant-id
-                     :LOCALE       (case language-code "fi" "fi_FI" "sv" "sv_SE" "en" "en_US")
-                     :URL_SUCCESS  (str callback-uri "/success" query)
-                     :URL_CANCEL   (str callback-uri "/cancel" query)
-                     :URL_NOTIFY   (str callback-uri "/notify" query)
-                     :AMOUNT       (format-number-us-locale amount)
-                     :ORDER_NUMBER order-number
-                     :PARAMS_IN params-in
-                     :PARAMS_OUT params-out}
-        authcode (calculate-authcode form-params merchant-secret)]
-    {:uri    paytrail-host
-     :params (assoc form-params :AUTHCODE authcode)}))
+(defn- generate-json-data [{:keys [callback-uri]}
+                           {:keys [language-code amount order-number secret first-name last-name email]}]
+  (let [query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
+        callback-urls {"success" (str callback-uri "/success" query)
+                       "cancel"  (str callback-uri "/cancel" query)}]
+    {"stamp"        (str (UUID/randomUUID))
+     ; Order reference
+     "reference"    order-number
+     ; Total amount in EUR cents
+     "amount"       amount ; (format-number-us-locale amount)
+     "currency"     "EUR"
+     "language"     (case language-code "fi" "FI" "sv" "SV" "en" "EN")
+     "customer"     {"email"     email
+                     "firstName" (or first-name "testi")
+                     "lastName"  (or last-name "tester")}
+     "redirectUrls" callback-urls
+     "callbackUrls" callback-urls
+     }))
 
 (defn- get-paytrail-config [this]
   (let [config (:config this)]
@@ -77,16 +56,49 @@
      :merchant-secret (-> config :paytrail-config :merchant-secret)
      :callback-uri    (-> config :callback-uri)}))
 
+(defn- authentication-headers [method merchant-id transaction-id]
+  (cond-> {"checkout-account"   merchant-id
+           "checkout-algorithm" "sha512"
+           "checkout-method"    method
+           "checkout-nonce"     (str (UUID/randomUUID))
+           "checkout-timestamp" (str (time/now))}
+          (some? transaction-id)
+          (assoc "checkout-transaction-id" transaction-id)))
+
+(defn- headers->signature-keys-order [headers]
+  (->> (keys headers)
+       (filter #(str/starts-with? % "checkout-"))
+       (sort)))
+
+(defn- sign-request [merchant-secret headers body]
+  (let [sb (StringBuilder.)]
+    (doseq [header (headers->signature-keys-order headers)]
+      (when-let [data (headers header)]
+        (.append sb header)
+        (.append sb ":")
+        (.append sb data)
+        (.append sb "\n")))
+    (when body
+      (.append sb body))
+    (-> (.toString sb)
+        (mac/hash {:key merchant-secret
+                   :alg :hmac+sha512})
+        (codecs/bytes->hex))))
+
+(defn- lasku-to-json [lasku paytrail-config order-id locale secret]
+  (let [p {:language-code    (or locale "fi")
+       :amount           (:amount lasku)
+       :order-number     order-id
+       :secret           secret
+       :first-name       (:first_name lasku)
+       :last-name        (:last_name lasku)
+       :email            (:email lasku)}]
+    (json/write-str (generate-json-data paytrail-config p))))
+
 ;Instead of directly searching by order-id, use secret to prevent order-id brute-forcing
 (defn- tutu-payment [this db audit-logger session {:keys [order-id locale secret]}]
   (let [laskut (maksut-queries/get-laskut-by-secret db secret)
-        lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))
-        lang (or locale "fi")
-        p {:language-code    lang
-           :amount           (:amount lasku)
-           :order-number     order-id
-           :secret           secret
-           }]
+        lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))]
     (cond
       (not (some? lasku)) (maksut-error :invoice-notfound "Laskua ei löydy")
       (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue "Lasku on erääntynyt")
@@ -95,7 +107,20 @@
     (when (not= (:status lasku) "active")
           (maksut-error :invoice-not-active "Maksua ei voi enää maksaa"))
 
-    (let [data (generate-form-data (get-paytrail-config this) p)
+    (let [paytrail-config (get-paytrail-config this)
+          merchant-id (:merchant-id paytrail-config)
+          merchant-secret (:merchant-secret paytrail-config)
+          authentication-headers (authentication-headers "POST" merchant-id nil)
+          body (lasku-to-json lasku paytrail-config order-id locale secret)
+          response (-> {:method           :post
+                        :url              "https://services.paytrail.com/payments"
+                        :content-type     "application/json; charset=utf-8"
+                        :throw-exceptions true
+                        :as               :json
+                        :headers          (-> authentication-headers
+                                              (assoc "signature" (sign-request merchant-secret authentication-headers body)))
+                        :body             body}
+                       client/request)
           audit-data (Lasku->AuditJson lasku)]
 
       (audit/log audit-logger
@@ -104,7 +129,7 @@
                  (audit/->target {:email (:email lasku)})
                  (audit/->changes {} audit-data))
 
-      data)))
+      (-> response :body))))
 
 
 (defn- handle-tutu-confirmation-email [email-service email locale order-id reference]
@@ -122,32 +147,31 @@
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale _]
-  (s/validate api-schemas/PaytrailCallbackRequest pt-params)
-
-  (let [{:keys [STATUS]} pt-params
+  ;(s/validate api-schemas/PaytrailCallbackRequest pt-params)
+  (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp]} pt-params
         pt-config (get-paytrail-config this)
         return-error (fn [code msg]
                        (error (str "Payment handling error " code " " msg " " pt-params))
                        {:action :error
-                        :code code})]
+                        :code code})
+        signed-headers (sign-request (:merchant-secret pt-config) (stringify-keys pt-params) nil)]
 
     ;due-date is not checked here again, as it might take up to 5-7 days for Paytrail to
     ;manually process payments where the first redirect-callback was skipped
     (info "Processing success callback")
 
-    (let [auth-ok (return-authcode-valid? pt-config pt-params)
-          status-ok (= STATUS "PAID")]
+    (let [auth-ok (= signed-headers (:signature pt-params))
+          status-ok (= checkout-status "ok")]
       (match [auth-ok status-ok]
              [false _] (return-error :payment-invalid-status "Maksun tiedoissa on vikaa")
              [_ false] (return-error :payment-invalid-status "Maksun tiedoissa on virhe")
-             [true true] (if-let [result (maksut-queries/create-payment db pt-params)]
+             [true true] (if-let [result (maksut-queries/create-payment db checkout-reference checkout-stamp checkout-amount (System/currentTimeMillis))]
                                  (do
                                    (case (:action result)
                                           :created (handle-confirmation-email email-service locale result)
                                           nil)
                                    result)
-                                 (return-error :payment-failed "Maksun luominen epäonnistui"))
-             ))))
+                                 (return-error :payment-failed "Maksun luominen epäonnistui"))))))
 
 (defrecord PaymentService [config audit-logger email-service db]
   component/Lifecycle
@@ -170,11 +194,7 @@
   (tutu-payment [this session params]
     (tutu-payment this db audit-logger session params))
   (process-success-callback [this params locale notify?]
-    (process-success-callback this db email-service params locale notify?))
-  (form-data-for-payment [this params]
-    (generate-form-data this params))
-  (authentic-response? [this form-data]
-    (return-authcode-valid? this form-data)))
+    (process-success-callback this db email-service params locale notify?)))
 
 (defn payment-payment [config]
   (map->PaymentService config))

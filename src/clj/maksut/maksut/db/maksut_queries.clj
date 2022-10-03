@@ -67,12 +67,11 @@
 (defn check-laskut-statuses-by-reference [db origin refs]
   (get-linked-lasku-statuses-by-reference db {:origin origin :refs refs}))
 
-(defn create-payment [db pt-params]
+(defn create-payment [db order-number payment-id amount timestamp]
   (with-db-transaction
    [tx db]
-   (if-let [lasku (get-lasku-locked tx {:order-id (:ORDER_NUMBER pt-params)})]
+   (if-let [lasku (get-lasku-locked tx {:order-id order-number})]
      (let [lasku-id    (:id lasku)
-           payment-id  (:PAYMENT_ID pt-params)
            old-payment (select-payment tx {:invoice-id lasku-id :payment-id payment-id})
            response    {:order-id  (:order_id lasku)
                         :email     (:email lasku)
@@ -87,11 +86,11 @@
            (insert-payment! tx
                             {:invoice-id lasku-id
                              :payment-id payment-id
-                             :amount     (bigdec (:AMOUNT pt-params))
-                             :timestamp  (:TIMESTAMP pt-params)}) ;epoch seconds
+                             :amount     (bigdec amount)
+                             :timestamp  timestamp}) ;epoch seconds
            (assoc response :action :created))))
      (do
-       (log/error "Payment cannot be processed as invoice not found for order_number " (:ORDER_NUMBER pt-params))
+       (log/error "Payment cannot be processed as invoice not found for order_number " order-number)
        ;Not throwing exception or returning non-success http-status as otherwise Paytrail will not
        ;accept this notify as received and will do the same request again multiple times
        {:action    :error
