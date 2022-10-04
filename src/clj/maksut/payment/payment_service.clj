@@ -38,7 +38,7 @@
      ; Order reference
      "reference"    order-number
      ; Total amount in EUR cents
-     "amount"       amount ; (format-number-us-locale amount)
+     "amount"       amount
      "currency"     "EUR"
      "language"     (case language-code "fi" "FI" "sv" "SV" "en" "EN")
      "customer"     {"email"     email
