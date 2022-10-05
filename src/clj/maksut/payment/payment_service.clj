@@ -19,7 +19,9 @@
             [clojure.data.json :as json]
             [clj-http.client :as client]
             [buddy.core.mac :as mac])
-  (:import [java.util UUID]))
+  (:import [java.util UUID]
+           (java.time ZoneOffset ZonedDateTime)
+           (java.time.format DateTimeFormatter)))
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
 
@@ -60,7 +62,9 @@
            "checkout-algorithm" "sha512"
            "checkout-method"    method
            "checkout-nonce"     (str (UUID/randomUUID))
-           "checkout-timestamp" (str (time/now))}
+           "checkout-timestamp" (.format (ZonedDateTime/now)
+                                         (-> (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss.SSS'Z'")
+                                             (.withZone (ZoneOffset/UTC))))}
           (some? transaction-id)
           (assoc "checkout-transaction-id" transaction-id)))
 
