@@ -76,7 +76,7 @@
     {:get {:parameters {:query s/Any}
            :handler    (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                          (log/warn "Paytrail success " query)
-                         (let [now      (/ (System/currentTimeMillis) 1000)
+                         (let [now      (long  (/ (System/currentTimeMillis) 1000))
                                response (payment-protocol/process-success-callback payment-service
                                                                                    (assoc query :timestamp now)
                                                                                    tutulocale
