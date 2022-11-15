@@ -48,7 +48,11 @@
      "amount"       amount
      "currency"     "EUR"
      "language"     (case language-code "fi" "FI" "sv" "SV" "en" "EN")
-     "items"        [{"description" (create-description language-code order-number)}]
+     "items"        [{"description"   (create-description language-code order-number)
+                      "units"         1
+                      "unitPrice"     amount
+                      "vatPercentage" 0
+                      "productCode"   order-number}]
      "customer"     {"email"     email
                      "firstName" (or first-name "testi")
                      "lastName"  (or last-name "tester")}
