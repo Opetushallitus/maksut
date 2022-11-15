@@ -74,4 +74,9 @@
                                            :en "Finnish National Agency for Education"
                                            :sv "Utbildningsstyrelsen"}}
 
-   })
+   :kuitti          {:käsittely           {:fi "Opetushallitus Tutkintojen tunnustaminen Hakemuksen käsittelymaksu"
+                                           :en "Finnish National Agency for Education Recognition of qualifications Processing fee"
+                                           :sv "Utbildningsstyrelsen Erkännande av examina Beslutsavgift"}
+                     :päätös              {:fi "Opetushallitus Tutkintojen tunnustaminen Päätösmaksu"
+                                           :en "Finnish National Agency for Education Recognition of qualifications Decision fee"
+                                           :sv "Utbildningsstyrelsen Erkännande av examina Behandlingsavgift"}}})

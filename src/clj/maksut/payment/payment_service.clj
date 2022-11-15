@@ -10,6 +10,7 @@
             [maksut.audit-logger-protocol :as audit]
             [maksut.schemas.class-pred :as p]
             [maksut.util.url-encoder :refer [encode]]
+            [maksut.util.translation :refer [get-translation]]
             [com.stuartsierra.component :as component]
             [taoensso.timbre :refer [error info]]
             [clojure.string :as str]
@@ -30,6 +31,11 @@
    :amount (str (:amount lasku))
    :due_date (str (:due_date lasku))))
 
+(defn- create-description [language-code order-id]
+  (cond
+    (str/ends-with? order-id "-1") (get-translation (keyword language-code) :kuitti/käsittely)
+    (str/ends-with? order-id "-2") (get-translation (keyword language-code) :kuitti/päätös)))
+
 (defn- generate-json-data [{:keys [callback-uri]}
                            {:keys [language-code amount order-number secret first-name last-name email]}]
   (let [query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
@@ -42,6 +48,7 @@
      "amount"       amount
      "currency"     "EUR"
      "language"     (case language-code "fi" "FI" "sv" "SV" "en" "EN")
+     "items"        [{"description" (create-description language-code order-number)}]
      "customer"     {"email"     email
                      "firstName" (or first-name "testi")
                      "lastName"  (or last-name "tester")}
