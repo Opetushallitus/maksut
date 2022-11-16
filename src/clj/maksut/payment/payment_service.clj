@@ -40,17 +40,18 @@
                            {:keys [language-code amount order-number secret first-name last-name email]}]
   (let [query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
         callback-urls {"success" (str callback-uri "/success" query)
-                       "cancel"  (str callback-uri "/cancel" query)}]
+                       "cancel"  (str callback-uri "/cancel" query)}
+        amount-in-euro-cents (* 100 amount)]
     {"stamp"        (str (UUID/randomUUID))
      ; Order reference
      "reference"    order-number
      ; Total amount in EUR cents
-     "amount"       amount
+     "amount"       amount-in-euro-cents
      "currency"     "EUR"
      "language"     (case language-code "fi" "FI" "sv" "SV" "en" "EN")
      "items"        [{"description"   (create-description language-code order-number)
                       "units"         1
-                      "unitPrice"     amount
+                      "unitPrice"     amount-in-euro-cents
                       "vatPercentage" 0
                       "productCode"   order-number}]
      "customer"     {"email"     email
