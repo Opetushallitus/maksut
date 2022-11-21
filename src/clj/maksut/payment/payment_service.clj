@@ -55,8 +55,8 @@
                       "vatPercentage" 0
                       "productCode"   order-number}]
      "customer"     {"email"     email
-                     "firstName" (or first-name "testi")
-                     "lastName"  (or last-name "tester")}
+                     "firstName" first-name
+                     "lastName"  last-name}
      "redirectUrls" callback-urls
      "callbackUrls" callback-urls
      }))
