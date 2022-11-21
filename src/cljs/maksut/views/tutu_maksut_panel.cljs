@@ -153,7 +153,7 @@
 
    ]))
 
-(defn invoice-item [header invoice]
+(defn invoice-item [_ _]
   (let [value-style {:text-align "right"
                      :margin-bottom "10px"}
         separator-style {
@@ -162,7 +162,7 @@
                 :margin-bottom "10px"
                 :padding-bottom "-20px"
                 }]
-    (fn [header {:keys [order_id amount due_date status paid_at]} invoice]
+    (fn [header {:keys [order_id amount due_date status paid_at]} _]
       ^{:key (:order_id order_id)}
       [:div (use-style lasku-style)
        [:div (use-style {:margin-bottom "20px"
@@ -258,6 +258,8 @@
                            :loading false
                            true)
         payment-form (subscribe [maksut-subs/maksut-payment-form])
+        secret (subscribe [maksut-subs/maksut-secret])
+        lang (subscribe [:lang])
         lasku-container-style {:display "flex"
                                :grid-gap "10px"
                                :flex-wrap "wrap"
@@ -289,7 +291,7 @@
           [invoice-item @(subscribe [:translation :tutu-panel/maksulaatikko-otsikko-päätös]) paatos])]
 
       (if (some? pay-id)
-        [:span (use-style button-style {:on-click #(on-maksa-click pay-id)})
+        [:a (use-style button-style {:href (str "/maksut/api/lasku/" pay-id "/maksa?secret=" @secret "&locale=" (name @lang))})
           @(subscribe [:translation :tutu-panel/maksu-nappula])
           [:span (use-style {:margin-left "7px"
                              :vertical-align "middle"}) [icon/trending_flat]]]

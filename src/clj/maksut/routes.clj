@@ -18,11 +18,9 @@
             [clj-access-logging]
             [ring.middleware.session :as ring-session]
             [ring.util.http-response :as response]
-            [schema-tools.core :as st]
             [schema.core :as s]
             [selmer.parser :as selmer]
             [taoensso.timbre :as log]))
-
 
 ; --- Session ---
 (defn- create-wrap-database-backed-session [config datasource]
@@ -75,18 +73,21 @@
   ["/payment"
    ["/paytrail"
     ["/success"
-    {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
+    {:get {:parameters {:query s/Any}
            :handler    (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                          (log/warn "Paytrail success " query)
-                         (let [params   (st/select-schema query schema/PaytrailCallbackRequest)
-                               response (payment-protocol/process-success-callback payment-service params tutulocale false)
+                         (let [now      (long  (/ (System/currentTimeMillis) 1000))
+                               response (payment-protocol/process-success-callback payment-service
+                                                                                   (assoc query :timestamp now)
+                                                                                   tutulocale
+                                                                                   false)
                                action   (or (:action response) :error)
                                uri-end  (if (= action :error) "&payment=error" "")
                                uri      (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) uri-end)]
                               (response/permanent-redirect uri)))}}]
 
     ["/cancel"
-     {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
+     {:get {:parameters {:query s/Any}
             :handler (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                         (log/warn "Paytrail cancel " query)
                         ;Canceling does not really need to be processed in any way, lets just direct back to payment view
@@ -94,11 +95,10 @@
                         )}}]
 
     ["/notify"
-     {:get {:parameters {:query schema/TutuPaytrailCallbackRequest}
+     {:get {:parameters {:query s/Any}
             :handler (fn [{{{:keys [tutulocale] :as query} :query} :parameters}]
                        (log/warn "Paytrail notify " query)
-                       (let [params (st/select-schema query schema/PaytrailCallbackRequest)]
-                         (payment-protocol/process-success-callback payment-service params tutulocale true))
+                        (payment-protocol/process-success-callback payment-service query tutulocale true)
                         (response/ok {}))}}]
 
    ]])
@@ -212,11 +212,12 @@
                                       (s/optional-key :locale) (s/maybe schema/Locale)}}
                  :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters}]
                                (log/info "Generate Paytrail form fields for " order-id locale secret)
-                               (response/ok (payment-protocol/tutu-payment payment-service
-                                                                           session
-                                                                           {:order-id order-id
-                                                                            :locale locale
-                                                                            :secret secret})))}}]]
+                               (let [paytrail-response (payment-protocol/tutu-payment payment-service
+                                                                                      session
+                                                                                      {:order-id order-id
+                                                                                       :locale   locale
+                                                                                       :secret   secret})]
+                                 (response/found (:href paytrail-response))))}}]]
 
        ["/laskut-by-secret"
         [""

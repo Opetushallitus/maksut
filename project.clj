@@ -91,7 +91,8 @@
                             [clj-kondo "2020.10.10"]
                             [day8.re-frame/re-frame-10x "1.1.13"]
                             [day8.re-frame/tracing "0.6.2"]
-                            [reloaded.repl "0.2.4"]]
+                            [reloaded.repl "0.2.4"]
+                            [clj-http-fake "1.0.3"]]
              :source-paths ["dev/clj" "dev/cljs"]}
 
    :prod    {:dependencies [[day8.re-frame/tracing-stubs "0.6.2"]]}

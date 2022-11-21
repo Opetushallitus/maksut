@@ -2,6 +2,8 @@
 /*-init.clj
 /*.log
 /.idea/
+/dataSources/
+/.idea*
 /.lein-*
 /.nrepl-port
 /.pm2/
