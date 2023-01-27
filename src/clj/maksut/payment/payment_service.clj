@@ -4,7 +4,7 @@
             [clojure.walk :refer [stringify-keys]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.payment.payment-service-protocol :as payment-service-protocol]
-            [maksut.email.tutu-payment-confirmation :as email-confirmation]
+            [maksut.email.email-message-handling :as email-message-handling]
             [maksut.email.email-service-protocol :as email-protocol]
             [maksut.config :as c]
             [maksut.audit-logger-protocol :as audit]
@@ -146,19 +146,38 @@
 
       (-> response :body))))
 
+(defn- handle-send-email [msg email-service email]
+  (let [{:keys [subject from body]} msg]
+    (info "Sending email to " subject " to " email)
+    (email-protocol/send-email email-service from [email] subject body)))
 
-(defn- handle-tutu-confirmation-email [email-service email locale order-id reference]
+(defn- handle-tutu-email-confirmation
+  [email-service email locale order-id reference]
   (when-let [msg (cond
-                   (str/ends-with? order-id "-1") (email-confirmation/create-processing-email email locale reference)
-                   (str/ends-with? order-id "-2") (email-confirmation/create-decision-email email locale))]
-    (let [{:keys [subject from body]} msg]
-      (info "Sending email to " subject " to " email)
-      (email-protocol/send-email email-service from [email] subject body))))
+                   (str/ends-with? order-id "-1") (email-message-handling/create-tutu-processing-email email locale reference)
+                   (str/ends-with? order-id "-2") (email-message-handling/create-tutu-decision-email email locale))]
+    (handle-send-email msg email-service email)))
+
+(defn- handle-payment-receipt
+  [email-service email locale reference timestamp total-amount items]
+  (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp total-amount items)]
+    ; TODO tallenna kuitti S3:een ennen lähetystä
+    (handle-send-email msg email-service email)))
 
 ;TODO add robustness here, maybe background-job with retry?
-(defn- handle-confirmation-email [email-service locale {:keys [order-id email origin reference]}]
+(defn- handle-confirmation-email
+  [email-service locale checkout-amount-in-euro-cents timestamp {:keys [order-id email origin reference]}]
   (case origin
-    "tutu" (handle-tutu-confirmation-email email-service email locale order-id reference)
+    "tutu" (do
+             (handle-tutu-email-confirmation email-service email locale order-id
+                                             reference)
+             (handle-payment-receipt email-service email locale
+                                     reference timestamp
+                                     (/ checkout-amount-in-euro-cents 100)
+                                     [{:description (create-description locale order-id)
+                                       :units 1
+                                       :unit-price (/ checkout-amount-in-euro-cents 100)
+                                       :vat-percentage 0}]))
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale _]
@@ -182,7 +201,7 @@
              [true true] (if-let [result (maksut-queries/create-payment db checkout-reference checkout-stamp checkout-amount timestamp)]
                                  (do
                                    (case (:action result)
-                                          :created (handle-confirmation-email email-service locale result)
+                                          :created (handle-confirmation-email email-service locale checkout-amount timestamp result)
                                           nil)
                                    result)
                                  (return-error :payment-failed "Maksun luominen epäonnistui"))))))

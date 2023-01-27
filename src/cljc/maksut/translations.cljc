@@ -79,4 +79,46 @@
                                            :sv "Utbildningsstyrelsen Erkännande av examina Behandlingsavgift"}
                      :päätös              {:fi "Opetushallitus Tutkintojen tunnustaminen Päätösmaksu"
                                            :en "Finnish National Agency for Education Recognition of qualifications Decision fee"
-                                           :sv "Utbildningsstyrelsen Erkännande av examina Beslutsavgift"}}})
+                                           :sv "Utbildningsstyrelsen Erkännande av examina Beslutsavgift"}
+                     :otsikko             {:fi "Kuitti"
+                                           :en "Receipt"
+                                           :sv "Kvitto"}
+                     :oph                 {:fi "Opetushallitus"
+                                           :en "Finnish National Agency for Education"
+                                           :sv "Utbildningsstyrelsen"}
+                     :address1            {:fi "Hakaniemenranta 6"
+                                           :en "Hakaniemenranta 6"
+                                           :sv "Hagnäskajen 6"}
+                     :address2            {:fi "PL 380, 00531 Helsinki"
+                                           :en "P.O. Box 380, 00531 Helsinki, Finland"
+                                           :sv "PB 380, 00531 Helsingfors"}
+                     :contact-details     {:fi "Puhelin: +358 29 533 1000"
+                                           :en "Telephone: +358 29 533 1000"
+                                           :sv "Telefon: +358 29 533 1000"}
+                     :business-id         {:fi "Y-tunnus: 2769790-1"
+                                           :en "Business ID: 2769790-1"
+                                           :sv "FO-nummer: 2769790-1"}
+                     :payment-reference-desc {:fi "Viite"
+                                              :en "Payment reference"
+                                              :sv "Betalningsreferens"}
+                     :date-of-purchase-desc {:fi "Päiväys"
+                                             :en "Date"
+                                             :sv "Datum"}
+                     :description         {:fi "Kuvaus"
+                                           :en "Description"
+                                           :sv "Beskrivning"}
+                     :units               {:fi "Määrä"
+                                           :en "Quantity"
+                                           :sv "Kvantitet"}
+                     :vat                 {:fi "ALV"
+                                           :en "VAT"
+                                           :sv "MOMS"}
+                     :unit-price          {:fi "Yksikköhinta"
+                                           :en "Unit price"
+                                           :sv "Jämförpris"}
+                     :total-paid          {:fi "YHTEENSÄ MAKSETTU"
+                                           :en "TOTAL PAID"
+                                           :sv "TOTALT BETALDA"}
+                     :älä-vastaa-emailaa  {:fi "Älä vastaa tähän viestiin – viesti on lähetetty automaattisesti. Jos sinulla on kysyttävää, otathan meihin yhteyttä sähköpostitse osoitteessa"
+                                           :en "This is an automatically generated email, please do not reply. If you have any questions, please send us an email at"
+                                           :sv "Svara inte på detta meddelande, det har skickats automatiskt. Om du har frågor, vänligen kontakta oss per e-post:"}}})

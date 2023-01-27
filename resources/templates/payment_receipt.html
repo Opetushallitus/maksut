@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title></title>
+</head>
+<body style="margin: 0; font-family: 'Open Sans', Arial, sans-serif;">
+<table style="width: 600px;">
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 10px; font-size: 24px;">
+      {{otsikko|safe}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 20px;">
+      {{oph|safe}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+      {{address1|safe}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+      {{address2|safe}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+      {{contact-details|safe}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+      {{business-id|safe}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+      {{payment-reference-desc|safe}}: {{payment-reference|safe}}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+      {{date-of-purchase-desc|safe}}: {{date-of-purchase|datetime-format-with-dots-from-long}}
+    </td>
+  </tr>
+  <tr>
+    <th style="padding-left: 20px; padding-top: 20px; text-align: left;">
+      {{description|safe}}
+    </th>
+    <th style="padding-left: 20px; padding-top: 20px; text-align: right;">
+      {{units|safe}}
+    </th>
+    <th style="padding-left: 20px; padding-top: 20px; text-align: right;">
+      {{vat|safe}}
+    </th>
+    <th style="padding-left: 20px; padding-top: 20px; text-align: right;">
+      {{unit-price|safe}}
+    </th>
+  </tr>
+  {% for item in items %}
+  <tr>
+    <td style="padding-left: 20px; padding-top: 20px;">
+      {{item.description|safe}}
+    </td>
+    <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
+      {{item.units|safe}}
+    </td>
+    <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
+      {{item.vat|safe}} %
+    </td>
+    <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
+      {{item.unit-price|safe}}
+    </td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <td colspan="3" style="padding-left: 20px; padding-top: 20px;">
+      {{total-paid|safe}}
+    </td>
+    <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
+      {{total-amount}}
+    </td>
+  </tr>
+</table>
+</body>
+</html>
