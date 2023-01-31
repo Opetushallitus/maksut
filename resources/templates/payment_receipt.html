@@ -5,7 +5,7 @@
   <title></title>
 </head>
 <body style="margin: 0; font-family: 'Open Sans', Arial, sans-serif;">
-<table style="width: 600px;">
+<table style="width: 400px;">
   <tr>
     <td colspan="4" style="padding-left: 20px; padding-top: 10px; font-size: 24px;">
       {{otsikko|safe}}
@@ -17,32 +17,32 @@
     </td>
   </tr>
   <tr>
-    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+    <td colspan="4" style="padding-left: 20px; padding-top: 3px;">
       {{address1|safe}}
     </td>
   </tr>
   <tr>
-    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+    <td colspan="4" style="padding-left: 20px; padding-top: 3px;">
       {{address2|safe}}
     </td>
   </tr>
   <tr>
-    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+    <td colspan="4" style="padding-left: 20px; padding-top: 3px;">
       {{contact-details|safe}}
     </td>
   </tr>
   <tr>
-    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+    <td colspan="4" style="padding-left: 20px; padding-top: 3px;">
       {{business-id|safe}}
     </td>
   </tr>
   <tr>
-    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+    <td colspan="4" style="padding-left: 20px; padding-top: 3px;">
       {{payment-reference-desc|safe}}: {{payment-reference|safe}}
     </td>
   </tr>
   <tr>
-    <td colspan="4" style="padding-left: 20px; padding-top: 5px;">
+    <td colspan="4" style="padding-left: 20px; padding-top: 3px;">
       {{date-of-purchase-desc|safe}}: {{date-of-purchase|datetime-format-with-dots-from-long}}
     </td>
   </tr>
@@ -62,17 +62,17 @@
   </tr>
   {% for item in items %}
   <tr>
-    <td style="padding-left: 20px; padding-top: 20px;">
+    <td style="padding-left: 20px; padding-top: 5px;">
       {{item.description|safe}}
     </td>
-    <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
+    <td style="padding-left: 20px; padding-top: 5px; text-align: right;">
       {{item.units|safe}}
     </td>
-    <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
+    <td style="padding-left: 20px; padding-top: 5px; text-align: right;">
       {{item.vat|safe}} %
     </td>
-    <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
-      {{item.unit-price|currency-format:fi}}
+    <td style="padding-left: 20px; padding-top: 5px; text-align: right;">
+      {{item.unit-price|number-format:%.2f:fi}} EUR
     </td>
   </tr>
   {% endfor %}
@@ -81,7 +81,7 @@
       {{total-paid}}
     </td>
     <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
-      {{total-amount|currency-format:fi}}
+      {{total-amount|number-format:%.2f:fi}} EUR
     </td>
   </tr>
 </table>
