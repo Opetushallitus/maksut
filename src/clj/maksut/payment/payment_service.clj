@@ -200,8 +200,9 @@
              [_ false] (return-error :payment-invalid-status "Maksun tiedoissa on virhe")
              [true true] (if-let [result (maksut-queries/create-payment db checkout-reference checkout-stamp checkout-amount timestamp)]
                                  (do
+                                   (println "TIMESTAMP" (type timestamp))
                                    (case (:action result)
-                                          :created (handle-confirmation-email email-service locale checkout-amount timestamp result)
+                                          :created (handle-confirmation-email email-service locale (bigdec checkout-amount) timestamp result)
                                           nil)
                                    result)
                                  (return-error :payment-failed "Maksun luominen epäonnistui"))))))

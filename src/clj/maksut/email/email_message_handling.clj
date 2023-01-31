@@ -3,11 +3,13 @@
             [selmer.parser :as selmer]
             [selmer.filters :as filters]
             [clj-time.format :as f]
-            [clj-time.coerce :as c]))
+            [clj-time.coerce :as c]
+            [clj-time.core :as t]))
 
 (def from-address "no-reply@opintopolku.fi")
 
-(def finnish-datetime-formatter (f/formatter "d.M.YYYY HH:mm"))
+(def finnish-datetime-formatter (f/with-zone (f/formatter "d.M.YYYY HH:mm")
+                                             (t/time-zone-for-id "Europe/Helsinki")))
 
 (defn format-datetime-to-finnish-format [datetime]
   (f/unparse finnish-datetime-formatter datetime))
