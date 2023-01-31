@@ -72,13 +72,13 @@
       {{item.vat|safe}} %
     </td>
     <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
-      {{item.unit-price|safe}}
+      {{item.unit-price|currency-format:fi}}
     </td>
   </tr>
   {% endfor %}
   <tr>
     <td colspan="3" style="padding-left: 20px; padding-top: 20px;">
-      {{total-paid|safe}}
+      {{total-paid|currency-format:fi}}
     </td>
     <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
       {{total-amount}}

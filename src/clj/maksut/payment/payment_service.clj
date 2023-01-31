@@ -159,8 +159,8 @@
     (handle-send-email msg email-service email)))
 
 (defn- handle-payment-receipt
-  [email-service email locale reference timestamp total-amount items]
-  (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp total-amount items)]
+  [email-service email locale reference timestamp-millis total-amount items]
+  (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp-millis total-amount items)]
     ; TODO tallenna kuitti S3:een ennen lähetystä
     (handle-send-email msg email-service email)))
 
@@ -172,12 +172,12 @@
              (handle-tutu-email-confirmation email-service email locale order-id
                                              reference)
              (handle-payment-receipt email-service email locale
-                                     reference timestamp
+                                     order-id (* 1000 timestamp)
                                      (/ checkout-amount-in-euro-cents 100)
                                      [{:description (create-description locale order-id)
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
-                                       :vat-percentage 0}]))
+                                       :vat 0}]))
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale _]
