@@ -78,10 +78,10 @@
   {% endfor %}
   <tr>
     <td colspan="3" style="padding-left: 20px; padding-top: 20px;">
-      {{total-paid|currency-format:fi}}
+      {{total-paid}}
     </td>
     <td style="padding-left: 20px; padding-top: 20px; text-align: right;">
-      {{total-amount}}
+      {{total-amount|currency-format:fi}}
     </td>
   </tr>
 </table>
