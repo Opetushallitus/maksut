@@ -82,13 +82,13 @@
                                :secret secret})
 
     (testing "Payment success callback"
-        (let [response  (payment-protocol/process-success-callback service params locale false)
+        (let [response (payment-protocol/process-success-callback service params locale false)
               emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
-              first-subject (-> emails-to-user first :subject)]
+              subjects (set (map :subject emails-to-user))]
           (is (= (:action response) :created))
-          (is-email-count 1)
-          (is (= (count emails-to-user) 1))
-          (is (.contains first-subject "Käsittelymaksusi on vastaanotettu"))
+          (is-email-count 2)
+          (is (= (count emails-to-user) 2))
+          (is (= subjects #{"Opintopolku: Käsittelymaksusi on vastaanotettu" "Opintopolku: Kuitti"}))
           (reset-emails!)
           )
         )
@@ -144,13 +144,13 @@
     (testing "2nd payment success callback"
              (test-fixtures/add-invoice! db (db-invoice-2 due-date))
 
-             (let [response       (payment-protocol/process-success-callback service params-2 locale false)
+             (let [response (payment-protocol/process-success-callback service params-2 locale false)
                    emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
-                   first-subject  (-> emails-to-user first :subject)]
+                   subjects (set (map :subject emails-to-user))]
                (is (= (:action response) :created))
-               (is-email-count 1)
-               (is (= (count emails-to-user) 1))
-               (is (.contains first-subject "Päätösmaksusi on vastaanotettu"))
+               (is-email-count 2)
+               (is (= (count emails-to-user) 2))
+               (is (= subjects #{"Opintopolku: Päätösmaksusi on vastaanotettu" "Opintopolku: Kuitti"}))
                (reset-emails!))
              )
 
@@ -205,13 +205,13 @@
     (testing "Confirmation email is in English"
             (test-fixtures/add-invoice! db db-data)
 
-            (let [response  (payment-protocol/process-success-callback service params locale false)
+            (let [response (payment-protocol/process-success-callback service params locale false)
                   emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
-                  first-subject (-> emails-to-user first :subject)]
+                  subjects (set (map :subject emails-to-user))]
               (is (= (:action response) :created))
-              (is-email-count 1)
-              (is (= (count emails-to-user) 1))
-              (is (.contains first-subject "Your processing fee has been received"))
+              (is-email-count 2)
+              (is (= (count emails-to-user) 2))
+              (is (= subjects #{"Studyinfo: Your processing fee has been received" "Studyinfo: Receipt"}))
               (reset-emails!)
               )
             )
