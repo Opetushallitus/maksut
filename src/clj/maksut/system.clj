@@ -6,6 +6,9 @@
             [maksut.cas.cas-ticket-client :as cas-ticket-validator]
             [maksut.config :as c]
             [maksut.db :as db]
+            [maksut.files.filesystem-store :as filesystem-store]
+            [maksut.files.s3-client :as s3-client]
+            [maksut.files.s3-store :as s3-store]
             [maksut.maksut.maksut-service :as maksut-service]
             [maksut.payment.payment-service :as payment-service]
             [maksut.email.email-service :as email-service]
@@ -33,7 +36,8 @@
                                              (payment-service/map->PaymentService {:config config})
                                              [:audit-logger
                                               :email-service
-                                              :db])
+                                              :db
+                                              :storage-engine])
 
                            :health-checker (component/using
                                              (health-check/map->DbHealthChecker {})
@@ -78,10 +82,23 @@
                            :mock-email-service-list (atom '())
 
                            :email-service (component/using (email-service/map->MockEmailService {:config config})
-                                                           [:mock-email-service-list])
-                           ]
-        system            (into base-system
-                                (if it-profile?
-                                  mock-system
-                                  production-system))]
+                                                           [:mock-email-service-list])]
+
+        files             (case (get-in config [:file-store :engine])
+                            :filesystem [:config config
+                                         :storage-engine (component/using
+                                                           (filesystem-store/new-store)
+                                                           [:config])]
+                            :s3 [:config config
+                                 :s3-client (component/using
+                                              (s3-client/new-client)
+                                              [:config])
+                                 :storage-engine (component/using
+                                                   (s3-store/new-store)
+                                                   [:s3-client :config])])
+        system            (into
+                            (into base-system
+                                  (if it-profile?
+                                    mock-system
+                                    production-system)) files)]
     (apply component/system-map system)))

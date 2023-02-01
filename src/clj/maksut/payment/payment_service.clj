@@ -6,13 +6,14 @@
             [maksut.payment.payment-service-protocol :as payment-service-protocol]
             [maksut.email.email-message-handling :as email-message-handling]
             [maksut.email.email-service-protocol :as email-protocol]
+            [maksut.files.file-store :as file-store]
             [maksut.config :as c]
             [maksut.audit-logger-protocol :as audit]
             [maksut.schemas.class-pred :as p]
             [maksut.util.url-encoder :refer [encode]]
             [maksut.util.translation :refer [get-translation]]
             [com.stuartsierra.component :as component]
-            [taoensso.timbre :refer [error info]]
+            [taoensso.timbre :refer [error info warn]]
             [clojure.string :as str]
             [schema.core :as s]
             [buddy.core.codecs :as codecs]
@@ -24,6 +25,8 @@
            (java.time.format DateTimeFormatter)))
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
+
+(def op-get-kuitti (audit/->operation "KuitinHakeminen"))
 
 (defn Lasku->AuditJson [lasku]
   (assoc
@@ -158,15 +161,27 @@
                    (str/ends-with? order-id "-2") (email-message-handling/create-tutu-decision-email email locale))]
     (handle-send-email msg email-service email)))
 
+(defn- save-receipt
+  [storage-engine contents key]
+  (file-store/create-file-from-bytearray storage-engine (.getBytes contents) key))
+
 (defn- handle-payment-receipt
-  [email-service email locale reference timestamp-millis total-amount items]
+  [email-service email locale reference timestamp-millis total-amount items storage-engine]
   (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp-millis total-amount items)]
-    ; TODO tallenna kuitti S3:een ennen lähetystä
+    (future
+      (try
+        (save-receipt storage-engine (:body msg) reference)
+        (catch Exception e
+          (warn "Could not save receipt to S3 - retrying:" reference e)
+          (try
+            (save-receipt storage-engine (:body msg) reference)
+            (catch Exception ex
+              (error "Could not save receipt to S3:" reference ex))))))
     (handle-send-email msg email-service email)))
 
 ;TODO add robustness here, maybe background-job with retry?
 (defn- handle-confirmation-email
-  [email-service locale checkout-amount-in-euro-cents timestamp {:keys [order-id email origin reference]}]
+  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine {:keys [order-id email origin reference]}]
   (case origin
     "tutu" (do
              (handle-tutu-email-confirmation email-service email locale order-id
@@ -177,10 +192,11 @@
                                      [{:description (create-description locale order-id)
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
-                                       :vat 0}]))
+                                       :vat 0}]
+                                     storage-engine))
     nil))
 
-(defn- process-success-callback [this db email-service pt-params locale _]
+(defn- process-success-callback [this db email-service pt-params locale storage-engine _]
   ;(s/validate api-schemas/PaytrailCallbackRequest pt-params)
   (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp timestamp]} pt-params
         pt-config (get-paytrail-config this)
@@ -202,12 +218,20 @@
                                  (do
                                    (println "TIMESTAMP" (type timestamp))
                                    (case (:action result)
-                                          :created (handle-confirmation-email email-service locale (bigdec checkout-amount) timestamp result)
+                                          :created (handle-confirmation-email email-service locale (bigdec checkout-amount) timestamp storage-engine result)
                                           nil)
                                    result)
                                  (return-error :payment-failed "Maksun luominen epäonnistui"))))))
 
-(defrecord PaymentService [config audit-logger email-service db]
+(defn- get-kuitti [_ session storage-engine audit-logger {:keys [file-key]}]
+  (audit/log audit-logger
+             (audit/->user session)
+             op-get-kuitti
+             (audit/->target {:file-key file-key})
+             (audit/->changes {:file-key file-key} {:file-key file-key}))
+  (file-store/get-file storage-engine file-key))
+
+(defrecord PaymentService [config audit-logger email-service db storage-engine]
   component/Lifecycle
   (start [this]
     (s/validate c/MaksutConfig config)
@@ -228,7 +252,9 @@
   (tutu-payment [this session params]
     (tutu-payment this db audit-logger session params))
   (process-success-callback [this params locale notify?]
-    (process-success-callback this db email-service params locale notify?)))
+    (process-success-callback this db email-service params locale storage-engine notify?))
+  (get-kuitti [this session params]
+    (get-kuitti this session storage-engine audit-logger params)))
 
 (defn payment-payment [config]
   (map->PaymentService config))

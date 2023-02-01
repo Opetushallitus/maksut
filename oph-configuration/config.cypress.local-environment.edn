@@ -13,6 +13,12 @@
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
+ :file-store           {:engine :filesystem
+                        :filesystem {:base-path "/tmp/maksut-tests"}
+                        :s3 {:bucket ""
+                             :region ""}
+                        :attachment-mime-types ["text/plain"
+                                                "text/html"]}
  :cas                  {:username "cas_username"
                         :password "cas_password"
                         :services {:kayttooikeus    {:service-url-property :cas.service.kayttooikeus-service

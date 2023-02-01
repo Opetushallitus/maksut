@@ -21,6 +21,11 @@
                           }
    :tutu                 {:lasku-origin       s/Str
                           :order-id-prefix    s/Str}
+   :file-store           {:engine s/Keyword
+                          :filesystem {:base-path s/Str}
+                          :s3 {:bucket s/Str
+                               :region s/Str}
+                          :attachment-mime-types [s/Str]}
    :cas                  {:username s/Str
                           :password s/Str
                           :services {:kayttooikeus          {:service-url-property s/Keyword

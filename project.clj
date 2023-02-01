@@ -9,6 +9,7 @@
                  [cheshire "5.10.0"]
                  [clj-http "3.10.3"]
                  [clj-time "0.15.2"]
+                 [com.amazonaws/aws-java-sdk-s3 "1.12.396"]
                  [com.andrewmcveigh/cljs-time "0.5.2"]
                  [com.taoensso/timbre "4.10.0"]
                  [com.fzakaria/slf4j-timbre "0.3.20"]

@@ -13,6 +13,12 @@
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
+ :file-store           {:engine {{maksut_file_engine}}
+                        :filesystem {:base-path "{{maksut_filesystem_base_path}}"}
+                        :s3 {:bucket "{{maksut_s3_bucket}}"
+                             :region "{{maksut_s3_region}}"}
+                        :attachment-mime-types ["text/plain"
+                                                "text/html"]}
  :cas                  {:username "{{ maksut_cas_username | default('maksut') }}"
                         :password "{{ maksut_cas_password }}"
                         :services {:kayttooikeus    {:service-url-property :cas.service.kayttooikeus-service

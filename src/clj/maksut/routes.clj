@@ -227,8 +227,21 @@
                  :responses  {200 {:body [schema/Lasku]}}
                  :parameters {:query {:secret s/Str}}
                  :handler    (fn [{session :session {secret :query} :parameters}]
-                               (response/ok (maksut-protocol/get-laskut-by-secret maksut-service session (:secret secret))))}}]
-        ]
+                               (response/ok (maksut-protocol/get-laskut-by-secret maksut-service session (:secret secret))))}}]]
+
+       ["/kuitti/:file-key"
+        [""
+         {:get {:middleware auth
+                :tags       ["Kuitti"]
+                :summary    "Palauttaa maksun kuitin"
+                :responses  {200 {:body s/Any}}
+                :parameters {:path {:key s/Str}}
+                :handler    (fn [{session :session {{:keys [file-key]} :path} :parameters}]
+                              (if-let [file-response (payment-protocol/get-kuitti maksut-service session {:file-key file-key})]
+                                (-> (response/ok file-response)
+                                    (assoc "Content-Disposition"
+                                           (str "attachment; filename=\"" (:filename file-response) "\"")))
+                                (response/not-found)))}}]]
 
        (payment-routes args)]
       ["/auth"
