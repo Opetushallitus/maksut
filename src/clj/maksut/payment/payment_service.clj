@@ -39,6 +39,11 @@
     (str/ends-with? order-id "-1") (get-translation (keyword language-code) :kuitti/käsittely)
     (str/ends-with? order-id "-2") (get-translation (keyword language-code) :kuitti/päätös)))
 
+(defn- create-receipt-description [language-code order-id]
+  (cond
+    (str/ends-with? order-id "-1") (get-translation (keyword language-code) :kuitti/käsittely-lr)
+    (str/ends-with? order-id "-2") (get-translation (keyword language-code) :kuitti/päätös-lr)))
+
 (defn- generate-json-data [{:keys [callback-uri]}
                            {:keys [language-code amount order-number secret first-name last-name email]}]
   (let [query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
@@ -189,7 +194,7 @@
              (handle-payment-receipt email-service email locale
                                      order-id (* 1000 timestamp)
                                      (/ checkout-amount-in-euro-cents 100)
-                                     [{:description (create-description locale order-id)
+                                     [{:description (create-receipt-description locale order-id)
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
                                        :vat 0}]

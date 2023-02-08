@@ -2,9 +2,9 @@
 
 (def local-translations
   {
-   :email           {:subject-prefix {:fi "Opintopolku"
-                                      :sv "Studieinfo"
-                                      :en "Studyinfo"}}
+   :email           {:subject-prefix {:fi "Opetushallitus"
+                                      :sv "Utbildningsstyrelsen"
+                                      :en "Finnish National Agency for Education"}}
 
    :email-käsittely {:otsikko                        {:fi "Käsittelymaksusi on vastaanotettu"
                                                       :en "Your processing fee has been received"
@@ -80,9 +80,18 @@
                      :päätös              {:fi "Opetushallitus Tutkintojen tunnustaminen Päätösmaksu"
                                            :en "Finnish National Agency for Education Recognition of qualifications Decision fee"
                                            :sv "Utbildningsstyrelsen Erkännande av examina Beslutsavgift"}
-                     :otsikko             {:fi "Kuitti"
+                     :käsittely-lr        {:fi "Opetushallitus\nTutkintojen tunnustaminen\nHakemuksen käsittelymaksu"
+                                           :en "Finnish National Agency for Education\nRecognition of qualifications\nProcessing fee"
+                                           :sv "Utbildningsstyrelsen\nErkännande av examina\nBehandlingsavgift"}
+                     :päätös-lr           {:fi "Opetushallitus Tutkintojen tunnustaminen Päätösmaksu"
+                                           :en "Finnish National Agency for Education Recognition of qualifications Decision fee"
+                                           :sv "Utbildningsstyrelsen Erkännande av examina Beslutsavgift"}
+                     :otsikko             {:fi "Kuitti tutkintojen tunnustamisen maksusta"
                                            :en "Receipt"
                                            :sv "Kvitto"}
+                     :body-otsikko        {:fi "Tutkintojen tunnustaminen: kuitti"
+                                           :en "Recognition of qualifications: receipt"
+                                           :sv "Erkännande av examina: kvitto"}
                      :oph                 {:fi "Opetushallitus"
                                            :en "Finnish National Agency for Education"
                                            :sv "Utbildningsstyrelsen"}
@@ -98,12 +107,12 @@
                      :business-id         {:fi "Y-tunnus: 2769790-1"
                                            :en "Business ID: 2769790-1"
                                            :sv "FO-nummer: 2769790-1"}
-                     :payment-reference-desc {:fi "Viite"
+                     :payment-reference-desc {:fi "Maksuviite"
                                               :en "Payment reference"
                                               :sv "Betalningsreferens"}
-                     :date-of-purchase-desc {:fi "Päiväys"
-                                             :en "Date"
-                                             :sv "Datum"}
+                     :date-of-purchase-desc {:fi "Maksupäivä"
+                                             :en "Payment Date"
+                                             :sv "Betalningsdatum"}
                      :description         {:fi "Kuvaus"
                                            :en "Description"
                                            :sv "Beskrivning"}
@@ -119,6 +128,6 @@
                      :total-paid          {:fi "YHTEENSÄ MAKSETTU"
                                            :en "TOTAL PAID"
                                            :sv "TOTALT BETALDA"}
-                     :älä-vastaa-emailaa  {:fi "Älä vastaa tähän viestiin – viesti on lähetetty automaattisesti. Jos sinulla on kysyttävää, otathan meihin yhteyttä sähköpostitse osoitteessa"
-                                           :en "This is an automatically generated email, please do not reply. If you have any questions, please send us an email at"
-                                           :sv "Svara inte på detta meddelande, det har skickats automatiskt. Om du har frågor, vänligen kontakta oss per e-post:"}}})
+                     :zero-vat-explanation {:fi "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."
+                                            :en "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."
+                                            :sv "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."}}})

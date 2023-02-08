@@ -78,4 +78,5 @@
                 :payment-reference payment-reference
                 :date-of-purchase timestamp-millis
                 :total-amount total-amount
-                :items items))
+                :items items
+                :lang locale))
