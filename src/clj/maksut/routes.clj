@@ -235,9 +235,9 @@
                 :tags       ["Kuitti"]
                 :summary    "Palauttaa maksun kuitin"
                 :responses  {200 {:body s/Any}}
-                :parameters {:path {:key s/Str}}
-                :handler    (fn [{session :session {{:keys [file-key]} :path} :parameters}]
-                              (if-let [file-response (payment-protocol/get-kuitti maksut-service session {:file-key file-key})]
+                :parameters {:path {:file-key s/Str}}
+                :handler    (fn [{session :session {input :path} :parameters}]
+                              (if-let [file-response (payment-protocol/get-kuitti maksut-service session input)]
                                 (-> (response/ok file-response)
                                     (assoc "Content-Disposition"
                                            (str "attachment; filename=\"" (:filename file-response) "\"")))
