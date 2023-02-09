@@ -83,9 +83,9 @@
                      :käsittely-lr        {:fi "Opetushallitus\nTutkintojen tunnustaminen\nHakemuksen käsittelymaksu"
                                            :en "Finnish National Agency for Education\nRecognition of qualifications\nProcessing fee"
                                            :sv "Utbildningsstyrelsen\nErkännande av examina\nBehandlingsavgift"}
-                     :päätös-lr           {:fi "Opetushallitus Tutkintojen tunnustaminen Päätösmaksu"
-                                           :en "Finnish National Agency for Education Recognition of qualifications Decision fee"
-                                           :sv "Utbildningsstyrelsen Erkännande av examina Beslutsavgift"}
+                     :päätös-lr           {:fi "Opetushallitus\nTutkintojen tunnustaminen\nPäätösmaksu"
+                                           :en "Finnish National Agency for Education\nRecognition of qualifications\nDecision fee"
+                                           :sv "Utbildningsstyrelsen\nErkännande av examina\nBeslutsavgift"}
                      :otsikko             {:fi "Kuitti tutkintojen tunnustamisen maksusta"
                                            :en "Receipt"
                                            :sv "Kvitto"}
