@@ -228,13 +228,7 @@
                                    result)
                                  (return-error :payment-failed "Maksun luominen epäonnistui"))))))
 
-(defn- kuitti-get [_ session storage-engine audit-logger {:keys [file-key]}]
-  (info "Getting kuitti" file-key)
-  (audit/log audit-logger
-             (audit/->user session)
-             op-get-kuitti
-             (audit/->target {:file-key file-key})
-             (audit/->changes {:file-key file-key} {:file-key file-key}))
+(defn- kuitti-get [_ _ storage-engine {:keys [file-key]}]
   (file-store/get-file storage-engine file-key))
 
 (defrecord PaymentService [config audit-logger email-service db storage-engine]
@@ -260,7 +254,7 @@
   (process-success-callback [this params locale notify?]
     (process-success-callback this db email-service params locale storage-engine notify?))
   (get-kuitti [this session params]
-    (kuitti-get this session storage-engine audit-logger params)))
+    (kuitti-get this session storage-engine params)))
 
 (defn payment-payment [config]
   (map->PaymentService config))

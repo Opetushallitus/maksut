@@ -237,7 +237,6 @@
                 :responses  {200 {:body s/Any}}
                 :parameters {:path {:file-key s/Str}}
                 :handler    (fn [{session :session {input :path} :parameters}]
-                              (log/info "Kuitti file-key" (:file-key input))
                               (if-let [file-response (payment-protocol/get-kuitti payment-service session input)]
                                 (-> (response/ok file-response)
                                     (assoc "Content-Disposition"
