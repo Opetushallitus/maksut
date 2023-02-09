@@ -229,6 +229,7 @@
                                  (return-error :payment-failed "Maksun luominen epäonnistui"))))))
 
 (defn- get-kuitti [_ session storage-engine audit-logger {:keys [file-key]}]
+  (info "Getting kuitti" file-key)
   (audit/log audit-logger
              (audit/->user session)
              op-get-kuitti
