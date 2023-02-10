@@ -211,7 +211,7 @@
               (is (= (:action response) :created))
               (is-email-count 2)
               (is (= (count emails-to-user) 2))
-              (is (= subjects #{"Finnish National Agency for Education: Your processing fee has been received" "Finnish National Agency for Education: Receipt"}))
+              (is (= subjects #{"Finnish National Agency for Education: Your processing fee has been received" "Finnish National Agency for Education: Receipt for payment of the fee for recognition of qualifications"}))
               (reset-emails!)
               )
             )
