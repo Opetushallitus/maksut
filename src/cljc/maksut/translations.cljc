@@ -87,8 +87,8 @@
                                            :en "Finnish National Agency for Education\nRecognition of qualifications\nDecision fee"
                                            :sv "Utbildningsstyrelsen\nErkännande av examina\nBeslutsavgift"}
                      :otsikko             {:fi "Kuitti tutkintojen tunnustamisen maksusta"
-                                           :en "Receipt"
-                                           :sv "Kvitto"}
+                                           :en "Receipt for payment of the fee for recognition of qualifications"
+                                           :sv "Betalningskvitto på avgiften för erkännande av examina"}
                      :body-otsikko        {:fi "Tutkintojen tunnustaminen: kuitti"
                                            :en "Recognition of qualifications: receipt"
                                            :sv "Erkännande av examina: kvitto"}
@@ -129,5 +129,5 @@
                                            :en "TOTAL PAID"
                                            :sv "TOTALT BETALDA"}
                      :zero-vat-explanation {:fi "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."
-                                            :en "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."
-                                            :sv "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."}}})
+                                            :en "The fees for recognition of qualifications are based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (137/2022). The fees are exempted from VAT."
+                                            :sv "Avgifterna för erkännande av examina är föreskrivna i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (137/2022) och är momsfria."}}})
