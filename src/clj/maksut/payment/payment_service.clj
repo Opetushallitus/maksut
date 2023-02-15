@@ -28,6 +28,8 @@
 
 (def op-get-kuitti (audit/->operation "KuitinHakeminen"))
 
+(def vat-zero 0)
+
 (defn Lasku->AuditJson [lasku]
   (assoc
    (select-keys lasku [:order_id :first_name :last_name :email :origin :reference])
@@ -65,7 +67,7 @@
      "items"        [{"description"   (create-description language-code order-number)
                       "units"         1
                       "unitPrice"     amount-in-euro-cents
-                      "vatPercentage" 0
+                      "vatPercentage" vat-zero
                       "productCode"   order-number}]
      "customer"     {"email"     email
                      "firstName" first-name
@@ -202,12 +204,11 @@
                                      [{:description (create-receipt-description locale order-id)
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
-                                       :vat 0}]
+                                       :vat vat-zero}]
                                      storage-engine oppija-baseurl))
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]
-  ;(s/validate api-schemas/PaytrailCallbackRequest pt-params)
   (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp timestamp]} pt-params
         pt-config (get-paytrail-config this)
         oppija-baseurl (get-in this [:config :urls :oppija-baseurl])
@@ -227,7 +228,6 @@
              [_ false] (return-error :payment-invalid-status "Maksun tiedoissa on virhe")
              [true true] (if-let [result (maksut-queries/create-payment db checkout-reference checkout-stamp checkout-amount timestamp)]
                                  (do
-                                   (println "TIMESTAMP" (type timestamp))
                                    (case (:action result)
                                           :created (handle-confirmation-email email-service locale (bigdec checkout-amount) timestamp storage-engine oppija-baseurl result)
                                           nil)
