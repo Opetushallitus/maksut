@@ -171,8 +171,8 @@
   (file-store/create-file-from-bytearray storage-engine (.getBytes contents) key))
 
 (defn- handle-payment-receipt
-  [email-service email locale reference timestamp-millis total-amount items storage-engine]
-  (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp-millis total-amount items)]
+  [email-service email locale reference timestamp-millis total-amount items storage-engine oppija-baseurl]
+  (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp-millis total-amount items oppija-baseurl)]
     (future
       (try
         (save-receipt storage-engine (:body msg) reference)
@@ -186,7 +186,7 @@
 
 ;TODO add robustness here, maybe background-job with retry?
 (defn- handle-confirmation-email
-  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine {:keys [order-id email origin reference]}]
+  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference]}]
   (case origin
     "tutu" (do
              (handle-tutu-email-confirmation email-service email locale order-id
@@ -198,13 +198,14 @@
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
                                        :vat 0}]
-                                     storage-engine))
+                                     storage-engine oppija-baseurl))
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]
   ;(s/validate api-schemas/PaytrailCallbackRequest pt-params)
   (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp timestamp]} pt-params
         pt-config (get-paytrail-config this)
+        oppija-baseurl (get-in this [:config :urls :oppija-baseurl])
         signed-headers (sign-request (:merchant-secret pt-config) (stringify-keys pt-params) nil)
         return-error (fn [code msg]
                        (error (str "Payment handling error " code " " msg " " pt-params))
@@ -223,7 +224,7 @@
                                  (do
                                    (println "TIMESTAMP" (type timestamp))
                                    (case (:action result)
-                                          :created (handle-confirmation-email email-service locale (bigdec checkout-amount) timestamp storage-engine result)
+                                          :created (handle-confirmation-email email-service locale (bigdec checkout-amount) timestamp storage-engine oppija-baseurl result)
                                           nil)
                                    result)
                                  (return-error :payment-failed "Maksun luominen epäonnistui"))))))

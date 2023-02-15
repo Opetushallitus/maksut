@@ -70,7 +70,7 @@
                 "templates/tutu_payment_decision.html"))
 
 (defn create-payment-receipt
-  [recipient locale payment-reference timestamp-millis total-amount items]
+  [recipient locale payment-reference timestamp-millis total-amount items oppija-baseurl]
   (create-email recipient
                 locale
                 :kuitti
@@ -79,4 +79,5 @@
                 :date-of-purchase timestamp-millis
                 :total-amount total-amount
                 :items items
-                :lang locale))
+                :lang locale
+                :oppija-baseurl oppija-baseurl))
