@@ -2,8 +2,8 @@
   (:require [maksut.files.file-store :as file-store]
             [clojure.java.io :as io]))
 
-(defrecord FilesystemStore [config]
-  file-store/StorageEngine
+(defrecord ReceiptFilesystemStore [config]
+  file-store/ReceiptStorageEngine
 
   (create-file-from-bytearray [_ file-bytes file-key]
     (let [base-path (get-in config [:file-store :filesystem :base-path])
@@ -18,4 +18,4 @@
       (io/input-stream (io/file path)))))
 
 (defn new-store []
-  (map->FilesystemStore {}))
+  (map->ReceiptFilesystemStore {}))

@@ -6,8 +6,8 @@
 (defn- bucket-name [config]
   (get-in config [:file-store :s3 :bucket]))
 
-(defrecord S3Store [s3-client config]
-  file-store/StorageEngine
+(defrecord ReceiptS3Store [s3-client config]
+  file-store/ReceiptStorageEngine
 
   (create-file-from-bytearray [_ file-bytes file-key]
     (with-open [inputstream (ByteArrayInputStream. file-bytes)]
@@ -20,4 +20,4 @@
         (.getObjectContent))))
 
 (defn new-store []
-  (map->S3Store {}))
+  (map->ReceiptS3Store {}))
