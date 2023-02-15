@@ -9,9 +9,9 @@
    :email-käsittely {:otsikko                        {:fi "Käsittelymaksusi on vastaanotettu"
                                                       :en "Your processing fee has been received"
                                                       :sv "Din behandlingsavgift har emottagits"}
-                     :käsittely-selitys              {:fi "Olet maksanut käsittelymaksun. Voit käydä tarkastelemassa maksusi tietoja aiemmin sähköpostitse saamasi linkin kautta. Linkki toimii 14 vuorokauden ajan siitä, kun lähetimme maksupyynnön. Sen jälkeen linkki sulkeutuu tietosuojasyistä."
-                                                      :en "You have paid the processing fee. You can view the details of your payment through the link you have received in your email. The link will work for 14 days from the date when we sent the payment request to you. After that the link will be closed for data protection reasons."
-                                                      :sv "Du har betalat behandlingsavgiften. Du kan kontrollera uppgifterna om den betalda avgiften via länken som du har fått tidigare med e-post. Länken fungerar i 14 dygn efter att vi har skickat dig begäran om behandlingsavgiften. Därefter stängs länken på grund av datasäkerhetsskäl."}
+                     :käsittely-selitys              {:fi "Olet maksanut käsittelymaksun. Olet saanut kuitin maksustasi erillisellä sähköpostilla. Voit käydä tarkastelemassa maksusi tietoja aiemmin sähköpostitse saamasi linkin kautta. Linkki toimii 14 vuorokauden ajan siitä, kun lähetimme maksupyynnön. Sen jälkeen linkki sulkeutuu tietosuojasyistä."
+                                                      :en "You have paid the processing fee. You have received a receipt for your payment in a separate email. You can view the details of your payment through the link you have received in your email. The link will work for 14 days from the date when we sent the payment request to you. After that the link will be closed for data protection reasons."
+                                                      :sv "Du har betalat behandlingsavgiften. Kvittot på betalningen har du fått som ett separat epost. Du kan kontrollera uppgifterna om den betalda avgiften via länken som du har fått tidigare med e-post. Länken fungerar i 14 dygn efter att vi har skickat dig begäran om behandlingsavgiften. Därefter stängs länken på grund av datasäkerhetsskäl."}
                      :käsittely-väliotsikko-1-1      {:fi "1.  Jos hait päätöstä "
                                                       :en "1.  If you have applied for "
                                                       :sv "1.  Om du har ansökt om "}
@@ -58,9 +58,9 @@
    :email-päätös    {:otsikko             {:fi "Päätösmaksusi on vastaanotettu"
                                            :en "Your decision fee has been received"
                                            :sv "Din beslutsavgift har emottagits"}
-                     :päätös-selitys      {:fi "Olet maksanut päätösmaksun. Lähetämme päätöksen sinulle mahdollisimman pian. Jos et ole saanut päätöstä kolmen työpäivän sisällä, ota meihin yhteyttä sähköpostitse osoitteessa recognition@oph.fi."
-                                           :en "You have paid the decision fee. We will send the decision to you as soon as possible. If you have not received the decision in three working days, please contact us by email at recognition@oph.fi."
-                                           :sv "Du har betalat beslutsavgiften. Vi skickar beslutet till dig så snart som möjligt. Om du inte har fått beslutet inom tre arbetsdagar, vänligen kontakta oss per e-post: recognition@oph.fi."}
+                     :päätös-selitys      {:fi "Olet maksanut päätösmaksun. Olet saanut kuitin maksustasi erillisellä sähköpostilla. Lähetämme päätöksen sinulle mahdollisimman pian. Jos et ole saanut päätöstä kolmen työpäivän sisällä, ota meihin yhteyttä sähköpostitse osoitteessa recognition@oph.fi."
+                                           :en "You have paid the decision fee. You have received a receipt for your payment in a separate email. We will send the decision to you as soon as possible. If you have not received the decision in three working days, please contact us by email at recognition@oph.fi."
+                                           :sv "Du har betalat beslutsavgiften. Kvittot på betalningen har du fått som ett separat epost. Vi skickar beslutet till dig så snart som möjligt. Om du inte har fått beslutet inom tre arbetsdagar, vänligen kontakta oss per e-post: recognition@oph.fi."}
                      :tarkastelu-teksti   {:fi "Voit käydä tarkastelemassa maksusi tietoja aiemmin sähköpostitse saamasi linkin kautta. Linkki toimii 14 vuorokauden ajan siitä, kun lähetimme maksupyynnön. Sen jälkeen linkki sulkeutuu tietosuojasyistä."
                                            :en "You can view the details of your payment through the link you have received in your email. The link will work for 14 days from the date when we sent the payment request to you. After that the link will be closed for data protection reasons."
                                            :sv "Du kan kontrollera uppgifterna om den betalda avgiften via länken som du har fått tidigare med e-post. Länken fungerar i 14 dygn efter att vi har skickat dig begäran om beslutsavgiften. Därefter stängs länken på grund av datasäkerhetsskäl."}
@@ -111,7 +111,7 @@
                                               :en "Payment reference"
                                               :sv "Betalningsreferens"}
                      :date-of-purchase-desc {:fi "Maksupäivä"
-                                             :en "Payment Date"
+                                             :en "Payment date"
                                              :sv "Betalningsdatum"}
                      :description         {:fi "Kuvaus"
                                            :en "Description"
@@ -127,7 +127,7 @@
                                            :sv "Jämförpris"}
                      :total-paid          {:fi "YHTEENSÄ MAKSETTU"
                                            :en "TOTAL PAID"
-                                           :sv "TOTALT BETALDA"}
+                                           :sv "TOTALT BETALT"}
                      :zero-vat-explanation {:fi "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."
                                             :en "The fees for recognition of qualifications are based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (137/2022). The fees are exempted from VAT."
                                             :sv "Avgifterna för erkännande av examina är föreskrivna i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (137/2022) och är momsfria."}}})
