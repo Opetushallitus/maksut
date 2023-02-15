@@ -34,15 +34,20 @@
    :amount (str (:amount lasku))
    :due_date (str (:due_date lasku))))
 
-(defn- create-description [language-code order-id]
+(defn- order-state [order-id]
   (cond
-    (str/ends-with? order-id "-1") (get-translation (keyword language-code) :kuitti/käsittely)
-    (str/ends-with? order-id "-2") (get-translation (keyword language-code) :kuitti/päätös)))
+    (str/ends-with? order-id "-1") :käsittely
+    (str/ends-with? order-id "-2") :päätös))
+
+(defn- create-description [language-code order-id]
+  (case (order-state order-id)
+    :käsittely (get-translation (keyword language-code) :kuitti/käsittely)
+    :päätös (get-translation (keyword language-code) :kuitti/päätös)))
 
 (defn- create-receipt-description [language-code order-id]
-  (cond
-    (str/ends-with? order-id "-1") (get-translation (keyword language-code) :kuitti/käsittely-lr)
-    (str/ends-with? order-id "-2") (get-translation (keyword language-code) :kuitti/päätös-lr)))
+  (case (order-state order-id)
+    :käsittely (get-translation (keyword language-code) :kuitti/käsittely-lr)
+    :päätös (get-translation (keyword language-code) :kuitti/päätös-lr)))
 
 (defn- generate-json-data [{:keys [callback-uri]}
                            {:keys [language-code amount order-number secret first-name last-name email]}]
@@ -161,9 +166,9 @@
 
 (defn- handle-tutu-email-confirmation
   [email-service email locale order-id reference]
-  (when-let [msg (cond
-                   (str/ends-with? order-id "-1") (email-message-handling/create-tutu-processing-email email locale reference)
-                   (str/ends-with? order-id "-2") (email-message-handling/create-tutu-decision-email email locale))]
+  (when-let [msg (case (order-state order-id)
+                   :käsittely (email-message-handling/create-tutu-processing-email email locale reference)
+                   :päätös (email-message-handling/create-tutu-decision-email email locale))]
     (handle-send-email msg email-service email)))
 
 (defn- save-receipt
