@@ -6,6 +6,7 @@
             [clj-time.format :as format]
             [clj-time.coerce :refer [to-sql-date]]
             [clojure.java.jdbc :as jdbc]
+            [clojure.string :as s]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
             [maksut.test-fixtures :as test-fixtures :refer [test-system
                                                             get-emails
@@ -84,14 +85,17 @@
     (testing "Payment success callback"
         (let [response (payment-protocol/process-success-callback service params locale false)
               emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
-              subjects (set (map :subject emails-to-user))]
+              subjects (set (map :subject emails-to-user))
+              receipt (first
+                        (filter #(s/includes? (:subject %) "Kuitti")
+                                emails-to-user))]
           (is (= (:action response) :created))
           (is-email-count 2)
           (is (= (count emails-to-user) 2))
           (is (= subjects #{"Opetushallitus: Käsittelymaksusi on vastaanotettu" "Opetushallitus: Kuitti tutkintojen tunnustamisen maksusta"}))
-          (reset-emails!)
-          )
-        )
+          (is (true? (s/includes? (:body receipt)
+                                  "https://testiopintopolku.fi/maksut/images/OPH-logo.png")))
+          (reset-emails!)))
 
     (testing "Try to pay invoice after it has been paid"
              (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session

@@ -211,7 +211,7 @@
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]
   (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp timestamp]} pt-params
         pt-config (get-paytrail-config this)
-        oppija-baseurl (get-in this [:config :urls :oppija-baseurl])
+        oppija-baseurl (get-in this [:config :oppija-baseurl])
         signed-headers (sign-request (:merchant-secret pt-config) (stringify-keys pt-params) nil)
         return-error (fn [code msg]
                        (error (str "Payment handling error " code " " msg " " pt-params))
@@ -248,7 +248,7 @@
     (s/validate s/Int (get-in config [:payment :paytrail-config :merchant-id]))
     (s/validate s/Str (get-in config [:payment :paytrail-config :merchant-secret]))
 
-    (assoc this :config (:payment config)))
+    (assoc this :config (merge (:payment config) (:urls config))))
   (stop [this]
     (assoc this
            :config nil
