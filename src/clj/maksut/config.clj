@@ -33,7 +33,8 @@
                                      :email                 {:service-url-property s/Keyword
                                                              :session-cookie-name  s/Str}}}
    :urls                 {:virkailija-baseurl        s/Str
-                          :maksut-url s/Str}
+                          :maksut-url s/Str
+                          :oppija-baseurl s/Str}
    :oph-organisaatio-oid s/Str
    :public-config        public/PublicConfig})
 
