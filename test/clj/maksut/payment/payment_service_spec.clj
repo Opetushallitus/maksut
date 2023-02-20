@@ -6,6 +6,7 @@
             [clj-time.format :as format]
             [clj-time.coerce :refer [to-sql-date]]
             [clojure.java.jdbc :as jdbc]
+            [clojure.string :as s]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
             [maksut.test-fixtures :as test-fixtures :refer [test-system
                                                             get-emails
@@ -82,16 +83,19 @@
                                :secret secret})
 
     (testing "Payment success callback"
-        (let [response  (payment-protocol/process-success-callback service params locale false)
+        (let [response (payment-protocol/process-success-callback service params locale false)
               emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
-              first-subject (-> emails-to-user first :subject)]
+              subjects (set (map :subject emails-to-user))
+              receipt (first
+                        (filter #(s/includes? (:subject %) "Kuitti")
+                                emails-to-user))]
           (is (= (:action response) :created))
-          (is-email-count 1)
-          (is (= (count emails-to-user) 1))
-          (is (.contains first-subject "Käsittelymaksusi on vastaanotettu"))
-          (reset-emails!)
-          )
-        )
+          (is-email-count 2)
+          (is (= (count emails-to-user) 2))
+          (is (= subjects #{"Opetushallitus: Käsittelymaksusi on vastaanotettu" "Opetushallitus: Kuitti tutkintojen tunnustamisen maksusta"}))
+          (is (true? (s/includes? (:body receipt)
+                                  "https://testiopintopolku.fi/maksut/images/OPH-logo.png")))
+          (reset-emails!)))
 
     (testing "Try to pay invoice after it has been paid"
              (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
@@ -144,13 +148,13 @@
     (testing "2nd payment success callback"
              (test-fixtures/add-invoice! db (db-invoice-2 due-date))
 
-             (let [response       (payment-protocol/process-success-callback service params-2 locale false)
+             (let [response (payment-protocol/process-success-callback service params-2 locale false)
                    emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
-                   first-subject  (-> emails-to-user first :subject)]
+                   subjects (set (map :subject emails-to-user))]
                (is (= (:action response) :created))
-               (is-email-count 1)
-               (is (= (count emails-to-user) 1))
-               (is (.contains first-subject "Päätösmaksusi on vastaanotettu"))
+               (is-email-count 2)
+               (is (= (count emails-to-user) 2))
+               (is (= subjects #{"Opetushallitus: Päätösmaksusi on vastaanotettu" "Opetushallitus: Kuitti tutkintojen tunnustamisen maksusta"}))
                (reset-emails!))
              )
 
@@ -205,13 +209,13 @@
     (testing "Confirmation email is in English"
             (test-fixtures/add-invoice! db db-data)
 
-            (let [response  (payment-protocol/process-success-callback service params locale false)
+            (let [response (payment-protocol/process-success-callback service params locale false)
                   emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
-                  first-subject (-> emails-to-user first :subject)]
+                  subjects (set (map :subject emails-to-user))]
               (is (= (:action response) :created))
-              (is-email-count 1)
-              (is (= (count emails-to-user) 1))
-              (is (.contains first-subject "Your processing fee has been received"))
+              (is-email-count 2)
+              (is (= (count emails-to-user) 2))
+              (is (= subjects #{"Finnish National Agency for Education: Your processing fee has been received" "Finnish National Agency for Education: Receipt for payment of the fee for recognition of qualifications"}))
               (reset-emails!)
               )
             )

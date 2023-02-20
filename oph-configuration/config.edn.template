@@ -13,6 +13,12 @@
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
+ :file-store           {:engine {{maksut_file_engine}}
+                        :filesystem {:base-path "{{maksut_filesystem_base_path}}"}
+                        :s3 {:bucket "{{maksut_s3_bucket}}"
+                             :region "{{maksut_s3_region}}"}
+                        :attachment-mime-types ["text/plain"
+                                                "text/html"]}
  :cas                  {:username "{{ maksut_cas_username | default('maksut') }}"
                         :password "{{ maksut_cas_password }}"
                         :services {:kayttooikeus    {:service-url-property :cas.service.kayttooikeus-service
@@ -20,7 +26,8 @@
                                    :email           {:service-url-property :cas.service.ryhmasahkoposti-service
                                                                            :session-cookie-name  "JSESSIONID"}}}
  :urls                 {:virkailija-baseurl "{{ maksut_virkailija_base_url }}"
-                        :maksut-url         "{{ maksut_url }}"}
+                        :maksut-url         "{{ maksut_url }}"
+                        :oppija-baseurl     "{{ maksut_oppija_base_url }}"}
  :oph-organisaatio-oid "1.2.246.562.10.00000000001"
  :public-config        {:environment   {{ maksut_environment | default(':development') }}
                         :default-panel :panel/tutu-maksut

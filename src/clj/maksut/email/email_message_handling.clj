@@ -1,8 +1,25 @@
-(ns maksut.email.tutu-payment-confirmation
+(ns maksut.email.email-message-handling
   (:require [maksut.util.translation :refer [get-translation get-translation-ns]]
-            [selmer.parser :as selmer]))
+            [selmer.parser :as selmer]
+            [selmer.filters :as filters]
+            [clj-time.format :as f]
+            [clj-time.coerce :as c]
+            [clj-time.core :as t]))
 
 (def from-address "no-reply@opintopolku.fi")
+
+(def finnish-datetime-formatter (f/with-zone (f/formatter "d.M.YYYY HH:mm")
+                                             (t/time-zone-for-id "Europe/Helsinki")))
+
+(defn format-datetime-to-finnish-format [datetime]
+  (f/unparse finnish-datetime-formatter datetime))
+
+(defn finnish-datetime-from-long [timestamp-long]
+  (format-datetime-to-finnish-format (c/from-long timestamp-long)))
+
+(filters/add-filter! :datetime-format-with-dots-from-long
+                     (fn [timestamp-long]
+                       (finnish-datetime-from-long timestamp-long)))
 
 (defn- make-email
   [email-data render-file-fn]
@@ -39,16 +56,28 @@
        render-file-fn)))
 
 
-(defn create-processing-email [recipient locale application-id]
+(defn create-tutu-processing-email [recipient locale application-id]
   (create-email recipient
                 locale
                 :email-käsittely
                 "templates/tutu_payment_processing.html"
                 :application-id application-id))
 
-(defn create-decision-email [recipient locale]
+(defn create-tutu-decision-email [recipient locale]
   (create-email recipient
                 locale
                 :email-päätös
                 "templates/tutu_payment_decision.html"))
 
+(defn create-payment-receipt
+  [recipient locale payment-reference timestamp-millis total-amount items oppija-baseurl]
+  (create-email recipient
+                locale
+                :kuitti
+                "templates/payment_receipt.html"
+                :payment-reference payment-reference
+                :date-of-purchase timestamp-millis
+                :total-amount total-amount
+                :items items
+                :lang locale
+                :oppija-baseurl oppija-baseurl))

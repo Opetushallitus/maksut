@@ -4,15 +4,16 @@
             [clojure.walk :refer [stringify-keys]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.payment.payment-service-protocol :as payment-service-protocol]
-            [maksut.email.tutu-payment-confirmation :as email-confirmation]
+            [maksut.email.email-message-handling :as email-message-handling]
             [maksut.email.email-service-protocol :as email-protocol]
+            [maksut.files.file-store :as file-store]
             [maksut.config :as c]
             [maksut.audit-logger-protocol :as audit]
             [maksut.schemas.class-pred :as p]
             [maksut.util.url-encoder :refer [encode]]
             [maksut.util.translation :refer [get-translation]]
             [com.stuartsierra.component :as component]
-            [taoensso.timbre :refer [error info]]
+            [taoensso.timbre :refer [error info warn]]
             [clojure.string :as str]
             [schema.core :as s]
             [buddy.core.codecs :as codecs]
@@ -25,16 +26,30 @@
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
 
+(def op-get-kuitti (audit/->operation "KuitinHakeminen"))
+
+(def vat-zero 0)
+
 (defn Lasku->AuditJson [lasku]
   (assoc
    (select-keys lasku [:order_id :first_name :last_name :email :origin :reference])
    :amount (str (:amount lasku))
    :due_date (str (:due_date lasku))))
 
-(defn- create-description [language-code order-id]
+(defn- order-state [order-id]
   (cond
-    (str/ends-with? order-id "-1") (get-translation (keyword language-code) :kuitti/käsittely)
-    (str/ends-with? order-id "-2") (get-translation (keyword language-code) :kuitti/päätös)))
+    (str/ends-with? order-id "-1") :käsittely
+    (str/ends-with? order-id "-2") :päätös))
+
+(defn- create-description [language-code order-id]
+  (case (order-state order-id)
+    :käsittely (get-translation (keyword language-code) :kuitti/käsittely)
+    :päätös (get-translation (keyword language-code) :kuitti/päätös)))
+
+(defn- create-receipt-description [language-code order-id]
+  (case (order-state order-id)
+    :käsittely (get-translation (keyword language-code) :kuitti/käsittely-lr)
+    :päätös (get-translation (keyword language-code) :kuitti/päätös-lr)))
 
 (defn- generate-json-data [{:keys [callback-uri]}
                            {:keys [language-code amount order-number secret first-name last-name email]}]
@@ -52,7 +67,7 @@
      "items"        [{"description"   (create-description language-code order-number)
                       "units"         1
                       "unitPrice"     amount-in-euro-cents
-                      "vatPercentage" 0
+                      "vatPercentage" vat-zero
                       "productCode"   order-number}]
      "customer"     {"email"     email
                      "firstName" first-name
@@ -146,25 +161,57 @@
 
       (-> response :body))))
 
+(defn- handle-send-email [msg email-service email]
+  (let [{:keys [subject from body]} msg]
+    (info "Sending email to " subject " to " email)
+    (email-protocol/send-email email-service from [email] subject body)))
 
-(defn- handle-tutu-confirmation-email [email-service email locale order-id reference]
-  (when-let [msg (cond
-                   (str/ends-with? order-id "-1") (email-confirmation/create-processing-email email locale reference)
-                   (str/ends-with? order-id "-2") (email-confirmation/create-decision-email email locale))]
-    (let [{:keys [subject from body]} msg]
-      (info "Sending email to " subject " to " email)
-      (email-protocol/send-email email-service from [email] subject body))))
+(defn- handle-tutu-email-confirmation
+  [email-service email locale order-id reference]
+  (when-let [msg (case (order-state order-id)
+                   :käsittely (email-message-handling/create-tutu-processing-email email locale reference)
+                   :päätös (email-message-handling/create-tutu-decision-email email locale))]
+    (handle-send-email msg email-service email)))
+
+(defn- save-receipt
+  [storage-engine contents key]
+  (file-store/create-file-from-bytearray storage-engine (.getBytes contents) key))
+
+(defn- handle-payment-receipt
+  [email-service email locale reference timestamp-millis total-amount items storage-engine oppija-baseurl]
+  (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp-millis total-amount items oppija-baseurl)]
+    (future
+      (try
+        (save-receipt storage-engine (:body msg) reference)
+        (catch Exception e
+          (warn "Could not save receipt to S3 - retrying:" reference e)
+          (try
+            (save-receipt storage-engine (:body msg) reference)
+            (catch Exception ex
+              (error "Could not save receipt to S3:" reference ex))))))
+    (handle-send-email msg email-service email)))
 
 ;TODO add robustness here, maybe background-job with retry?
-(defn- handle-confirmation-email [email-service locale {:keys [order-id email origin reference]}]
+(defn- handle-confirmation-email
+  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference]}]
   (case origin
-    "tutu" (handle-tutu-confirmation-email email-service email locale order-id reference)
+    "tutu" (do
+             (handle-tutu-email-confirmation email-service email locale order-id
+                                             reference)
+             (handle-payment-receipt email-service email locale
+                                     order-id (* 1000 timestamp)
+                                     (/ checkout-amount-in-euro-cents 100)
+                                     [{:description (create-receipt-description locale order-id)
+                                       :units 1
+                                       :unit-price (/ checkout-amount-in-euro-cents 100)
+                                       :vat vat-zero}]
+                                     storage-engine oppija-baseurl))
     nil))
 
-(defn- process-success-callback [this db email-service pt-params locale _]
-  ;(s/validate api-schemas/PaytrailCallbackRequest pt-params)
+(defn- process-success-callback [this db email-service pt-params locale storage-engine _]
   (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp timestamp]} pt-params
         pt-config (get-paytrail-config this)
+        oppija-baseurl (get-in this [:config :oppija-baseurl])
         signed-headers (sign-request (:merchant-secret pt-config) (stringify-keys pt-params) nil)
         return-error (fn [code msg]
                        (error (str "Payment handling error " code " " msg " " pt-params))
@@ -182,12 +229,15 @@
              [true true] (if-let [result (maksut-queries/create-payment db checkout-reference checkout-stamp checkout-amount timestamp)]
                                  (do
                                    (case (:action result)
-                                          :created (handle-confirmation-email email-service locale result)
+                                          :created (handle-confirmation-email email-service locale (bigdec checkout-amount) timestamp storage-engine oppija-baseurl result)
                                           nil)
                                    result)
                                  (return-error :payment-failed "Maksun luominen epäonnistui"))))))
 
-(defrecord PaymentService [config audit-logger email-service db]
+(defn- kuitti-get [_ _ storage-engine {:keys [file-key]}]
+  (file-store/get-file storage-engine file-key))
+
+(defrecord PaymentService [config audit-logger email-service db storage-engine]
   component/Lifecycle
   (start [this]
     (s/validate c/MaksutConfig config)
@@ -198,7 +248,7 @@
     (s/validate s/Int (get-in config [:payment :paytrail-config :merchant-id]))
     (s/validate s/Str (get-in config [:payment :paytrail-config :merchant-secret]))
 
-    (assoc this :config (:payment config)))
+    (assoc this :config (merge (:payment config) (:urls config))))
   (stop [this]
     (assoc this
            :config nil
@@ -208,7 +258,9 @@
   (tutu-payment [this session params]
     (tutu-payment this db audit-logger session params))
   (process-success-callback [this params locale notify?]
-    (process-success-callback this db email-service params locale notify?)))
+    (process-success-callback this db email-service params locale storage-engine notify?))
+  (get-kuitti [this session params]
+    (kuitti-get this session storage-engine params)))
 
 (defn payment-payment [config]
   (map->PaymentService config))
