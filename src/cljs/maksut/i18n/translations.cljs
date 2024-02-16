@@ -131,6 +131,9 @@
                        :kasittely-maksamatta-3 {:fi "Jos olet täyttänyt lopullisen päätöksen hakulomakkeen, sinulta ei peritä erillistä päätösmaksua."
                                                 :en "If you have filled out the application for a final decision, a separate decision fee will not be charged."
                                                 :sv "Om du har fyllt i ansökan om ett slutligt beslut, tas en separat beslutsavgift inte ut."}
+                       :kasittely-maksamatta-4 {:fi "Emme palauta käsittelymaksua, vaikka peruuttaisit hakemuksesi."
+                                                :en "We will not return the processing fee to you even if you cancel your application."
+                                                :sv "Vi returnerar inte den betalda behandlingsavgiften även om du skulle dra tillbaka din ansökan."}
                        :kasittely-maksettu-1   {:fi "Olet maksanut käsittelymaksun. Olet saanut sähköpostiisi vahvistuksen maksusta. Olet saanut myös kuitin maksustasi erillisellä sähköpostilla. Hakemuksesi siirtyy seuraavaksi käsittelyyn."
                                                 :en "You have paid the processing fee. A confirmation of the transaction has been sent to your email. You have also received a receipt for your payment in a separate email. Your application will now be taken into processing."
                                                 :sv "Du har betalat behandlingsavgiften. Du har fått en bekräftelse om betalningen till din e-post. Kvittot på betalningen har du fått som ett separat epost. Din ansökan tas nu till behandling."}

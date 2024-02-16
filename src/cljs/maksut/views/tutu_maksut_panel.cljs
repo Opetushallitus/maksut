@@ -241,7 +241,9 @@
                                               [:br] [:br]
                                               @(subscribe [:translation :tutu-panel-ohje/kasittely-maksamatta-2])
                                               [:br] [:br]
-                                              @(subscribe [:translation :tutu-panel-ohje/kasittely-maksamatta-3])]
+                                              @(subscribe [:translation :tutu-panel-ohje/kasittely-maksamatta-3])
+                                              [:br] [:br]
+                                              @(subscribe [:translation :tutu-panel-ohje/kasittely-maksamatta-4])]
                        :kasittely-maksettu [:<>
                                             @(subscribe [:translation :tutu-panel-ohje/kasittely-maksettu-1])
                                             [:br] [:br]
