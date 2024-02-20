@@ -55,19 +55,19 @@
     ;returns created/changed fields from view (including generated fields)
     (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
 
-(defn- throw-specific-old-secret-error [prefix laskut]
+(defn- throw-specific-old-secret-error [prefix laskut secret]
   (let [order-id-matcher #(first (filter (fn [x] (and
                                                     (str/starts-with? (:order_id x) prefix)
                                                     (str/ends-with? (:order_id x) %))) laskut))
         processing (order-id-matcher "-1")
         decision (order-id-matcher "-2")
-        output #(maksut-error % "Linkki on vanhentunut")]
+        output #(maksut-error % (str "Linkki on vanhentunut: " secret))]
     (match [(:status processing) (:status decision)]
            ["paid"    nil] (output :invoice-processing-oldsecret)
            ["overdue" nil] (output :invoice-processing-overdue)
            [_ "paid"]      (output :invoice-decision-oldsecret)
            [_ "overdue"]   (output :invoice-decision-overdue)
-           :else (maksut-error :invoice-notfound-oldsecret "Linkki on vanhentunut"))))
+           :else (maksut-error :invoice-notfound-oldsecret (str "Linkki on vanhentunut: " secret)))))
 
 (defrecord MaksutService [audit-logger config db]
   component/Lifecycle
@@ -131,9 +131,9 @@
         ;do not let user to the page if all due_dates for all (linked) invoices has passed
         (log/info "laskut " laskut)
         (if all-passed?
-          (throw-specific-old-secret-error (get-in this [:config :order-id-prefix]) laskut)
+          (throw-specific-old-secret-error (get-in this [:config :order-id-prefix]) laskut secret)
           (map Lasku->json laskut)))
       (do (log/error (str "Linkki on väärä tai vanhentunut: " secret))
-          (maksut-error :invoice-notfound-secret "Linkki on väärä tai vanhentunut")))))
+          (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret))))))
 
 
