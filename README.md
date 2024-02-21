@@ -97,7 +97,24 @@ Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](
    Include /polku/local-environment-repositoryysi/docker/ssh/config
    ```
    * Mikäli et halua määrittää kyseistä `Include` -direktiiviä, voit tarjota kyseiset porttiohjauskonfiguraatiot SSH-clientillesi jotenkin toisin.
-   
+
+
+### Maksuputken testaaminen testiympäristössä
+
+Maksuputkea voi testata seuraavasti QA:lla
+
+* Täytä TuTun lomake: https://testiopintopolku.fi/hakemus/74825f61-e561-447e-bef4-1bb5be4ea44a
+    * Jos lomake on vaihtunut niin lomakkeen tunnisteen löytää myös atarun QA:n konfiguraatioista
+* Ohjautuu ekaan maksuun, valitse Osuuspankki maksutavaksi
+* Maksun jälkeen fakemaileriin (https://fakemailer.testiopintopolku.fi/) ilmestyy hakemuksen muokkauslinkki ja erillinen maili jossa kuitti
+* Tämän jälkeen mene hakemusten käsittelyyn ja vaihda organisaatioksi Tutkintojen tunnustaminen
+* Avaa lomakkeen hakemukset (HAKEMUS / Tutkintojen tunnustaminen)
+* Avaa listauksesta edellä täytetty hakemus
+    * käsittelyvaiheena pitäisi olla Käsittely maksettu
+* Vaihda käsittelytilaksi "Päätösmaksu avoin", syötä maksun määrä ja viesti ja lähetä maksupyyntö
+* Avaa fakemailerista hakijalle lähetetty sähköposti ja klikkaa sieltä maksulinkkiä
+* Klikkaile maksuputken läpi
+    * Hakemusten käsittelyssä pitäisi nyt näkyä molemmat maksukuitit
 
 ### Käyttö
 
@@ -105,9 +122,9 @@ Tämä on suositeltu tapa ajaa palvelua paikallisesti. Tässä ohjeessa oletetaa
 
 Käynnistetty palvelu on käytettävissä osoitteessa (http://localhost:9099/maksut).
 
-Kun ajat palvelua, käynnistä aina ensin SSH-yhteys käyttämääsi ympäristöön. Oletuksena se on `untuva`:
-
 Maksua voi testata paytrailissa valitsemalla Osuuspankin maksutavaksi.
+
+Kun ajat palvelua, käynnistä aina ensin SSH-yhteys käyttämääsi ympäristöön. Oletuksena se on `untuva`:
 
 ```
 ssh bastion.untuva
