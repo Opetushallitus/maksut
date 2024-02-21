@@ -90,7 +90,7 @@
            "checkout-nonce"     (str (UUID/randomUUID))
            "checkout-timestamp" (.format (ZonedDateTime/now)
                                          (-> (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss.SSS'Z'")
-                                             (.withZone (ZoneOffset/UTC))))}
+                                             (.withZone ZoneOffset/UTC)))}
           (some? transaction-id)
           (assoc "checkout-transaction-id" transaction-id)))
 
