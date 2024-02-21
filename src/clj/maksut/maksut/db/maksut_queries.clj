@@ -76,7 +76,9 @@
            response    {:order-id  (:order_id lasku)
                         :email     (:email lasku)
                         :origin    (:origin lasku)
-                        :reference (:reference lasku)}]
+                        :reference (:reference lasku)
+                        :first-name (:first_name lasku)
+                        :last-name (:last_name lasku)}]
        (if (some? old-payment)
          (do
            (log/warn "Old payment with same payment-id found, duplicate notification " old-payment)

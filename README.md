@@ -107,6 +107,8 @@ Käynnistetty palvelu on käytettävissä osoitteessa (http://localhost:9099/mak
 
 Kun ajat palvelua, käynnistä aina ensin SSH-yhteys käyttämääsi ympäristöön. Oletuksena se on `untuva`:
 
+Maksua voi testata paytrailissa valitsemalla Osuuspankin maksutavaksi.
+
 ```
 ssh bastion.untuva
 ```
