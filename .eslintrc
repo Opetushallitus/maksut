@@ -2,8 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "airbnb-base",
-    "plugin:prettier/recommended",
-    "plugin:cypress/recommended"
+    "plugin:prettier/recommended"
   ],
   "plugins": ["prettier"],
   "env": {
