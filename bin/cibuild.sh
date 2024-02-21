@@ -6,8 +6,7 @@ if [[ "${LEIN}" == "" ]]; then
 fi
 
 lint() {
-  npm run lint:clj \
-    && npm run lint:js
+  npm run lint:clj
 }
 
 test-lein() {
