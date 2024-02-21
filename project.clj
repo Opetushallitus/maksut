@@ -1,7 +1,7 @@
 (defproject maksut "0.1.0-SNAPSHOT"
   ;TODO Tässä on todennäköisesti paljon kopioitua depsejä mitä ei tarvita, käy läpi myöhemmin mitkä voi jättää pois
   :dependencies [[org.clojure/clojure "1.11.1"]
-                 [org.clojure/clojurescript "1.10.773"
+                 [org.clojure/clojurescript "1.11.132"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
@@ -45,10 +45,11 @@
                  [ring/ring-json "0.5.1"]
                  [ring/ring-session-timeout "0.3.0"]
                  [selmer "1.12.59"]
-                 [stylefy "2.2.1"
+                 [stylefy "3.2.0"
                   :exclusions [[org.clojure/core.async]]]
+                 [stylefy/reagent "3.0.0"]
                  [prismatic/schema "1.4.1"]
-                 [thheller/shadow-cljs "2.11.23"]
+                 [thheller/shadow-cljs "2.27.4"]
                  [yogthos/config "1.2.0"]
                  [environ "1.2.0"]]
 
