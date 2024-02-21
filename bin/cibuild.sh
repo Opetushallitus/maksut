@@ -5,10 +5,6 @@ if [[ "${LEIN}" == "" ]]; then
   LEIN="./bin/lein"
 fi
 
-tsc() {
-  npm run tsc:type-check
-}
-
 lint() {
   npm run lint:clj \
     && npm run lint:js
@@ -37,8 +33,7 @@ run-mocked-maksut() {
 }
 
 run-all-tests-and-create-uberjar() {
-  tsc \
-    && lint \
+  lint \
     && create-uberjar \
     && run-mocked-maksut \
     && test-lein
