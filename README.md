@@ -175,7 +175,7 @@ Swagger JSON löytyy polusta `/maksut/swagger.json`
 npm run lint:clj
 ```
 
-### Integraatiotestit
+### Backend-testit
 
 Käynnistä ensin bäkkäri komennolla
 
