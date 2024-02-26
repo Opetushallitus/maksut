@@ -5,8 +5,7 @@
             [stylefy.core :as stylefy]))
 
 (s/defschema ButtonProps
-  {:cypressid                  s/Str
-   (s/optional-key :disabled?) s/Bool
+  {(s/optional-key :disabled?) s/Bool
    (s/optional-key :custom-style) s/Any
    :label                      s/Any
    :on-click                   s/Any
@@ -56,38 +55,33 @@
                      [:disabled {:cursor "default"
                                  :color colors/blue-lighten-3}]]})
 
-(defn- create-button [{:keys [cypressid disabled? label on-click style]}]
+(defn- create-button [{:keys [disabled? label on-click style]}]
   [:button (stylefy/use-style
              style
-             {:cypressid cypressid
-              :disabled  disabled?
+             {:disabled  disabled?
               :on-click  (fn []
                            (on-click))})
    label])
 
 (s/defn button :- s/Any
-  [{:keys [cypressid
-           disabled?
+  [{:keys [disabled?
            label
            on-click
            style-prefix
            custom-style]} :- ButtonProps]
   (let [button-styles (make-button-styles style-prefix custom-style)]
-    (create-button {:cypressid cypressid
-                    :disabled? disabled?
+    (create-button {:disabled? disabled?
                     :label     label
                     :on-click  on-click
                     :style     button-styles})))
 
 (s/defn text-button
-  [{:keys [cypressid
-           disabled?
+  [{:keys [disabled?
            label
            on-click
            style-prefix]} :- ButtonProps]
   (let [button-styles (make-text-button-styles style-prefix)]
-    (create-button {:cypressid cypressid
-                    :disabled? disabled?
+    (create-button {:disabled? disabled?
                     :label     label
                     :on-click  on-click
                     :style     button-styles})))

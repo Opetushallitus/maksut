@@ -276,12 +276,10 @@
     [:<>
      (when show-process [process-map state kasittely-status paatos-status])
       [:div (use-style {:margin-top "10px"})]
-      [h/heading {:cypressid (str "laskut-state-header")
-                  :level     :text}
+      [h/heading {:level :text}
          state-text]
       (when (or (= state :kasittely-maksettu) (= state :paatos-maksettu))
-            [h/heading {:cypressid (str "laskut-state-sharedcomp-tip")
-                        :level     :text}
+            [h/heading {:level :text}
              @(subscribe [:translation :tutu-panel-ohje/yhteiskaytto-ohje])])
       [:div (use-style {:margin-bottom "10px"})]
 
@@ -313,8 +311,7 @@
         email-tag [:a {:href (str "mailto:" email)} email]
         myynti-email "myyntilaskutus@oph.fi"
         myynti-email-tag [:a {:href (str "mailto:" myynti-email)} myynti-email]
-        header (fn [header] [h/heading {:cypressid "error-header"
-                            :level     :h2}
+        header (fn [header] [h/heading {:level :h2}
                             header])
         text-style {:color       colors/black
                     :font-size   "16px"
@@ -363,8 +360,7 @@
         invoices (subscribe [maksut-subs/maksut-invoice])]
     (fn []
         [:<>
-         [h/heading {:cypressid (str "sub-heading")
-                     :level     :h2}
+         [h/heading {:level :h2}
                     @aliotsikko]
 
          [laskut-container @invoices]
@@ -374,7 +370,7 @@
   (let [fullname (subscribe [maksut-subs/maksut-invoice-fullname])
         error    @(subscribe [maksut-subs/maksut-invoice-error])]
     [p/panel
-      {:cypressid "tutu-maksut-panel"}
+      {}
       (when-not error @(subscribe [:translation :tutu-panel/otsikko]))
       @fullname
       [:div (use-style grid-styles)

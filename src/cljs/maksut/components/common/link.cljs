@@ -20,8 +20,7 @@
                                 :top         "1px"}]]})
 
 (s/defschema LinkProps
-  {(s/optional-key :cypressid)        s/Str
-   :href                              s/Str
+  {:href                              s/Str
    :label                             s/Str
    (s/optional-key :target)           s/Str
    (s/optional-key :on-click)         s/Any
@@ -34,8 +33,7 @@
             {(s/optional-key :styles) ps/Styles}))
 
 (s/defn link :- s/Any
-  [{:keys [cypressid
-           label
+  [{:keys [label
            href
            target
            on-click
@@ -45,8 +43,7 @@
            tabindex]} :- LinkWithExtraStylesProps]
   [:a (stylefy/use-style
        (merge link-styles styles)
-       (merge {:cypressid cypressid
-               :href      href}
+       (merge {:href href}
               (when target
                 {:target target})
               (when on-click
@@ -62,12 +59,10 @@
    label])
 
 (s/defn link-with-left-separator :- s/Any
-  [{:keys [cypressid
-           href
+  [{:keys [href
            label
            on-click]} :- LinkProps]
-  [link {:cypressid cypressid
-         :href      href
+  [link {:href      href
          :label     label
          :on-click  on-click
          :styles    link-left-margin-styles}])

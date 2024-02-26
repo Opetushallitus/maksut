@@ -35,11 +35,10 @@
 
 (s/defschema PopupProps
   {:on-close  s/Any
-   :style     {s/Any s/Any}
-   :cypressid s/Str})
+   :style     {s/Any s/Any}})
 
-(s/defn popup [{:keys [style on-close cypressid]} :- PopupProps & children]
+(s/defn popup [{:keys [style on-close]} :- PopupProps & children]
   [:<>
-   [:div (stylefy/use-style popup-background {:cypressid (str cypressid "-close") :on-click #(on-close)})]
-   [:div (stylefy/use-style (merge popup-style style) {:cypressid cypressid})
+   [:div (stylefy/use-style popup-background {:on-click #(on-close)})]
+   [:div (stylefy/use-style (merge popup-style style))
     children]])
