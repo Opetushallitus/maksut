@@ -1,6 +1,5 @@
 (ns maksut.components.common.material-icons
-  (:require [stylefy.core :as stylefy]
-            [re-frame.core :refer [subscribe]]))
+  (:require [stylefy.core :as stylefy]))
 
 (def ^:private material-icon-styles
   {:font-family             "Material Icons"
@@ -24,22 +23,8 @@
     [:i (stylefy/use-style styles options)
      icon]))
 
-(defn arrow-drop-down []
-  [material-icon "arrow_drop_down" {}])
-
-(defn arrow-drop-up []
-  [material-icon "arrow_drop_up" {}])
-
 (defn trending_flat []
   [material-icon "trending_flat" {}])
 
 (defn done-bold []
-  [material-icon "done" {}])
-
-(defn archived []
-  [material-icon "book"
-   {:vertical-align "text-top"}
-   {:title @(subscribe [:translation :yleiset/arkistoitu])}])
-
-(defn done []
   [material-icon "done" {}])

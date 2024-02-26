@@ -1,8 +1,6 @@
 (ns maksut.components.common.svg
   (:require [stylefy.core :as stylefy]))
 
-(def base-url "/maksut/images/")
-
 (defn icons [svg-style]
   {:alert [:svg (merge {:xmlns      "http://www.w3.org/2000/svg"
                         :xmlnsXlink "http://www.w3.org/1999/xlink"
@@ -17,8 +15,3 @@
 (defn icon [name style svg-style]
   [:div (stylefy/use-style style)
    (get (icons svg-style) name)])
-
-(defn img-icon [name style]
-  [:img
-   {:src (str base-url name ".svg")
-    :style style}])
