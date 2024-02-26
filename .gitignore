@@ -28,4 +28,4 @@ pom.xml
 .lsp/
 /maksut.iws
 /maksut.ipr
-
+.clj-kondo/

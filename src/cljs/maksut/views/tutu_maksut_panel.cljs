@@ -5,12 +5,10 @@
             [maksut.styles.styles-colors :as colors]
             [maksut.styles.styles-fonts :as vars]
             [maksut.styles.styles-init :refer [media-small]]
-            [maksut.events.maksut-events :as maksut-events]
             [maksut.subs.maksut-subs :as maksut-subs]
             [maksut.dates.date-parser :refer [format-date]]
-            [schema.core :as s]
             [clojure.string]
-            [re-frame.core :refer [dispatch subscribe]]
+            [re-frame.core :refer [subscribe]]
             [reagent.dom :refer [dom-node]]
             [reagent.core :as reagent]
             [stylefy.core :as stylefy :refer [use-style]]))
@@ -36,11 +34,6 @@
    :width "10px"
    :border-radius "50%"
    :display "inline-block"})
-
-
-(defn on-maksa-click [x]
-  (dispatch [maksut-events/get-payment-form x]))
-
 
 (defn invoice-status-indicator [status]
   (let [c (get-in colors/invoice-status [status])
@@ -91,15 +84,6 @@
         (str index))]
     ))
 
-(s/defschema TutuMaksuState
-  (s/enum
-    :loading
-    :invalid-secret
-    :kasittely-maksamatta
-    :kasittely-maksettu
-    :paatos-maksamatta
-    :paatos-maksettu))
-
 (defn process-map [state kasittely-status paatos-status]
   (let [header-active {:color colors/process-circle-text-selected
                        :width "min-content"
@@ -120,20 +104,7 @@
                     :grid-row-gap "10px"
                     })
      [circle-icon 1 true (= kasittely-status :paid)]
-     ;TODO consider fixing this in the end if there is time
-     ;[:div (use-style {:justify-content "center"
-     ;                  :text-align "center"
-     ;                  :height "max-content"
-     ;                  :vertical-align "middle"})
-     ; [:div (use-style {
-     ;                    :text-align "center"
-     ;                    :border-top (str "2px dashed " colors/process-circle-border)
-     ;                    :height "2px"
-     ;                    :width "150px"})
-     ;  ]
-      ;]
      [circle-icon 2 (or (= state :kasittely-maksettu) (= state :paatos-maksettu)) (= paatos-status :paid)]
-     ;]
 
    (case state
      :loading [:<>]
@@ -276,12 +247,10 @@
     [:<>
      (when show-process [process-map state kasittely-status paatos-status])
       [:div (use-style {:margin-top "10px"})]
-      [h/heading {:cypressid (str "laskut-state-header")
-                  :level     :text}
+      [h/heading {:level :text}
          state-text]
       (when (or (= state :kasittely-maksettu) (= state :paatos-maksettu))
-            [h/heading {:cypressid (str "laskut-state-sharedcomp-tip")
-                        :level     :text}
+            [h/heading {:level :text}
              @(subscribe [:translation :tutu-panel-ohje/yhteiskaytto-ohje])])
       [:div (use-style {:margin-bottom "10px"})]
 
@@ -313,8 +282,7 @@
         email-tag [:a {:href (str "mailto:" email)} email]
         myynti-email "myyntilaskutus@oph.fi"
         myynti-email-tag [:a {:href (str "mailto:" myynti-email)} myynti-email]
-        header (fn [header] [h/heading {:cypressid "error-header"
-                            :level     :h2}
+        header (fn [header] [h/heading {:level :h2}
                             header])
         text-style {:color       colors/black
                     :font-size   "16px"
@@ -363,8 +331,7 @@
         invoices (subscribe [maksut-subs/maksut-invoice])]
     (fn []
         [:<>
-         [h/heading {:cypressid (str "sub-heading")
-                     :level     :h2}
+         [h/heading {:level :h2}
                     @aliotsikko]
 
          [laskut-container @invoices]
@@ -374,7 +341,7 @@
   (let [fullname (subscribe [maksut-subs/maksut-invoice-fullname])
         error    @(subscribe [maksut-subs/maksut-invoice-error])]
     [p/panel
-      {:cypressid "tutu-maksut-panel"}
+      {}
       (when-not error @(subscribe [:translation :tutu-panel/otsikko]))
       @fullname
       [:div (use-style grid-styles)

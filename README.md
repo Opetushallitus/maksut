@@ -97,7 +97,7 @@ Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](
    Include /polku/local-environment-repositoryysi/docker/ssh/config
    ```
    * Mikäli et halua määrittää kyseistä `Include` -direktiiviä, voit tarjota kyseiset porttiohjauskonfiguraatiot SSH-clientillesi jotenkin toisin.
-
+   
 
 ### Maksuputken testaaminen testiympäristössä
 
@@ -175,18 +175,18 @@ Swagger JSON löytyy polusta `/maksut/swagger.json`
 npm run lint:clj
 ```
 
-### Integraatiotestit
+### Backend-testit
 
 Käynnistä ensin bäkkäri komennolla
 
 ```
-make start-cypress
+make start-test
 ```
 
 Aja sen jälkeen lein testit käyttäen lokaalia konfiguraatiotiedostoa:
 
 ```
-CONFIG=oph-configuration/config.cypress.local-environment.edn lein test
+CONFIG=oph-configuration/config.test.local-environment.edn lein test
 ```
 
 ## REPL-yhteys palvelimeen ja selaimeen
