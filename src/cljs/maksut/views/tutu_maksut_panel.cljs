@@ -5,12 +5,10 @@
             [maksut.styles.styles-colors :as colors]
             [maksut.styles.styles-fonts :as vars]
             [maksut.styles.styles-init :refer [media-small]]
-            [maksut.events.maksut-events :as maksut-events]
             [maksut.subs.maksut-subs :as maksut-subs]
             [maksut.dates.date-parser :refer [format-date]]
-            [schema.core :as s]
             [clojure.string]
-            [re-frame.core :refer [dispatch subscribe]]
+            [re-frame.core :refer [subscribe]]
             [reagent.dom :refer [dom-node]]
             [reagent.core :as reagent]
             [stylefy.core :as stylefy :refer [use-style]]))
@@ -36,11 +34,6 @@
    :width "10px"
    :border-radius "50%"
    :display "inline-block"})
-
-
-(defn on-maksa-click [x]
-  (dispatch [maksut-events/get-payment-form x]))
-
 
 (defn invoice-status-indicator [status]
   (let [c (get-in colors/invoice-status [status])
@@ -91,15 +84,6 @@
         (str index))]
     ))
 
-(s/defschema TutuMaksuState
-  (s/enum
-    :loading
-    :invalid-secret
-    :kasittely-maksamatta
-    :kasittely-maksettu
-    :paatos-maksamatta
-    :paatos-maksettu))
-
 (defn process-map [state kasittely-status paatos-status]
   (let [header-active {:color colors/process-circle-text-selected
                        :width "min-content"
@@ -120,20 +104,7 @@
                     :grid-row-gap "10px"
                     })
      [circle-icon 1 true (= kasittely-status :paid)]
-     ;TODO consider fixing this in the end if there is time
-     ;[:div (use-style {:justify-content "center"
-     ;                  :text-align "center"
-     ;                  :height "max-content"
-     ;                  :vertical-align "middle"})
-     ; [:div (use-style {
-     ;                    :text-align "center"
-     ;                    :border-top (str "2px dashed " colors/process-circle-border)
-     ;                    :height "2px"
-     ;                    :width "150px"})
-     ;  ]
-      ;]
      [circle-icon 2 (or (= state :kasittely-maksettu) (= state :paatos-maksettu)) (= paatos-status :paid)]
-     ;]
 
    (case state
      :loading [:<>]
