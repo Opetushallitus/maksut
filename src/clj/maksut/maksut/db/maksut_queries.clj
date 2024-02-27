@@ -49,9 +49,9 @@
   (let [status      (:status old-ai)
         same-origin (= (:origin old-ai) (:origin new))]
     (cond
-     (= status "overdue") (maksut-error :invoice-invalidstate-overdue "Ei voi muuttaa, eräpäivä mennyt")
-     (= status "paid")    (maksut-error :invoice-invalidstate-paid "Ei voi muuttaa, lasku on jo maksettu")
-     (not same-origin)   (maksut-error :invoice-createerror-originclash "Sama lasku eri lähteestä on jo olemassa"))
+     (= status "overdue") (maksut-error :invoice-invalidstate-overdue (str "Ei voi muuttaa, eräpäivä mennyt: " new))
+     (= status "paid")    (maksut-error :invoice-invalidstate-paid (str "Ei voi muuttaa, lasku on jo maksettu: " new))
+     (not same-origin)   (maksut-error :invoice-createerror-originclash (str "Sama lasku eri lähteestä on jo olemassa: " new)))
     true))
 
 (defn get-lasku [db order-id]
