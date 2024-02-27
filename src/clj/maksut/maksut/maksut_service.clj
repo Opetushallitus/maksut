@@ -49,7 +49,7 @@
     (log/info "Current" (maksut-queries/get-lasku db order-id))
 
     (when-not (time/before? (time/today) due-date)
-      (maksut-error :invoice-createerror-duedateinpast "Due-date needs to be in future." :status-code 422))
+      (maksut-error :invoice-createerror-duedateinpast (str "Due-date needs to be in future: " lasku) :status-code 422))
 
     (maksut-queries/create-or-update-lasku db lasku)
     ;returns created/changed fields from view (including generated fields)
@@ -107,7 +107,7 @@
       (s/validate s/Str application-key)
       (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
         (map Lasku->json laskut)
-        (maksut-error :invoice-notfound "Laskuja ei löytynyt"))))
+        (maksut-error :invoice-notfound (str "Laskuja ei löytynyt hakemusavaimella " application-key)))))
 
   (check-status-tutu [this _ input]
     (let [origin (get-in this [:config :lasku-origin])
