@@ -107,6 +107,9 @@
                      :business-id         {:fi "Y-tunnus: 2769790-1"
                                            :en "Business ID: 2769790-1"
                                            :sv "FO-nummer: 2769790-1"}
+                     :name-desc           {:fi "Nimi"
+                                           :en "Name"
+                                           :sv "Namn"}
                      :payment-reference-desc {:fi "Maksuviite"
                                               :en "Payment reference"
                                               :sv "Betalningsreferens"}

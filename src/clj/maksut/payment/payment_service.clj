@@ -178,8 +178,8 @@
   (file-store/create-file-from-bytearray storage-engine (.getBytes contents) key))
 
 (defn- handle-payment-receipt
-  [email-service email locale reference timestamp-millis total-amount items storage-engine oppija-baseurl]
-  (let [msg (email-message-handling/create-payment-receipt email locale reference timestamp-millis total-amount items oppija-baseurl)]
+  [email-service email locale first-name last-name reference timestamp-millis total-amount items storage-engine oppija-baseurl]
+  (let [msg (email-message-handling/create-payment-receipt email locale first-name last-name reference timestamp-millis total-amount items oppija-baseurl)]
     (future
       (try
         (save-receipt storage-engine (:body msg) reference)
@@ -193,12 +193,13 @@
 
 ;TODO add robustness here, maybe background-job with retry?
 (defn- handle-confirmation-email
-  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference]}]
+  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference first-name last-name]}]
   (case origin
     "tutu" (do
              (handle-tutu-email-confirmation email-service email locale order-id
                                              reference)
              (handle-payment-receipt email-service email locale
+                                     first-name last-name
                                      order-id (* 1000 timestamp)
                                      (/ checkout-amount-in-euro-cents 100)
                                      [{:description (create-receipt-description locale order-id)
