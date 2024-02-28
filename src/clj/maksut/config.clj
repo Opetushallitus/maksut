@@ -68,3 +68,6 @@
 
 (s/defn integration-environment? [config :- MaksutConfig]
   (= :it (get-in config [:public-config :environment])))
+
+(s/defn development-environment? [config :- MaksutConfig]
+  (= :development (get-in config [:public-config :environment])))
