@@ -15,6 +15,7 @@ start-docker-db:
 start-docker-local:
 	@$(DOCKER_COMPOSE) up -d maksut-nginx-local
 	@$(DOCKER_COMPOSE) up -d maksut-db-local
+	@$(DOCKER_COMPOSE) up -d maksut-mailcatcher-local
 
 start-docker-test:
 	@$(DOCKER_COMPOSE) up -d maksut-nginx-local

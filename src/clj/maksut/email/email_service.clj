@@ -7,7 +7,10 @@
             [cheshire.core :as json]
             [com.stuartsierra.component :as component]
             [schema.core :as s]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log])
+  (:import (org.simplejavamail.api.mailer.config TransportStrategy)
+           (org.simplejavamail.mailer MailerBuilder)
+           (org.simplejavamail.email EmailBuilder)))
 
 (defn- send-email [this from recipients subject body]
   (try
@@ -59,6 +62,17 @@
 (defrecord MockEmailService [config mock-email-service-list]
   EmailServiceProtocol
   (send-email [_ from recipients subject body]
+    (when (c/development-environment? config) (let [mailer (-> (MailerBuilder/withSMTPServerHost "localhost")
+                     (.withSMTPServerPort (int 1025))
+                     (.withTransportStrategy TransportStrategy/SMTP)
+                     (.buildMailer))
+          mail (-> (EmailBuilder/startingBlank)
+                   (.from from)
+                   (.to (get recipients 0))
+                   (.withSubject subject)
+                   (.withHTMLText body)
+                   (.buildEmail))]
+      (.sendMail mailer mail)))
     (reset! mock-email-service-list
             (conj @mock-email-service-list
                   {:from       from
