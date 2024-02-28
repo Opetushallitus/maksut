@@ -5,7 +5,7 @@
             [schema.core :as s]))
 
 (s/defschema MaksutConfig
-  {:server               {:http {:port s/Int}}
+  {:server               s/Any                              ; this goes straight to jetty where keys have defaults
    :log                  {:base-path s/Str}
    :db                   {:username      s/Str
                           :password      s/Str
