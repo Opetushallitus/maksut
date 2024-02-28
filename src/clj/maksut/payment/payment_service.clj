@@ -90,7 +90,7 @@
            "checkout-nonce"     (str (UUID/randomUUID))
            "checkout-timestamp" (.format (ZonedDateTime/now)
                                          (-> (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss.SSS'Z'")
-                                             (.withZone (ZoneOffset/UTC))))}
+                                             (.withZone ZoneOffset/UTC)))}
           (some? transaction-id)
           (assoc "checkout-transaction-id" transaction-id)))
 
@@ -129,12 +129,12 @@
   (let [laskut (maksut-queries/get-laskut-by-secret db secret)
         lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))]
     (cond
-      (not (some? lasku)) (maksut-error :invoice-notfound "Laskua ei löydy")
-      (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue "Lasku on erääntynyt")
-      (= (:status lasku) "paid") (maksut-error :invoice-invalidstate-paid "Lasku on jo maksettu"))
+      (not (some? lasku)) (maksut-error :invoice-notfound (str "Laskua ei löydy: " secret))
+      (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue (str "Lasku on erääntynyt: " secret))
+      (= (:status lasku) "paid") (maksut-error :invoice-invalidstate-paid (str "Lasku on jo maksettu: " secret)))
 
     (when (not= (:status lasku) "active")
-          (maksut-error :invoice-not-active "Maksua ei voi enää maksaa"))
+          (maksut-error :invoice-not-active (str "Maksua ei voi enää maksaa: " secret)))
 
     (let [paytrail-config (get-paytrail-config this)
           paytrail-host (:paytrail-host paytrail-config)

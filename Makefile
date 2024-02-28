@@ -3,7 +3,7 @@ PM2 = PM2_HOME=.pm2 npx pm2
 DOCKER_COMPOSE=COMPOSE_PARALLEL_LIMIT=8 $(if $(DOCKER_SUDO),sudo )docker-compose
 
 $(NODE_MODULES): package.json package-lock.json
-	npm install
+	npm ci
 	touch $(NODE_MODULES)
 
 start-docker:
@@ -16,14 +16,14 @@ start-docker-local:
 	@$(DOCKER_COMPOSE) up -d maksut-nginx-local
 	@$(DOCKER_COMPOSE) up -d maksut-db-local
 
-start-docker-cypress:
+start-docker-test:
 	@$(DOCKER_COMPOSE) up -d maksut-nginx-local
 	@$(DOCKER_COMPOSE) up -d maksut-e2e-db-local
 
 kill-docker:
 	@$(DOCKER_COMPOSE) kill
 
-kill-docker-cypress:
+kill-docker-test:
 	@$(DOCKER_COMPOSE) kill maksut-e2e-db-local
 
 start: $(NODE_MODULES) start-docker
@@ -45,16 +45,16 @@ status: $(NODE_MODULES)
 kill: $(NODE_MODULES) kill-docker
 	@$(PM2) kill
 
-start-cypress: start-docker-cypress
+start-test: start-docker-test
 	@$(PM2) start pm2.config.js --only maksut-frontend
-	@$(PM2) start pm2.config.js --only maksut-backend-cypress
+	@$(PM2) start pm2.config.js --only maksut-backend-test
 
-kill-cypress: kill-docker-cypress
-	@$(PM2) stop pm2.config.js --only maksut-backend-cypress
+kill-test: kill-docker-test
+	@$(PM2) stop pm2.config.js --only maksut-backend-test
 
 restart: kill start
 restart-local: kill start-local
-restart-cypress: kill-cypress start-cypress
+restart-test: kill-test start-test
 
 reload:
 	@$(PM2) kill
