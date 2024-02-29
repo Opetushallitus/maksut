@@ -30,6 +30,7 @@
                  [hikari-cp "3.0.1"]
                  [metosin/reitit "0.6.0"]
                  [metosin/schema-tools "0.13.1"]
+                 [metosin/ring-swagger-ui "5.9.0"]
                  [org.clojure/core.async "1.6.681"]
                  [org.clojure/java.jdbc "0.7.12"]
                  [org.clojure/core.match "1.1.0"]
