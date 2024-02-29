@@ -43,6 +43,13 @@ services:
     ports:
       - "127.0.0.1:1025:1025"
       - "127.0.0.1:1080:1080"
+  maksut-wiremock-local:
+    container_name: "wiremock"
+    image: "wiremock/wiremock:3.4.2"
+    networks:
+      maksut-local-network:
+    ports:
+      - "127.0.0.1:9040:8080"
 networks:
   maksut-local-network:
   maksut-local-e2e-network:
