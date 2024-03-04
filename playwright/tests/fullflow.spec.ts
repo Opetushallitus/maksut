@@ -12,7 +12,9 @@ import { v4 as uuid } from "uuid";
 
 test.describe.configure({ mode: "serial" });
 
-const MERCHANT_KEY = "SAIPPUAKAUPPIAS";
+const MERCHANT_KEY =
+  process.env.WITH_PAYTRAIL == "TRUE" ? "SAIPPUAKAUPPIAS" : "sikrot";
+const ACCOUNT_ID = process.env.WITH_PAYTRAIL == "TRUE" ? "375917" : "12345";
 
 let userPage: Page;
 let apiContext: APIRequestContext;
@@ -84,7 +86,7 @@ const assertEmailsSent: (payerEmail: string) => void = async (payerEmail) => {
 
 test.beforeAll(async ({ playwright }) => {
   const browser = await chromium.launch({
-    headless: false,
+    headless: true,
     args: ["--disable-web-security"],
   });
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
@@ -144,7 +146,7 @@ test.describe("Mocked Paytrail", () => {
     const invoice = await createInvoice(apiContext);
 
     const checkoutData = {
-      "checkout-account": "375917",
+      "checkout-account": ACCOUNT_ID,
       "checkout-algorithm": "sha512",
       "checkout-amount": 25600,
       "checkout-provider": "osuuspankki",
@@ -161,7 +163,7 @@ test.describe("Mocked Paytrail", () => {
         linkin takaisin maksut-sovellukseen.
         */
     const callbackUrl =
-      `https://maksut-local.test:9000/maksut/api/payment/paytrail/success?tutulocale=fi` +
+      `/maksut/api/payment/paytrail/success?tutulocale=fi` +
       `&tutusecret=${invoice.secret}` +
       `&checkout-account=${checkoutData["checkout-account"]}` +
       `&checkout-algorithm=${checkoutData["checkout-algorithm"]}` +

@@ -62,7 +62,7 @@
 (defrecord MockEmailService [config mock-email-service-list]
   EmailServiceProtocol
   (send-email [_ from recipients subject body]
-    (when (c/development-environment? config) (let [mailer (-> (MailerBuilder/withSMTPServerHost "localhost")
+    (let [mailer (-> (MailerBuilder/withSMTPServerHost "localhost")
                      (.withSMTPServerPort (int 1025))
                      (.withTransportStrategy TransportStrategy/SMTP)
                      (.buildMailer))
@@ -72,7 +72,7 @@
                    (.withSubject subject)
                    (.withHTMLText body)
                    (.buildEmail))]
-      (.sendMail mailer mail)))
+      (.sendMail mailer mail))
     (reset! mock-email-service-list
             (conj @mock-email-service-list
                   {:from       from

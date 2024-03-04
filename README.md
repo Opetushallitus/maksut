@@ -76,6 +76,13 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
 
 6. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
 
+
+7. Käyttöliittymätestit voi ajaa lokaalia kehitysympäristöä ja Paytrailia vasten komennolla:
+
+   ```bash
+    WITH_PAYTRAIL=TRUE npm run playwright
+    ```
+
 ## Palvelun ajaminen paikallisesti testiympäristöä vasten
 
 Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](https://github.com/Opetushallitus/local-environment) -ympäristö.

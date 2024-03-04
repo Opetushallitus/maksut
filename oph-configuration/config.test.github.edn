@@ -6,8 +6,8 @@
                         :host          "localhost"
                         :port          5432}
  :payment              {:paytrail-config {:host             "http://localhost:9040/payments"
-                                          :merchant-id       375917
-                                          :merchant-secret  "SAIPPUAKAUPPIAS"}
+                                          :merchant-id      12345
+                                          :merchant-secret  "sikrot"}
                         :callback-uri       "<ei käytetä mock paytrail käyttöliittymätestissä>"
                         :order-id-prefix    "MKS"
                         :currency           "EUR"}
