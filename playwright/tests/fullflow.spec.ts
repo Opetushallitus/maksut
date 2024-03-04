@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { hmac } from "@noble/hashes/hmac";
 import { sha512 } from "@noble/hashes/sha512";
 import {
@@ -55,6 +56,11 @@ const createInvoice: (
   };
 };
 
+const expectPageAccessibilityOk = async (page: Page) => {
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  await expect(accessibilityScanResults.violations).toEqual([]);
+};
+
 const assertInvoiceMarkedPaid: (secret: string) => void = async (secret) => {
   await expect(userPage).toHaveURL(`/maksut/?secret=${secret}&locale=fi`, {
     timeout: 20000,
@@ -92,6 +98,17 @@ test.beforeAll(async ({ playwright }) => {
 test.afterAll(async () => {
   await userPage.close();
   await apiContext.dispose();
+});
+
+test("Accessibility", async () => {
+  // luodaan ataruna uusi lasku
+  const invoice = await createInvoice(apiContext);
+
+  // mennään käyttäjänä maksusivulle
+  await userPage.goto(`/maksut/?secret=${invoice.secret}&locale=fi`);
+
+  // saavutettavuuden pitäisi olla ok
+  await expectPageAccessibilityOk(userPage);
 });
 
 test.describe("Real Paytrail", () => {

@@ -14,7 +14,7 @@
   [panels panel-name])
 
 (defn main-panel []
-  [:div
+  [:main
    [alert/alert]
    (let [{panel :panel} @(re-frame/subscribe [:panel/active-panel])]
      [show-panel panel])])
