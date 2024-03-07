@@ -24,23 +24,29 @@
 
 Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla:
 
-1. Lisää hosts-tiedostoon:
+1. Varmista että ajossa on oikea Node-versio (Asenna nvm jos ei asennettu):
+
+    ```bash
+       nvm use
+    ```
+
+2. Lisää hosts-tiedostoon:
 
     ```bash
        127.0.0.1       maksut-local.test
     ```
 
-2. Käynnistä sovellus shellissä:
+3. Käynnistä sovellus shellissä:
 
    ```bash
    make start-local CONFIG=oph-configuration/config.dev.edn
    ```
 
-3. Kirjaudu sovellukseen menemällä osoitteeseen: https://localhost:9000/maksut/auth/cas?ticket=abc (tikettiparametrin 
+4. Kirjaudu sovellukseen menemällä osoitteeseen: https://localhost:9000/maksut/auth/cas?ticket=abc (tikettiparametrin 
    arvolla ei ole väliä).
 
 
-4. Mene swagger-ui:hin osoitteessa: https://localhost:9000/maksut/swagger, ja tee Maksut -> /maksut/api/lasku-tutu POST-kutsu
+5. Mene swagger-ui:hin osoitteessa: https://localhost:9000/maksut/swagger, ja tee Maksut -> /maksut/api/lasku-tutu POST-kutsu
    (esimerkiksi) seuraavalla payloadilla:
 
    ```bash
@@ -70,17 +76,17 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
     }
     ```
 
-5. Mene osoitteeseen: https://localhost:9000/maksut/?secret=<SECRET>&locale=fi (secret-parametrin arvo otetaan edellisen kutsun
+6. Mene osoitteeseen: https://localhost:9000/maksut/?secret=<SECRET>&locale=fi (secret-parametrin arvo otetaan edellisen kutsun
    vastauksesta). Tästä voit nakutella flown läpi painamalla "Siirry maksamaan" ja valitsemalla Paytrailin puolella maksutavaksi OP:n.
 
 
-6. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
+7. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
 
 
-7. Käyttöliittymätestit voi ajaa lokaalia kehitysympäristöä ja Paytrailia vasten komennolla:
+8. Käyttöliittymätestit voi ajaa lokaalia kehitysympäristöä ja Paytrailia vasten komennolla:
 
    ```bash
-    WITH_PAYTRAIL=TRUE npm run playwright
+    WITH_PAYTRAIL=TRUE npx playwright test
     ```
 
 ## Palvelun ajaminen paikallisesti testiympäristöä vasten
