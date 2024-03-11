@@ -30,6 +30,7 @@ jobs:
           git clone https://github.com/Opetushallitus/ci-tools.git
           source ci-tools/common/setup-tools.sh
           npm install
+          npx playwright install --with-deps chromium
           ./bin/cibuild.sh run-all-tests-and-create-uberjar
           bin/lein with-profile prod uberjar
 

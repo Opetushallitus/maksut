@@ -1,14 +1,18 @@
-{:server               {:port 19033}
- :log                  {:base-path "/root/logs"}
+{:server               {:http?        false
+                        :ssl-port     9000
+                        :join?        false
+                        :keystore     "resources/maksut.p12"
+                        :key-password "password"}
+ :log                  {:base-path "/tmp"}
  :db                   {:username      "postgres_user"
                         :password      "postgres_password"
                         :database-name "maksut"
                         :host          "localhost"
-                        :port          5432}
- :payment              {:paytrail-config {:host             "http://localhost:9040/payments"
-                                          :merchant-id      12345
-                                          :merchant-secret  "sikrot"}
-                        :callback-uri       "<ei käytetä mock paytrail käyttöliittymätestissä>"
+                        :port          15499}
+ :payment              {:paytrail-config {:host             "https://services.paytrail.com/payments"
+                                          :merchant-id       375917
+                                          :merchant-secret  "SAIPPUAKAUPPIAS"}
+                        :callback-uri       "https://maksut-local.test:9000/maksut/api/payment/paytrail"
                         :order-id-prefix    "MKS"
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
@@ -25,10 +29,10 @@
                                                      :session-cookie-name  "JSESSIONID"}
                                    :email           {:service-url-property :cas.service.ryhmasahkoposti-service
                                                      :session-cookie-name  "JSESSIONID"}}}
- :urls                 {:virkailija-baseurl        "http://localhost"
-                        :maksut-url                "http://localhost:19033/maksut/"
+ :urls                 {:virkailija-baseurl        "https://localhost"
+                        :maksut-url                "https://localhost:9000/maksut/"
                         :oppija-baseurl            "https://testiopintopolku.fi/maksut"}
  :oph-organisaatio-oid "1.2.246.562.10.00000000001"
- :public-config        {:environment   :it
+ :public-config        {:environment   :development
                         :default-panel :panel/tutu-maksut
                         :caller-id     "1.2.246.562.10.00000000001.maksut.frontend"}}

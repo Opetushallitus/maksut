@@ -18,8 +18,7 @@
             [maksut.server :as http]))
 
 (defn maksut-system [config]
-  (let [it-profile?       (c/integration-environment? config)
-        base-system       [:audit-logger (audit-logger/map->AuditLogger {:config config})
+  (let [base-system       [:audit-logger (audit-logger/map->AuditLogger {:config config})
 
                            :db (db/map->DbPool {:config config})
 
@@ -98,7 +97,7 @@
                                                    [:s3-client :config])])
         system            (into
                             (into base-system
-                                  (if it-profile?
+                                  (if (or (c/development-environment? config) (c/integration-environment? config))
                                     mock-system
                                     production-system)) files)]
     (apply component/system-map system)))
