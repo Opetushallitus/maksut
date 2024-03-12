@@ -289,7 +289,7 @@
                                :secret secret})
 
     (testing "Pay invoice at due-date"
-      (with-global-fake-routes {"http://localhost:12345" {:post (fn [_]
+      (with-global-fake-routes {"http://localhost:9040/payments" {:post (fn [_]
                                                                   {:status 200
                                                                    :headers {}
                                                                    :body "{\"href\":\"http://esimerkkilinkki\"}"}

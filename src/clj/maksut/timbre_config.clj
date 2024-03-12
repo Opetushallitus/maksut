@@ -1,7 +1,7 @@
 (ns maksut.timbre-config
   (:require [taoensso.timbre :as timbre]
             [taoensso.timbre.appenders.core :refer [println-appender]]
-            [taoensso.timbre.appenders.3rd-party.rolling :refer [rolling-appender]]
+            [taoensso.timbre.appenders.community.rolling :refer [rolling-appender]]
             [timbre-ns-pattern-level]
             [environ.core :refer [env]])
   (:import [java.util TimeZone]))

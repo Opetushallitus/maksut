@@ -37,8 +37,7 @@
    :font-weight vars/font-weight-regular
    :line-height "24px"})
 
-(defn heading [{:keys [cypressid
-                       level
+(defn heading [{:keys [level
                        style
                        id]} heading-text]
   (let [[element styles] (case level
@@ -49,6 +48,5 @@
                            :h4 [:h3 h4-styles])]
     [element (stylefy/use-style
                (merge styles style)
-               {:id        id
-                :cypressid cypressid})
+               {:id id})
      heading-text]))

@@ -27,8 +27,7 @@
     (s/validate c/MaksutConfig config)
     (s/validate (p/extends-class-pred health/HealthChecker) health-checker)
     (s/validate (p/extends-class-pred auth-routes/AuthRoutesSource) auth-routes-source)
-    (let [port   (-> config :server :http :port)
-          server (jetty/run-jetty (h/make-handler
+    (let [server (jetty/run-jetty (h/make-handler
                                             {:config                 config
                                              :db                     db
                                              :health-checker         health-checker
@@ -36,10 +35,8 @@
                                              :payment-service        payment-service
                                              :email-service          email-service
                                              :auth-routes-source     auth-routes-source})
-                                  {:port         port
-                                   :join?        false
-                                   :configurator (fn [server]
-                                                   (.setErrorHandler server jetty-error-handler))})]
+                                  (assoc (:server config) :configurator (fn [server]
+                                                                (.setErrorHandler server jetty-error-handler))))]
       (assoc this :server server)))
 
   (stop [this]

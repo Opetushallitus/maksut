@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/Opetushallitus/maksut.svg?branch=master)](https://travis-ci.org/Opetushallitus/maksut)
 
-* [Palvelun ajaminen paikallisesti](#palvelun-ajaminen-paikallisesti)
+* [Lokaali kehitys](#lokaali-kehitys)
+* [Palvelun ajaminen paikallisesti testiympäristöä vasten](#palvelun-ajaminen-paikallisesti-testiympäristöä-vasten)
   * [Vain kerran tehtävät työvaiheet](#vain-kerran-tehtävät-työvaiheet)
   * [Käyttö](#käyttö)
     * [Palvelun käynnistäminen](#palvelun-ajaminen)
@@ -19,7 +20,76 @@
   * [Palvelun uberjar -tiedoston luonti tuotantokäyttöä varten](#palvelun-uberjar--tiedoston-luonti-tuotantok%C3%A4ytt%C3%B6%C3%A4-varten)
   * [Palvelun ajaminen uberjar -tiedostosta](#palvelun-ajaminen-uberjar--tiedostosta)
 
-## Palvelun ajaminen paikallisesti
+## Lokaali kehitys
+
+Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla:
+
+1. Varmista että ajossa on oikea Node-versio (Asenna nvm jos ei asennettu):
+
+    ```bash
+       nvm use
+    ```
+
+2. Lisää hosts-tiedostoon:
+
+    ```bash
+       127.0.0.1       maksut-local.test
+    ```
+
+3. Käynnistä sovellus shellissä:
+
+   ```bash
+   make start-local CONFIG=oph-configuration/config.dev.edn
+   ```
+
+4. Kirjaudu sovellukseen menemällä osoitteeseen: https://localhost:9000/maksut/auth/cas?ticket=abc (tikettiparametrin 
+   arvolla ei ole väliä).
+
+
+5. Mene swagger-ui:hin osoitteessa: https://localhost:9000/maksut/swagger, ja tee Maksut -> /maksut/api/lasku-tutu POST-kutsu
+   (esimerkiksi) seuraavalla payloadilla:
+
+   ```bash
+    {
+      "application-key": "12345",
+      "first-name": "test",
+      "last-name": "test",
+      "email": "test@example.com",
+      "amount": "11",
+      "due-date": "2025-03-03",
+      "index": 1
+   }
+   ```
+
+   Huomaa että "application-key" -kentän tulee olla uniikki uuden laskun luomiseksi. Kutsu palauttaa seuraavan muotoisen vastauksen:
+
+   ```bash
+    {
+      "order_id": "TTU12345-1",
+      "first_name": "test",
+      "last_name": "test",
+      "amount": "123.00",
+      "due_date": "2024-05-06",
+      "status": "active",
+      "secret": "VFRVYXRhcnUtMQZoGsstaDlfq3h5AU8Mv78nm0cvV01abrNuMvTlGK4j6DyA",
+      "paid_at": ""
+    }
+    ```
+
+6. Mene osoitteeseen: https://localhost:9000/maksut/?secret=<SECRET>&locale=fi (secret-parametrin arvo otetaan edellisen kutsun
+   vastauksesta). Tästä voit nakutella flown läpi painamalla "Siirry maksamaan" ja valitsemalla Paytrailin puolella maksutavaksi OP:n.
+
+
+7. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
+
+
+8. Käyttöliittymätestit voi ajaa lokaalia kehitysympäristöä ja Paytrailia vasten komennolla:
+
+   ```bash
+    WITH_PAYTRAIL=TRUE npx playwright test
+    ```
+
+## Palvelun ajaminen paikallisesti testiympäristöä vasten
 
 Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](https://github.com/Opetushallitus/local-environment) -ympäristö.
 
@@ -97,13 +167,32 @@ Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](
    Include /polku/local-environment-repositoryysi/docker/ssh/config
    ```
    * Mikäli et halua määrittää kyseistä `Include` -direktiiviä, voit tarjota kyseiset porttiohjauskonfiguraatiot SSH-clientillesi jotenkin toisin.
-   
+
+
+### Maksuputken testaaminen testiympäristössä
+
+Maksuputkea voi testata seuraavasti QA:lla
+
+* Täytä TuTun lomake: https://testiopintopolku.fi/hakemus/74825f61-e561-447e-bef4-1bb5be4ea44a
+    * Jos lomake on vaihtunut niin lomakkeen tunnisteen löytää myös atarun QA:n konfiguraatioista
+* Ohjautuu ekaan maksuun, valitse Osuuspankki maksutavaksi
+* Maksun jälkeen fakemaileriin (https://fakemailer.testiopintopolku.fi/) ilmestyy hakemuksen muokkauslinkki ja erillinen maili jossa kuitti
+* Tämän jälkeen mene hakemusten käsittelyyn ja vaihda organisaatioksi Tutkintojen tunnustaminen
+* Avaa lomakkeen hakemukset (HAKEMUS / Tutkintojen tunnustaminen)
+* Avaa listauksesta edellä täytetty hakemus
+    * käsittelyvaiheena pitäisi olla Käsittely maksettu
+* Vaihda käsittelytilaksi "Päätösmaksu avoin", syötä maksun määrä ja viesti ja lähetä maksupyyntö
+* Avaa fakemailerista hakijalle lähetetty sähköposti ja klikkaa sieltä maksulinkkiä
+* Klikkaile maksuputken läpi
+    * Hakemusten käsittelyssä pitäisi nyt näkyä molemmat maksukuitit
 
 ### Käyttö
 
 Tämä on suositeltu tapa ajaa palvelua paikallisesti. Tässä ohjeessa oletetaan, että local-environment -repository löytyy maksut -hakemiston vierestä, samasta hakemistosta.
 
 Käynnistetty palvelu on käytettävissä osoitteessa (http://localhost:9099/maksut).
+
+Maksua voi testata paytrailissa valitsemalla Osuuspankin maksutavaksi.
 
 Kun ajat palvelua, käynnistä aina ensin SSH-yhteys käyttämääsi ympäristöön. Oletuksena se on `untuva`:
 
@@ -156,18 +245,18 @@ Swagger JSON löytyy polusta `/maksut/swagger.json`
 npm run lint:clj
 ```
 
-### Integraatiotestit
+### Backend-testit
 
 Käynnistä ensin bäkkäri komennolla
 
 ```
-make start-cypress
+make start-test
 ```
 
 Aja sen jälkeen lein testit käyttäen lokaalia konfiguraatiotiedostoa:
 
 ```
-CONFIG=oph-configuration/config.cypress.local-environment.edn lein test
+CONFIG=oph-configuration/config.test.local-environment.edn lein test
 ```
 
 ## REPL-yhteys palvelimeen ja selaimeen

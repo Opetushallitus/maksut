@@ -16,16 +16,13 @@
    :padding          "15px 25px"
    })
 
-(defn panel [{:keys [cypressid]} heading sub-header contents]
-  [:div (stylefy/use-style main-panel-style {:cypressid cypressid})
-   [h/heading {:cypressid (str cypressid "-recipient")
-               :style     {:text-align "center"}
-               :level     :h3}
+(defn panel [_ heading sub-header contents]
+  [:div (stylefy/use-style main-panel-style)
+   [h/heading {:style {:text-align "center"}
+               :level :h3}
     sub-header]
 
-   [h/heading {:cypressid (str cypressid "-heading")
-               :level     :h1}
+   [h/heading {:level :h1}
     heading]
    [:div (stylefy/use-style panel-content-style)
     contents]])
-

@@ -23,9 +23,8 @@
 /resources/public/js/compiled/maksut.js
 /resources/public/js/compiled/manifest.edn
 /target/
-pom.xml
 /projectFilesBackup/
 .lsp/
 /maksut.iws
 /maksut.ipr
-
+.clj-kondo/

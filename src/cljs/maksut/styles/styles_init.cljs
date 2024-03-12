@@ -1,6 +1,7 @@
 (ns maksut.styles.styles-init
   (:require [goog.string :as gstring]
             [stylefy.core :as stylefy]
+            [stylefy.reagent :as stylefy-reagent]
             [maksut.styles.styles-colors :as colors]
             [maksut.config :as c]
             [maksut.styles.styles-fonts :as vars]))
@@ -34,7 +35,8 @@
                           :font-style  "normal"}))))
 
 (defn init-styles []
-  (stylefy/init {:use-caching? (-> c/config :environment (= :production))})
+  (stylefy/init {:use-caching? (-> c/config :environment (= :production))
+                 :dom (stylefy-reagent/init)})
   (stylefy/tag "body" body-styles)
   (stylefy/tag "input" input-styles)
   (add-font-styles))

@@ -1,14 +1,14 @@
-{:server               {:http {:port 19033}}
+{:server               {:port 19033}
  :log                  {:base-path "/root/logs"}
  :db                   {:username      "postgres_user"
                         :password      "postgres_password"
                         :database-name "maksut"
                         :host          "localhost"
                         :port          5432}
- :payment              {:paytrail-config {:host             "http://localhost:12345"
+ :payment              {:paytrail-config {:host             "http://localhost:9040/payments"
                                           :merchant-id      12345
                                           :merchant-secret  "sikrot"}
-                        :callback-uri       "http://localhost:19033/maksut/payment/paytrail"
+                        :callback-uri       "<ei käytetä mock paytrail käyttöliittymätestissä>"
                         :order-id-prefix    "MKS"
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"

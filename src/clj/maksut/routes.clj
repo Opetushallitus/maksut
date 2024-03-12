@@ -36,7 +36,6 @@
    session-client/wrap-session-client-headers
    (session-timeout/create-wrap-absolute-session-timeout config)])
 
-
 ; --- Handlers ---
 (defn- random-lowercase-string [n]
   (reduce (fn [acc _] (str acc (char (+ 97 (rand-int 26))))) "" (range n)))

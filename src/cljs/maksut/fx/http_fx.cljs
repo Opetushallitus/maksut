@@ -8,12 +8,12 @@
             [re-frame.core :as re-frame]
             [schema.core :as s]
             [schema-tools.core :as st]
-            [goog.net.cookies])
+            [goog.net.Cookies])
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [cljs.core.async.interop :refer [<p!]]))
 
 (defn- get-cookie-value [name]
-  (.get goog.net.cookies name))
+  (.get (.getInstance goog.net.Cookies) name))
 
 (defn- create-search-params [url search-params]
   (let [search-params' (-> (js/URL. url (.-href js/location))
