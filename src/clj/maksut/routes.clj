@@ -142,17 +142,17 @@
                               (response/content-type "text/html")))}}]
 
 ;For generic (non-TuTu) payments
-;       ["/lasku"
-;        [""
-;         {:post { :middleware auth
-;                  :tags       ["Lasku"]
-;                  :summary    "Luo uuden laskun"
-;                  :responses  {200 {:body schema/Lasku}}
-;                  :parameters {:body schema/LaskuCreate}
-;                  :handler    (fn [{session :session {lasku :body} :parameters}]
-;                                (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
-;
-;        ]
+       ["/lasku"
+        [""
+         {:post { :middleware auth
+                  :tags       ["Lasku"]
+                  :summary    "Luo uuden laskun"
+                  :responses  {200 {:body schema/Lasku}}
+                  :parameters {:body schema/LaskuCreate}
+                  :handler    (fn [{session :session {lasku :body} :parameters}]
+                                (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
+
+        ]
 
        ["/lasku-tutu"
         [""
