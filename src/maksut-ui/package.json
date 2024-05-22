@@ -1,0 +1,38 @@
+{
+  "name": "maksut-ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.2.3",
+    "@opetushallitus/oph-design-system": "github:opetushallitus/oph-design-system#OK-496_pohja",
+    "@mui/material": "^5.15.18",
+    "@mui/material-nextjs": "^5.15.11",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.5",
+    "@mui/x-data-grid": "^6.18.7",
+    "@mui/x-tree-view": "^6.17.0",
+    "dompurify": "^3.0.11",
+    "i18next": "^23.10.1",
+    "i18next-resources-to-backend": "^1.2.0",
+    "react-i18next": "^14.1.0",
+    "swr": "^2.2.5",
+    "use-debounce": "^10.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3"
+  }
+}
