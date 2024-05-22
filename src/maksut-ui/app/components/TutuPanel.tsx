@@ -1,0 +1,22 @@
+import { Lasku } from "@/app/lib/types";
+import styles from "@/app/maksut/page.module.css";
+import Maksu from "@/app/components/Maksu";
+import { Box, Button } from "@mui/material";
+
+const TutuPanel = ({laskut}: {laskut: Array<Lasku>}) => {
+
+  return (
+    <Box className={styles.panel}>
+      <h2>Tutu lasku title</h2>
+      <span>Hakemuksesi käsitelty jne. loremipsum</span>
+      <Box className={styles.maksut}>
+        {laskut.map((lasku) => {
+          return <Maksu lasku={lasku}/>
+        }) }
+      </Box>
+      <Button color={'primary'}>Siirry maksamaan</Button>
+    </Box>
+  )
+}
+
+export default TutuPanel
