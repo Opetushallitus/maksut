@@ -17,7 +17,7 @@
 ;Näin koska CLJS ei tue BigDecimal/LocalDate tyyppejä
 (defn Lasku->json [lasku]
       (assoc
-        (select-keys lasku [:order_id :first_name :last_name])
+        (select-keys lasku [:order_id :first_name :last_name :origin :reference])
         :secret (str (:secret lasku))
         :amount (str (:amount lasku))
         :due_date (str (:due_date lasku))
