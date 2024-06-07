@@ -41,7 +41,9 @@
                       :amount "123.00"
                       :due_date date
                       :status :active
-                      :paid_at ""}]
+                      :paid_at ""
+                      :reference application-key
+                      :origin "tutu"}]
         (let [response  (maksut-protocol/create-tutu service maksut-test-fixtures/fake-session lasku)
               secret    (:secret response)
               wo-secret (dissoc response :secret)]
@@ -62,7 +64,9 @@
                              :amount "1000.00"
                              :due_date date
                              :status :active
-                             :paid_at ""}]
+                             :paid_at ""
+                             :reference application-key
+                             :origin "tutu"}]
                (let [response  (maksut-protocol/create-tutu service maksut-test-fixtures/fake-session lasku)
                      secret    (:secret response)
                      wo-secret (dissoc response :secret)]
@@ -83,7 +87,9 @@
                            :amount "555.12"
                            :due_date date
                            :status :active
-                           :paid_at ""}]
+                           :paid_at ""
+                           :reference application-key
+                           :origin "tutu"}]
              (let [response  (maksut-protocol/create-tutu service maksut-test-fixtures/fake-session lasku)
                    secret    (:secret response)
                    wo-secret (dissoc response :secret)]
