@@ -43,7 +43,7 @@ export class SovellusStack extends cdk.Stack {
     );
 
     const nextjs = new Nextjs(this, 'Nextjs', {
-      nextjsPath: './src/maksut-ui', // relative path from your project root to NextJS
+      nextjsPath: '../src/maksut-ui', // relative path from your project root to NextJS
       basePath: '/maksut',
       environment: {STANDALONE: 'true', MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api`},
       domainProps: {domainName: `maksut.${publicHostedZones[props.environmentName]}`, certificate: certificate},
