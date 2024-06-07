@@ -86,6 +86,8 @@
    :status PaymentStatus
    (s/optional-key :secret) s/Str
    (s/optional-key :paid_at) s/Str  ;java.time.LocalDate - Does not port to CLJS
+   :origin s/Str
+   :reference s/Str
    })
 
 (s/defschema Laskut

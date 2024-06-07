@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import './globals.css'
-import { oppijaTheme } from "@opetushallitus/oph-design-system"
+import { oppijaTheme } from "@opetushallitus/oph-design-system/next/theme"
 import { Roboto} from "next/font/google";
 import { ThemeProvider } from '@mui/material'
 import { TopBar } from "@/app/components/TopBar";
