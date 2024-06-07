@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED='0' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -11,6 +11,7 @@
   "dependencies": {
     "react": "^18",
     "react-dom": "^18",
+    "react-router-dom": "^6.23.1",
     "next": "14.2.3",
     "@opetushallitus/oph-design-system": "github:opetushallitus/oph-design-system#OK-496_pohja",
     "@mui/material": "^5.15.18",

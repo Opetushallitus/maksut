@@ -4,18 +4,19 @@ import Maksu from "@/app/components/Maksu";
 import { Box, Button } from "@mui/material";
 
 const TutuPanel = ({laskut}: {laskut: Array<Lasku>}) => {
+  const kasittely = laskut.find((lasku) => lasku.order_id.endsWith('-1'))
+  const paatos = laskut.find((lasku) => lasku.order_id.endsWith('-2'))
+
 
   return (
-    <Box className={styles.panel}>
+    <>
       <h2>Tutu lasku title</h2>
       <span>Hakemuksesi käsitelty jne. loremipsum</span>
       <Box className={styles.maksut}>
-        {laskut.map((lasku) => {
-          return <Maksu lasku={lasku}/>
-        }) }
+        {kasittely && <Maksu lasku={kasittely}/>}
+        {paatos && <Maksu lasku={paatos}/>}
       </Box>
-      <Button color={'primary'}>Siirry maksamaan</Button>
-    </Box>
+    </>
   )
 }
 

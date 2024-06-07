@@ -68,7 +68,7 @@
 
 
 ; --- Routes ---
-(defn- payment-routes [{:keys [payment-service]}]
+(defn- payment-routes [{:keys [payment-service config]}]
   ["/payment"
    ["/paytrail"
     ["/success"
@@ -82,7 +82,7 @@
                                                                                    false)
                                action   (or (:action response) :error)
                                uri-end  (if (= action :error) "&payment=error" "")
-                               uri      (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) uri-end)]
+                               uri      (str (get-in config [:urls :oppija-baseurl]) "/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) uri-end)]
                               (response/permanent-redirect uri)))}}]
 
     ["/cancel"
@@ -90,7 +90,7 @@
             :handler (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                         (log/warn "Paytrail cancel " query)
                         ;Canceling does not really need to be processed in any way, lets just direct back to payment view
-                        (response/permanent-redirect (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) "&payment=cancel"))
+                        (response/permanent-redirect (str (get-in config [:urls :oppija-baseurl]) "/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) "&payment=cancel"))
                         )}}]
 
     ["/notify"
