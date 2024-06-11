@@ -45,11 +45,20 @@ export class SovellusStack extends cdk.Stack {
     const nextjs = new Nextjs(this, 'maksut-ui', {
       nextjsPath: '../src/maksut-ui', // relative path from your project root to NextJS
       environment: {STANDALONE: 'true'},
-      domainProps: {domainName: `maksut.${publicHostedZones[props.environmentName]}`, certificate: certificate, hostedZone: zone},
-      overrides: { nextjsServer:
-          { functionProps:
-              { environment:
-                  { MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api` }}}}
+      domainProps: {
+        domainName: `maksut.${publicHostedZones[props.environmentName]}`,
+        certificate: certificate,
+        hostedZone: zone
+      },
+      overrides: {
+        nextjsServer: {
+          functionProps: {
+            environment: {
+              MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api`
+            }
+          }
+        }
+      }
     });
     new cdk.CfnOutput(this, "CloudFrontDistributionDomain", {
       value: nextjs.distribution.distributionDomain,

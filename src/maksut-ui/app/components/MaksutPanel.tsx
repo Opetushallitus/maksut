@@ -1,28 +1,48 @@
-import styles from "../page.module.css";
-import { Lasku, Origin } from "@/app/lib/types";
+'use client'
+
+import { Lasku } from "@/app/lib/types";
 import TutuPanel from "@/app/components/TutuPanel";
 import AstuPanel from "@/app/components/AstuPanel";
-import { Box } from "@mui/material";
-import { Button } from "@opetushallitus/oph-design-system"
+import { Box, useTheme } from "@mui/material";
+import { Button, colors } from "@opetushallitus/oph-design-system"
 import { backendUrl } from "@/app/lib/configurations";
+import { notFound } from "next/navigation";
 
-export default async function MaksutPanel({ laskut, secret, locale }: {laskut: Array<Lasku>, secret?: string, locale?: string}) {
-  const firstLasku = laskut[0]
-  const origin: Origin = firstLasku.origin
-  const orderId = laskut.find((lasku) => lasku.secret === secret)?.order_id
+export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<Lasku>, secret: string, locale: string}) {
+  const theme = useTheme()
+  const activeLasku = laskut.find((lasku) => lasku.secret === secret)
+
+  if (activeLasku === undefined) {
+    notFound()
+  }
 
   const panel = () => {
-    switch (origin) {
+    switch (activeLasku.origin) {
       case 'tutu':
         return <TutuPanel laskut={laskut}/>
       case 'astu':
-        return <AstuPanel lasku={firstLasku}/>
+        return <AstuPanel lasku={activeLasku}/>
     }
   }
+
   return (
-    <Box className={styles.panel}>
+    <Box
+      style={{
+        margin: 'auto',
+        backgroundColor: colors.white,
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: theme.spacing(1, 0),
+      }}>
       {panel()}
-      <Button variant={'contained'} href={`${backendUrl}/lasku/${orderId}/maksa?secret=${secret}&locale=${locale}`}>Maksa</Button>
+      <Button
+        variant={'contained'}
+        href={`${backendUrl}/lasku/${activeLasku.order_id}/maksa?secret=${secret}&locale=${locale}`}
+        disabled={activeLasku.status !== 'active'}
+      >
+        Maksa
+      </Button>
     </Box>
   );
 }
