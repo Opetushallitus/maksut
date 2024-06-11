@@ -13,7 +13,7 @@
     "react-dom": "^18",
     "react-router-dom": "^6.23.1",
     "next": "14.2.3",
-    "@opetushallitus/oph-design-system": "github:opetushallitus/oph-design-system#OK-496_pohja",
+    "@opetushallitus/oph-design-system": "github:opetushallitus/oph-design-system#v0.0.1",
     "@mui/material": "^5.15.18",
     "@mui/material-nextjs": "^5.15.11",
     "@emotion/react": "^11.11.3",

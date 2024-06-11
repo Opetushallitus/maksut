@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
 import './globals.css'
 import { oppijaTheme } from "@opetushallitus/oph-design-system/next/theme"
-import { Roboto} from "next/font/google";
-import { ThemeProvider } from '@mui/material'
-import { TopBar } from "@/app/components/TopBar";
+import { CssBaseline, ThemeProvider } from '@mui/material'
+import { AppRouterCacheProvider} from "@mui/material-nextjs/v13-appRouter"
+import { ReactNode } from "react"
 
-
-const roboto = Roboto({
-  weight: ['400', '500'],
-  display: 'swap',
-  subsets: ['latin'],
-})
 export const metadata: Metadata = {
   title: "Maksut",
   description: "Hakemusmaksujen käyttöliittymä"
@@ -19,17 +13,17 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
-    <html lang="fi" className={roboto.className}>
+    <html lang="fi">
       <body>
-        <ThemeProvider theme={oppijaTheme}>
-          <header>
-            <TopBar></TopBar>
-          </header>
-          {children}
-        </ThemeProvider>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={oppijaTheme}>
+            <CssBaseline/>
+            {children}
+          </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
