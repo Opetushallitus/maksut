@@ -1,5 +1,5 @@
 import { Lasku } from "@/app/lib/types";
-import styles from "@/app/maksut/page.module.css";
+import styles from "@/app/page.module.css";
 import Maksu from "@/app/components/Maksu";
 
 const AstuPanel = ({lasku}: {lasku: Lasku}) => {
