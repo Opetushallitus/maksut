@@ -1,4 +1,4 @@
-import styles from "../maksut/page.module.css";
+import styles from "../page.module.css";
 import { Lasku, Origin } from "@/app/lib/types";
 import TutuPanel from "@/app/components/TutuPanel";
 import AstuPanel from "@/app/components/AstuPanel";

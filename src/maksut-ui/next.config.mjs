@@ -16,10 +16,7 @@ const cspHeader = `
 
 const isStandalone = process.env.STANDALONE === 'true';
 
-const basePath = '/maksut';
-
 const nextConfig = {
-  basePath,
   eslint: {
     ignoreDuringBuilds: true,
   },

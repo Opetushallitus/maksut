@@ -1,4 +1,4 @@
-import styles from "@/app/maksut/page.module.css";
+import styles from "@/app/page.module.css";
 import { Lasku } from "@/app/lib/types";
 
 const Maksu = ({lasku}: {lasku: Lasku}) => {
