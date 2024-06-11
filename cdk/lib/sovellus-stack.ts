@@ -48,9 +48,9 @@ export class SovellusStack extends cdk.Stack {
       environment: {STANDALONE: 'true'},
       domainProps: {domainName: `maksut.${publicHostedZones[props.environmentName]}`, certificate: certificate, hostedZone: zone},
       overrides: { nextjsServer:
-          { functionProps: 
-              {environment:
-                  {MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api`}}}}
+          { functionProps:
+              { environment:
+                  { MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api` }}}}
     });
     new cdk.CfnOutput(this, "CloudFrontDistributionDomain", {
       value: nextjs.distribution.distributionDomain,
