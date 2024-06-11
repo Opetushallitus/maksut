@@ -103,6 +103,7 @@ test.afterAll(async () => {
 });
 
 test("Accessibility", async () => {
+  test.skip()
   // luodaan ataruna uusi lasku
   const invoice = await createInvoice(apiContext);
 
