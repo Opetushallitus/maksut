@@ -15,8 +15,11 @@ const cspHeader = `
 `;
 
 const isStandalone = process.env.STANDALONE === 'true';
+const basePath = '/valintojen-toteuttaminen';
 
 const nextConfig = {
+  basePath,
+  compress: false,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -32,6 +35,9 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  env: {
+    MAKSUT_URL: process.env.MAKSUT_URL,
   },
   output: isStandalone ? 'standalone' : undefined,
 };
