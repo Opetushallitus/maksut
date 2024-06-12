@@ -4,6 +4,8 @@ import { Nextjs } from 'cdk-nextjs-standalone';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 
+// @ts-expect-error: Nextjs config is used in js-files and cannot be TS
+import nextJsConfig from '../../src/maksut-ui/next.config.mjs';
 interface MaksutUiStackProps extends cdk.StackProps {
   environmentName: string;
 }
@@ -44,21 +46,16 @@ export class SovellusStack extends cdk.Stack {
 
     const nextjs = new Nextjs(this, 'maksut-ui', {
       nextjsPath: '../src/maksut-ui', // relative path from your project root to NextJS
-      environment: {STANDALONE: 'true'},
+      basePath: nextJsConfig.basePath,
+      environment: {
+        STANDALONE: 'true',
+        MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api`,
+      },
       domainProps: {
         domainName: `maksut.${publicHostedZones[props.environmentName]}`,
         certificate: certificate,
         hostedZone: zone
       },
-      overrides: {
-        nextjsServer: {
-          functionProps: {
-            environment: {
-              MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api`
-            }
-          }
-        }
-      }
     });
     new cdk.CfnOutput(this, "CloudFrontDistributionDomain", {
       value: nextjs.distribution.distributionDomain,
