@@ -15,7 +15,7 @@ const cspHeader = `
 `;
 
 const isStandalone = process.env.STANDALONE === 'true';
-const basePath = '/valintojen-toteuttaminen';
+const basePath = '/maksut';
 
 const nextConfig = {
   basePath,
