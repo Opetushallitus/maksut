@@ -49,6 +49,6 @@ jobs:
       application: maksut
       base-image: baseimage-fatjar-openjdk21:master
       configfolder: oph-configuration
-      jarfile: maksut.jar
+      jarfile: maksut
     secrets:
       AWS_UTILITY_ROLE_ARN: ${{ secrets.AWS_OPH_UTILITY_ROLE_ARN }}
