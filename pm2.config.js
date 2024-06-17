@@ -5,23 +5,6 @@ const config =
 module.exports = {
   apps: [
     {
-      name: 'maksut-frontend',
-      script: 'lein',
-      interpreter: '/bin/sh',
-      args: ['frontend:dev'],
-      cwd: __dirname,
-      log_file: 'logs/maksut-frontend.log',
-      pid_file: 'pids/maksut-frontend.pid',
-      combine_logs: true,
-      min_uptime: 30000,
-      max_restarts: 5,
-      restart_delay: 4000,
-      wait_ready: true,
-      watch: false,
-      exec_interpreter: 'none',
-      exec_mode: 'fork',
-    },
-    {
       name: 'maksut-backend',
       script: 'lein',
       interpreter: '/bin/sh',
