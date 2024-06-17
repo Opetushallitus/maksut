@@ -26,7 +26,6 @@ export default async function Page({ searchParams }: {searchParams: {secret?: st
       <Box style={{textAlign: 'center'}}>
         <h3>{`${firstLasku.last_name} ${firstLasku.first_name}`}</h3>
         <h1>Maksutapahtumat</h1>
-        <h1>{t('emailKäsittely.otsikko')}</h1>
       </Box>
       <MaksutPanel laskut={laskut} secret={secret} locale={lang}/>
     </main>
