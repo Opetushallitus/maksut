@@ -11,6 +11,7 @@
             [maksut.files.s3-store :as s3-store]
             [maksut.maksut.maksut-service :as maksut-service]
             [maksut.payment.payment-service :as payment-service]
+            [maksut.lokalisaatio.lokalisaatio-service :as lokalisaatio-service]
             [maksut.email.email-service :as email-service]
             [maksut.health-check :as health-check]
             [maksut.kayttooikeus.kayttooikeus-service :as kayttooikeus-service]
@@ -38,6 +39,10 @@
                                               :db
                                               :storage-engine])
 
+                           :lokalisaatio-service (component/using
+                                                   (lokalisaatio-service/map->LokalisaatioService {:config config})
+                                                   [])
+
                            :health-checker (component/using
                                              (health-check/map->DbHealthChecker {})
                                              [:db])
@@ -57,6 +62,7 @@
                                                    :maksut-service
                                                    :payment-service
                                                    :email-service
+                                                   :lokalisaatio-service
                                                    :auth-routes-source])]
 
         production-system [:kayttooikeus-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :kayttooikeus

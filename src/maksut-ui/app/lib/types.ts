@@ -2,6 +2,8 @@ export type PaymentStatus = 'active' | 'paid' | 'overdue'
 
 export type Origin = 'tutu' | 'astu' | 'kk'
 
+export type Locale = 'fi' | 'en' | 'sv'
+
 export type Lasku = {
   order_id: string;
   first_name: string;
