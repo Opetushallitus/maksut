@@ -9,6 +9,7 @@
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.config :as c]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
+            [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
             [maksut.health-check :as health-check]
             [maksut.oph-url-properties :as oph-urls]
@@ -102,29 +103,16 @@
 
    ]])
 
-(defn routes [{:keys [health-checker config db auth-routes-source maksut-service payment-service] :as args}]
+(defn routes [{:keys [health-checker config db auth-routes-source maksut-service payment-service lokalisaatio-service] :as args}]
   (let [auth (auth-middleware config db)]
     [["/"
       {:get {:no-doc  true
              :handler (fn [_] (response/permanent-redirect "/maksut/"))}}]
 
-     ["/favicon.ico"
-      {:get {:no-doc  true
-             :handler (fn [_]
-                        (-> (response/resource-response "maksut/images/favicon-32x32.png" {:root "public"})
-                            (response/content-type "image/x-icon")))}}]
-
      ["/maksut"
       ["/login-error"
        {:get {:no-doc  true
               :handler (create-error-handler config)}}]
-
-      [""
-       {:get {:no-doc     true
-              :handler    (fn [_] (response/permanent-redirect "/maksut/"))}}]
-      ["/"
-       {:get {:no-doc     true
-              :handler    (create-index-handler config)}}]
 
       ["/swagger.json"
        {:get {:no-doc  true
@@ -141,7 +129,14 @@
                               response/ok
                               (response/content-type "text/html")))}}]
 
-;For generic (non-TuTu) payments
+       ["/localisation/:locale"
+        {:get {:summary "Get localisations from localisation service"
+               :tags ["Localisation"]
+               :parameters {:path {:locale schema/Locale}}
+               :handler (fn [{{input :path} :parameters}]
+                          (response/ok (lokalisaatio-protocol/get-localisations lokalisaatio-service (:locale input))))}}]
+
+       ;For generic (non-TuTu) payments
        ["/lasku"
         [""
          {:post { :middleware auth
