@@ -20,6 +20,7 @@
                        maksut-service
                        payment-service
                        email-service
+                       lokalisaatio-service
                        auth-routes-source]
   component/Lifecycle
 
@@ -34,6 +35,7 @@
                                              :maksut-service         maksut-service
                                              :payment-service        payment-service
                                              :email-service          email-service
+                                             :lokalisaatio-service   lokalisaatio-service
                                              :auth-routes-source     auth-routes-source})
                                   (assoc (:server config) :configurator (fn [server]
                                                                 (.setErrorHandler server jetty-error-handler))))]

@@ -9,6 +9,7 @@
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.config :as c]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
+            [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
             [maksut.health-check :as health-check]
             [maksut.oph-url-properties :as oph-urls]
@@ -68,7 +69,7 @@
 
 
 ; --- Routes ---
-(defn- payment-routes [{:keys [payment-service]}]
+(defn- payment-routes [{:keys [payment-service config]}]
   ["/payment"
    ["/paytrail"
     ["/success"
@@ -82,7 +83,7 @@
                                                                                    false)
                                action   (or (:action response) :error)
                                uri-end  (if (= action :error) "&payment=error" "")
-                               uri      (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) uri-end)]
+                               uri      (str (get-in config [:urls :oppija-baseurl]) "/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) uri-end)]
                               (response/permanent-redirect uri)))}}]
 
     ["/cancel"
@@ -90,7 +91,7 @@
             :handler (fn [{{{:keys [tutusecret tutulocale] :as query} :query} :parameters}]
                         (log/warn "Paytrail cancel " query)
                         ;Canceling does not really need to be processed in any way, lets just direct back to payment view
-                        (response/permanent-redirect (str "/maksut/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) "&payment=cancel"))
+                        (response/permanent-redirect (str (get-in config [:urls :oppija-baseurl]) "/?secret=" (encode tutusecret) "&locale=" (encode tutulocale) "&payment=cancel"))
                         )}}]
 
     ["/notify"
@@ -102,29 +103,16 @@
 
    ]])
 
-(defn routes [{:keys [health-checker config db auth-routes-source maksut-service payment-service] :as args}]
+(defn routes [{:keys [health-checker config db auth-routes-source maksut-service payment-service lokalisaatio-service] :as args}]
   (let [auth (auth-middleware config db)]
     [["/"
       {:get {:no-doc  true
              :handler (fn [_] (response/permanent-redirect "/maksut/"))}}]
 
-     ["/favicon.ico"
-      {:get {:no-doc  true
-             :handler (fn [_]
-                        (-> (response/resource-response "maksut/images/favicon-32x32.png" {:root "public"})
-                            (response/content-type "image/x-icon")))}}]
-
      ["/maksut"
       ["/login-error"
        {:get {:no-doc  true
               :handler (create-error-handler config)}}]
-
-      [""
-       {:get {:no-doc     true
-              :handler    (fn [_] (response/permanent-redirect "/maksut/"))}}]
-      ["/"
-       {:get {:no-doc     true
-              :handler    (create-index-handler config)}}]
 
       ["/swagger.json"
        {:get {:no-doc  true
@@ -141,18 +129,25 @@
                               response/ok
                               (response/content-type "text/html")))}}]
 
-;For generic (non-TuTu) payments
-;       ["/lasku"
-;        [""
-;         {:post { :middleware auth
-;                  :tags       ["Lasku"]
-;                  :summary    "Luo uuden laskun"
-;                  :responses  {200 {:body schema/Lasku}}
-;                  :parameters {:body schema/LaskuCreate}
-;                  :handler    (fn [{session :session {lasku :body} :parameters}]
-;                                (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
-;
-;        ]
+       ["/localisation/:locale"
+        {:get {:summary "Get localisations from localisation service"
+               :tags ["Localisation"]
+               :parameters {:path {:locale schema/Locale}}
+               :handler (fn [{{input :path} :parameters}]
+                          (response/ok (lokalisaatio-protocol/get-localisations lokalisaatio-service (:locale input))))}}]
+
+       ;For generic (non-TuTu) payments
+       ["/lasku"
+        [""
+         {:post { :middleware auth
+                  :tags       ["Lasku"]
+                  :summary    "Luo uuden laskun"
+                  :responses  {200 {:body schema/Lasku}}
+                  :parameters {:body schema/LaskuCreate}
+                  :handler    (fn [{session :session {lasku :body} :parameters}]
+                                (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
+
+        ]
 
        ["/lasku-tutu"
         [""
