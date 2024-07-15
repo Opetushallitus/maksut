@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import { Nextjs } from 'cdk-nextjs-standalone';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
 
 interface MaksutUiStackProps extends cdk.StackProps {
   environmentName: string;
@@ -54,6 +55,13 @@ export class SovellusStack extends cdk.Stack {
         certificate: certificate,
         hostedZone: zone
       },
+      overrides: {
+        nextjsDistribution: {
+          distributionProps: {
+            priceClass: PriceClass.PRICE_CLASS_100
+          }
+        }
+      }
     });
     new cdk.CfnOutput(this, "CloudFrontDistributionDomain", {
       value: nextjs.distribution.distributionDomain,
