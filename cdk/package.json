@@ -18,6 +18,6 @@
     "aws-cdk-lib": "^2.114.1",
     "constructs": "^10.3.0",
     "ts-node": "^10.9.2",
-    "cdk-nextjs-standalone": "^4.0.0-beta.30"
+    "cdk-nextjs-standalone": "^4.0.0"
   }
 }
