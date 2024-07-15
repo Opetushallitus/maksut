@@ -43,6 +43,7 @@
 
 (def ^:private cache-fingerprint (random-lowercase-string 10))
 
+#_{:clj-kondo/ignore [:unused-private-var]}
 (defn- create-index-handler [config]
   (let [public-config (-> config :public-config json/generate-string)
         rendered-page (selmer/render-file
