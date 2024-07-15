@@ -103,7 +103,7 @@ test.afterAll(async () => {
 });
 
 test("Accessibility", async () => {
-  test.skip()
+  test.skip();
   // luodaan ataruna uusi lasku
   const invoice = await createInvoice(apiContext);
 
@@ -115,7 +115,7 @@ test("Accessibility", async () => {
 });
 
 test.describe("Real Paytrail", () => {
-  test.skip()
+  test.skip();
   test.skip(() => process.env.WITH_PAYTRAIL != "TRUE");
 
   test("Paytrail maksuflow", async () => {
@@ -141,7 +141,7 @@ test.describe("Real Paytrail", () => {
 });
 
 test.describe("Mocked Paytrail", () => {
-  test.skip()
+  test.skip();
   test.skip(() => process.env.WITH_PAYTRAIL == "TRUE");
 
   test("Paytrail mocked maksuflow", async () => {
