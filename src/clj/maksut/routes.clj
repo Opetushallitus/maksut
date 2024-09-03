@@ -38,26 +38,6 @@
    (session-timeout/create-wrap-absolute-session-timeout config)])
 
 ; --- Handlers ---
-(defn- random-lowercase-string [n]
-  (reduce (fn [acc _] (str acc (char (+ 97 (rand-int 26))))) "" (range n)))
-
-(def ^:private cache-fingerprint (random-lowercase-string 10))
-
-#_{:clj-kondo/ignore [:unused-private-var]}
-(defn- create-index-handler [config]
-  (let [public-config (-> config :public-config json/generate-string)
-        rendered-page (selmer/render-file
-                       "templates/index.html.template"
-                       {:frontend-config   public-config
-                        :front-properties  (oph-urls/front-json config)
-                        :apply-raamit      (c/production-environment? config)
-                        :cache-fingerprint cache-fingerprint})]
-    (fn [_]
-      (-> (response/ok rendered-page)
-          (response/content-type "text/html")
-          (response/charset "utf-8")))))
-
-
 (defn- create-error-handler [config]
   (let [rendered-page (selmer/render-file
                        "templates/login-error.html.template"
@@ -137,7 +117,6 @@
                :handler (fn [{{input :path} :parameters}]
                           (response/ok (lokalisaatio-protocol/get-localisations lokalisaatio-service (:locale input))))}}]
 
-       ;For generic (non-TuTu) payments
        ["/lasku"
         [""
          {:post { :middleware auth
@@ -149,6 +128,29 @@
                                 (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
 
         ]
+
+       ["/lasku-check"
+        [""
+         {:post { :middleware auth
+                 :tags       ["Lasku"]
+                 :summary    "Palauttaa useamman laskun statuksen"
+                 ;:responses  {200 {:body [schema/LaskuStatus]}}
+                 :parameters {:body schema/LaskuRefListWithOrigin}
+                 :handler    (fn [{session :session {input :body} :parameters}]
+                               (log/info "Check invoice statuses for" (count input) "keys")
+                               (let [x (maksut-protocol/check-status maksut-service session input)]
+                                 (response/ok x)))}}]]
+
+       ["/lasku/:application-key/:origin"
+        [""
+         {:get {:middleware auth
+                :tags       ["Lasku"]
+                :summary    "Palauttaa kaikki hakemus-origin pariin liittyvät laskut"
+                :responses  {200 {:body schema/Laskut}}
+                :parameters {:path {:application-key s/Str
+                                    :origin s/Str}}
+                :handler    (fn [{session :session {input :path} :parameters}]
+                              (response/ok (maksut-protocol/list maksut-service session input)))}}]]
 
        ["/lasku-tutu"
         [""
@@ -170,7 +172,7 @@
                   ;:responses  {200 {:body [schema/LaskuStatus]}}
                   :parameters {:body schema/LaskuRefList}
                   :handler    (fn [{session :session {input :body} :parameters}]
-                                (prn "Check invoice statuses for" (count input) "keys")
+                                (log/info "Check invoice statuses for" (count input) "keys")
                                 (let [x (maksut-protocol/check-status-tutu maksut-service session input)]
                                   (response/ok x)))}}]]
 
@@ -183,18 +185,6 @@
                 :parameters {:path {:application-key s/Str}}
                 :handler    (fn [{session :session {input :path} :parameters}]
                               (response/ok (maksut-protocol/list-tutu maksut-service session input)))}}]]
-
-;For generic (non-TuTu) payments
-;       ["/lasku/:order-id"
-;        [""
-;         {:get {:middleware auth
-;                :tags       ["Lasku"]
-;                :summary    "Palauttaa olemassa olevan laskun"
-;                :responses  {200 {:body schema/Lasku}}
-;                :parameters {:path {:order-id s/Str}}
-;                :handler    (fn [{session :session {order-id :path} :parameters}]
-;                                (response/ok (maksut-protocol/get-lasku maksut-service session (:order-id order-id))))}}]
-;        ]
 
        ["/lasku/:order-id/maksa"
         [""

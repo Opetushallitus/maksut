@@ -40,9 +40,27 @@
                (time/plus (time/today) (time/days (:due-days lasku))))
    :amount (.setScale (bigdec (:amount lasku)) 2 BigDecimal/ROUND_HALF_UP)))
 
-(defn- create [_ _ db lasku-input]
+(defn- parse-order-id [prefixes lasku]
+  (let [trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
+                                     (this (subs str 1))
+                                     str))
+        ;Using the last part of application-key OID as unique order-id
+        aid (trim-zeroes (last (str/split (:reference lasku) #"[.]")))
+        origin (:origin lasku)
+        prefix ((keyword origin) prefixes)
+        suffix (cond
+                 (= origin "tutu") (str "-" (:index lasku))
+                 (= origin "astu") "-2"
+                 :else "")]
+    (str prefix aid suffix)))
+
+(defn- create [this _ db lasku-input]
   (s/validate api-schemas/LaskuCreate lasku-input)
-  (let [lasku (json->LaskuCreate lasku-input)
+  (let [order-id (or (:order-id lasku-input)
+                     (parse-order-id
+                       (get-in this [:config :payment :order-id-prefix])
+                       lasku-input))
+        lasku (json->LaskuCreate lasku-input)
         {:keys [order-id due-date]} lasku]
 
     (log/info "Lasku" lasku)
@@ -55,10 +73,8 @@
     ;returns created/changed fields from view (including generated fields)
     (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
 
-(defn- throw-specific-old-secret-error [prefix laskut secret]
-  (let [order-id-matcher #(first (filter (fn [x] (and
-                                                    (str/starts-with? (:order_id x) prefix)
-                                                    (str/ends-with? (:order_id x) %))) laskut))
+(defn- throw-specific-old-secret-error [laskut secret]
+  (let [order-id-matcher #(first (filter (fn [x] (str/ends-with? (:order_id x) %)) laskut))
         processing (order-id-matcher "-1")
         decision (order-id-matcher "-2")
         output #(maksut-error % (str "Linkki on vanhentunut: " secret))]
@@ -72,9 +88,7 @@
 (defrecord MaksutService [audit-logger config db]
   component/Lifecycle
   (start [this]
-    (s/validate c/MaksutConfig config)
-    (assoc this :config (select-keys (:tutu config) [:lasku-origin
-                                                     :order-id-prefix])))
+    (assoc this :config config))
   (stop [this]
     (assoc this :config nil))
 
@@ -91,26 +105,38 @@
                         str))
           ;Using the last part of application-key OID as unique order-id
           aid (trim-zeroes (last (str/split application-key #"[.]")))
-          prefix (get-in this [:config :order-id-prefix])
+          prefix (get-in this [:config :tutu :order-id-prefix])
           order-id (str prefix aid "-" index)]
       (create this session db
               (assoc
                 (select-keys lasku [:first-name :last-name :email :amount :due-date])
                 :order-id order-id
                 :due-days 14 ;if due-date not defined
-                :origin (get-in this [:config :lasku-origin])
+                :origin (get-in this [:config :tutu :lasku-origin])
                 :reference application-key))))
+
+  (list [_ _ input]
+    (let [{:keys [application-key origin]} input]
+      (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
+        (map Lasku->json laskut)
+        (maksut-error :invoice-notfound (str "Laskuja ei löytynyt hakemusavaimella " application-key)))))
 
   (list-tutu [this _ input]
     (let [{:keys [application-key]} input
-          origin (get-in this [:config :lasku-origin])]
+          origin (get-in this [:config :tutu :lasku-origin])]
       (s/validate s/Str application-key)
       (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
         (map Lasku->json laskut)
         (maksut-error :invoice-notfound (str "Laskuja ei löytynyt hakemusavaimella " application-key)))))
 
+  (check-status [_ _ input]
+    (let [{:keys [keys origin]} input
+          statuses (maksut-queries/check-laskut-statuses-by-reference db origin keys)]
+      (map LaskuStatus->json statuses)))
+
+
   (check-status-tutu [this _ input]
-    (let [origin (get-in this [:config :lasku-origin])
+    (let [origin (get-in this [:config :tutu :lasku-origin])
           keys (:keys input)
           statuses (maksut-queries/check-laskut-statuses-by-reference db origin keys)]
           (map LaskuStatus->json statuses)))
@@ -123,7 +149,7 @@
       (Lasku->json lasku)
       (response/not-found! "Lasku not found")))
 
-  (get-laskut-by-secret [this _ secret]
+  (get-laskut-by-secret [_ _ secret]
     (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
       (let [now (. LocalDate (now))
             passed? #(.isAfter now %)
@@ -131,7 +157,7 @@
         ;do not let user to the page if all due_dates for all (linked) invoices has passed
         (log/info "laskut " laskut)
         (if all-passed?
-          (throw-specific-old-secret-error (get-in this [:config :order-id-prefix]) laskut secret)
+          (throw-specific-old-secret-error laskut secret)
           (map Lasku->json laskut)))
       (do (log/error (str "Linkki on väärä tai vanhentunut: " secret))
           (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret))))))

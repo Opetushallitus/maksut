@@ -13,7 +13,8 @@
                                           :merchant-id       375917
                                           :merchant-secret  "SAIPPUAKAUPPIAS"}
                         :callback-uri       "https://maksut-local.test:9000/maksut/api/payment/paytrail"
-                        :order-id-prefix    "MKS"
+                        :order-id-prefix    {:tutu "TTU"
+                                             :astu "ASTU"}
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
