@@ -49,10 +49,6 @@
 (s/defschema LaskuRefList
   {:keys [s/Str]})
 
-(s/defschema LaskuRefListWithOrigin
-  {:keys [s/Str]
-   :origin Origin})
-
 (s/defschema TutuLaskuCreate
   {:application-key s/Str
    :first-name s/Str
@@ -77,7 +73,8 @@
 (s/defschema LaskuStatus
   {:order-id s/Str
    :reference s/Str
-   :status PaymentStatus})
+   :status PaymentStatus
+   :origin Origin})
 
 (s/defschema ErrorResponse
   {:error s/Bool

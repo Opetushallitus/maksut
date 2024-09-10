@@ -12,7 +12,8 @@
             [schema.core :as s]
             [ring.util.http-response :as response]
             [taoensso.timbre :as log])
-  (:import [java.time LocalDate]))
+  (:import (java.math RoundingMode)
+           [java.time LocalDate]))
 
 ;Näin koska CLJS ei tue BigDecimal/LocalDate tyyppejä
 (defn Lasku->json [lasku]
@@ -35,10 +36,10 @@
   (s/validate (s/constrained s/Str #(>= (bigdec %) 0.65M) 'valid-payment-amount) (:amount lasku))
   (assoc
    (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference])
-   :due-date (or
+    :due-date (or
                (iso-date-str->date (:due-date lasku))
                (time/plus (time/today) (time/days (:due-days lasku))))
-   :amount (.setScale (bigdec (:amount lasku)) 2 BigDecimal/ROUND_HALF_UP)))
+    :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)))
 
 (defn- parse-order-id [prefixes lasku]
   (let [trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
@@ -48,10 +49,9 @@
         aid (trim-zeroes (last (str/split (:reference lasku) #"[.]")))
         origin (:origin lasku)
         prefix ((keyword origin) prefixes)
-        suffix (cond
-                 (= origin "tutu") (str "-" (:index lasku))
-                 (= origin "astu") "-2"
-                 :else "")]
+        suffix (if (some? (:index lasku))
+                 (str "-" (:index lasku))
+                 "")]
     (str prefix aid suffix)))
 
 (defn- create [this _ db lasku-input]
@@ -60,7 +60,9 @@
                      (parse-order-id
                        (get-in this [:config :payment :order-id-prefix])
                        lasku-input))
-        lasku (json->LaskuCreate lasku-input)
+        lasku (assoc
+                (json->LaskuCreate lasku-input)
+                :order-id order-id)
         {:keys [order-id due-date]} lasku]
 
     (log/info "Lasku" lasku)
@@ -116,29 +118,27 @@
                 :reference application-key))))
 
   (list [_ _ input]
-    (let [{:keys [application-key origin]} input]
-      (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
+    (let [{:keys [application-key]} input]
+      (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db application-key))]
         (map Lasku->json laskut)
         (maksut-error :invoice-notfound (str "Laskuja ei löytynyt hakemusavaimella " application-key)))))
 
-  (list-tutu [this _ input]
-    (let [{:keys [application-key]} input
-          origin (get-in this [:config :tutu :lasku-origin])]
+  (list-tutu [_ _ input]
+    (let [{:keys [application-key]} input]
       (s/validate s/Str application-key)
-      (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db origin application-key))]
+      (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db application-key))]
         (map Lasku->json laskut)
         (maksut-error :invoice-notfound (str "Laskuja ei löytynyt hakemusavaimella " application-key)))))
 
   (check-status [_ _ input]
-    (let [{:keys [keys origin]} input
-          statuses (maksut-queries/check-laskut-statuses-by-reference db origin keys)]
+    (let [{:keys [keys]} input
+          statuses (maksut-queries/check-laskut-statuses-by-reference db keys)]
       (map LaskuStatus->json statuses)))
 
 
-  (check-status-tutu [this _ input]
-    (let [origin (get-in this [:config :tutu :lasku-origin])
-          keys (:keys input)
-          statuses (maksut-queries/check-laskut-statuses-by-reference db origin keys)]
+  (check-status-tutu [_ _ input]
+    (let [keys (:keys input)
+          statuses (maksut-queries/check-laskut-statuses-by-reference db keys)]
           (map LaskuStatus->json statuses)))
 
   (get-lasku [_ _ order-id]

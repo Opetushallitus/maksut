@@ -131,24 +131,23 @@
 
        ["/lasku-check"
         [""
-         {:post { :middleware auth
+         {:post {:middleware auth
                  :tags       ["Lasku"]
                  :summary    "Palauttaa useamman laskun statuksen"
                  ;:responses  {200 {:body [schema/LaskuStatus]}}
-                 :parameters {:body schema/LaskuRefListWithOrigin}
+                 :parameters {:body schema/LaskuRefList}
                  :handler    (fn [{session :session {input :body} :parameters}]
                                (log/info "Check invoice statuses for" (count input) "keys")
                                (let [x (maksut-protocol/check-status maksut-service session input)]
                                  (response/ok x)))}}]]
 
-       ["/lasku/:application-key/:origin"
+       ["/lasku/:application-key"
         [""
          {:get {:middleware auth
                 :tags       ["Lasku"]
-                :summary    "Palauttaa kaikki hakemus-origin pariin liittyvät laskut"
+                :summary    "Palauttaa kaikki hakemukseen liittyvät laskut"
                 :responses  {200 {:body schema/Laskut}}
-                :parameters {:path {:application-key s/Str
-                                    :origin s/Str}}
+                :parameters {:path {:application-key s/Str}}
                 :handler    (fn [{session :session {input :path} :parameters}]
                               (response/ok (maksut-protocol/list maksut-service session input)))}}]]
 
