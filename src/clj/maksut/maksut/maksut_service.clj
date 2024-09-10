@@ -116,7 +116,7 @@
                 :origin (get-in this [:config :tutu :lasku-origin])
                 :reference application-key))))
 
-  (list [_ _ input]
+  (list-laskut [_ _ input]
     (let [{:keys [application-key]} input]
       (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db application-key))]
         (map Lasku->json laskut)
