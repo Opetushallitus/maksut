@@ -4,7 +4,6 @@
             [maksut.maksut.maksut-service-protocol :refer [MaksutServiceProtocol]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.api-schemas :as api-schemas]
-            [maksut.config :as c]
             [maksut.util.date :refer [iso-date-str->date]]
             [clojure.string :as str]
             [com.stuartsierra.component :as component]

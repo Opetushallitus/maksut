@@ -6,7 +6,7 @@
             [schema.core :as s])
   (:import [fi.vm.sade.auditlog ApplicationType Audit]))
 
-(defn- ^Audit create-audit-log [base-path]
+(defn- create-audit-log ^Audit [base-path]
   (cta-audit-log/create-audit-logger "maksut" base-path ApplicationType/OPPIJA))
 
 (defrecord AuditLogger [config]

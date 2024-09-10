@@ -1,6 +1,5 @@
 (ns maksut.routes
   (:require
-            [cheshire.core :as json]
             [clj-ring-db-session.authentication.auth-middleware :as auth-middleware]
             [clj-ring-db-session.session.session-client :as session-client]
             [clj-ring-db-session.session.session-store :refer [create-session-store]]
@@ -149,17 +148,17 @@
                 :responses  {200 {:body schema/Laskut}}
                 :parameters {:path {:application-key s/Str}}
                 :handler    (fn [{session :session {input :path} :parameters}]
-                              (response/ok (maksut-protocol/list maksut-service session input)))}}]]
+                              (response/ok (maksut-protocol/list-laskut maksut-service session input)))}}]]
 
        ["/lasku-tutu"
         [""
-         {:post { :middleware auth
-                  :tags       ["Lasku"]
-                  :summary    "Luo uuden Tutu laskun"
-                  :responses  {200 {:body schema/Lasku}}
-                  :parameters {:body schema/TutuLaskuCreate}
-                  :handler    (fn [{session :session {lasku :body} :parameters}]
-                                (response/ok (maksut-protocol/create-tutu maksut-service session lasku)))}}]
+         {:post {:middleware auth
+                 :tags       ["Lasku"]
+                 :summary    "Luo uuden Tutu laskun"
+                 :responses  {200 {:body schema/Lasku}}
+                 :parameters {:body schema/TutuLaskuCreate}
+                 :handler    (fn [{session :session {lasku :body} :parameters}]
+                               (response/ok (maksut-protocol/create-tutu maksut-service session lasku)))}}]
 
         ]
 
