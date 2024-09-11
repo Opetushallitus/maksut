@@ -32,8 +32,8 @@
 
 ;Läpilasketut kentät (Tutu-specificc, näitä ei välttämättä tarvita geneeriselle maksulle)
 (s/defschema TutuPassthruCallbackRequest
-  {:tutusecret s/Str
-   :tutulocale s/Str})
+  {:secret s/Str
+   :locale s/Str})
 
 (s/defschema TutuPaytrailCallbackRequest
   (st/merge

@@ -26,7 +26,7 @@
 
 (defn LaskuStatus->json [lasku]
   (assoc
-   (select-keys lasku [:order_id :reference])
+   (select-keys lasku [:order_id :reference :origin])
    :status (keyword (:status lasku))))
 
 ;api_schemas/LaskuCreate (ei sisällä gereroituja kenttiä)
@@ -118,12 +118,6 @@
 
   (list-laskut [_ _ input]
     (let [{:keys [application-key]} input]
-      (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db application-key))]
-        (map Lasku->json laskut)
-        (maksut-error :invoice-notfound (str "Laskuja ei löytynyt hakemusavaimella " application-key)))))
-
-  (list-tutu [_ _ input]
-    (let [{:keys [application-key]} input]
       (s/validate s/Str application-key)
       (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db application-key))]
         (map Lasku->json laskut)
@@ -133,12 +127,6 @@
     (let [{:keys [keys]} input
           statuses (maksut-queries/check-laskut-statuses-by-reference db keys)]
       (map LaskuStatus->json statuses)))
-
-
-  (check-status-tutu [_ _ input]
-    (let [keys (:keys input)
-          statuses (maksut-queries/check-laskut-statuses-by-reference db keys)]
-          (map LaskuStatus->json statuses)))
 
   (get-lasku [_ _ order-id]
     (if-let [lasku (maksut-queries/get-lasku-by-order-id db {:order-id order-id})]

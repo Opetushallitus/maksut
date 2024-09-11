@@ -98,8 +98,8 @@
           (reset-emails!)))
 
     (testing "Try to pay invoice after it has been paid"
-             (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                                         {:order-id (:order_id db-data)
+             (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                                    {:order-id (:order_id db-data)
                                                                           :locale locale
                                                                           :secret secret}))
                    data (:data exc)]
@@ -226,8 +226,8 @@
 (deftest pay-non-existing-invoice
   (let [service (:payment-service @test-system)]
     (testing "Try to pay invoice after it has been paid"
-             (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                                         {:order-id "TTU123456-1"
+             (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                                    {:order-id "TTU123456-1"
                                                                           :locale "en"
                                                                           :secret "foobar"}))
                    data (:data exc)]
@@ -252,8 +252,8 @@
                                :secret secret})
 
     (testing "Try to pay invoice after due-date"
-             (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                                         {:order-id (:order_id db-data)
+             (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                                    {:order-id (:order_id db-data)
                                                                           :locale "fi"
                                                                           :secret secret}))
                    data (:data exc)]
@@ -294,8 +294,8 @@
                                                                    :headers {}
                                                                    :body "{\"href\":\"http://esimerkkilinkki\"}"}
                                                                   )}}
-             (let [{:keys [href]} (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                           {:order-id (:order_id db-data)
+             (let [{:keys [href]} (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                            {:order-id (:order_id db-data)
                                                             :locale "fi"
                                                             :secret secret})]
                (is (not-empty href))

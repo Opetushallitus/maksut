@@ -26,7 +26,7 @@
         first-secret (atom nil)
         amount "123"
         index 1
-        due-date (time/from-now (time/days 14))
+        due-date (time/from-now (time/days 7))
         date (date->iso due-date)]
 
     (testing "Create invoice"
@@ -54,20 +54,21 @@
 
     (testing "Create 2. invoice"
              (let [lasku (merge (select-keys hannes [:first-name :last-name :email])
-                                {:application-key application-key
+                                {:reference application-key
+                                 :origin "tutu"
                                  :amount "1000"
-                                 :due-date date
+                                 :due-days 14
                                  :index 2})
                    expected {:order_id order-id-2
                              :first_name (:first-name hannes)
                              :last_name (:last-name hannes)
                              :amount "1000.00"
-                             :due_date date
+                             :due_date (date->iso (time/from-now (time/days 14)))
                              :status :active
                              :paid_at ""
                              :reference application-key
                              :origin "tutu"}]
-               (let [response  (maksut-protocol/create-tutu service maksut-test-fixtures/fake-session lasku)
+               (let [response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)
                      secret    (:secret response)
                      wo-secret (dissoc response :secret)]
                  (is (string? secret))
@@ -117,13 +118,13 @@
 
     (testing "List created 2 active invoices"
              (let [input {:application-key application-key}]
-               (let [list (maksut-protocol/list-tutu service maksut-test-fixtures/fake-session input)]
+               (let [list (maksut-protocol/list-laskut service maksut-test-fixtures/fake-session input)]
                  (is (= (count list) 2))
                  (is (map :status list) '(:active :active)))))
 
     (testing "Mass-check statuses"
              (let [input {:keys [application-key]}]
-               (let [list (maksut-protocol/check-status-tutu service maksut-test-fixtures/fake-session input)]
+               (let [list (maksut-protocol/check-status service maksut-test-fixtures/fake-session input)]
                  (is (= (count list) 2))
                  (is (->> list (map :order_id) sort first) order-id)
                  (is (map :status list) '(:active :active)))))
