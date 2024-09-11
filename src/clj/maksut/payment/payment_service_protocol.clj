@@ -6,4 +6,3 @@
   ;However if payment-id differs from previous calls, new payment will be stored.
   (process-success-callback [this params locale notify?])
   (get-kuitti [this session params]))
-

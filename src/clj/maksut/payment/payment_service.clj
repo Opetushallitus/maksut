@@ -207,6 +207,19 @@
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
                                        :vat vat-zero}]
                                      storage-engine oppija-baseurl))
+    "astu" (do
+             ;TODO: astu email
+             (handle-tutu-email-confirmation email-service email locale order-id
+                                             reference)
+             (handle-payment-receipt email-service email locale
+                                     first-name last-name
+                                     order-id (* 1000 timestamp)
+                                     (/ checkout-amount-in-euro-cents 100)
+                                     [{:description (create-receipt-description locale order-id)
+                                       :units 1
+                                       :unit-price (/ checkout-amount-in-euro-cents 100)
+                                       :vat vat-zero}]
+                                     storage-engine oppija-baseurl))
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]

@@ -158,9 +158,7 @@
                  :responses  {200 {:body schema/Lasku}}
                  :parameters {:body schema/TutuLaskuCreate}
                  :handler    (fn [{session :session {lasku :body} :parameters}]
-                               (response/ok (maksut-protocol/create-tutu maksut-service session lasku)))}}]
-
-        ]
+                               (response/ok (maksut-protocol/create-tutu maksut-service session lasku)))}}]]
 
        ["/lasku-check-tutu"
         [""
