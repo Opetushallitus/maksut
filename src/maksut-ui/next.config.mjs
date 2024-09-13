@@ -15,7 +15,7 @@ const cspHeader = `
 `;
 
 const isStandalone = process.env.STANDALONE === 'true';
-const basePath = '/maksut';
+const basePath = '/maksut-ui';
 
 const nextConfig = {
   basePath,

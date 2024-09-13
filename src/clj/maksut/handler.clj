@@ -82,6 +82,7 @@
                   :operationsSorter "alpha"}
          :path   "/maksut/swagger"
          :url    "/maksut/swagger.json"})
+      (ring/create-resource-handler {:path "/maksut" :root "public/maksut"})
       (ring/create-default-handler {:not-found (constantly {:status 404, :body "<h1>Not found</h1>"})}))))
 
 (def reloader #'reload/reloader)

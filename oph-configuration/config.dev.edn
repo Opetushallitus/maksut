@@ -32,7 +32,7 @@
                                                      :session-cookie-name  "JSESSIONID"}}}
  :urls                 {:virkailija-baseurl        "https://localhost"
                         :maksut-url                "https://localhost:9000/maksut/"
-                        :oppija-baseurl            "http://localhost:3000/maksut"}
+                        :oppija-baseurl            "http://localhost:3000/maksut-ui"}
  :oph-organisaatio-oid "1.2.246.562.10.00000000001"
  :public-config        {:environment   :development
                         :default-panel :panel/tutu-maksut

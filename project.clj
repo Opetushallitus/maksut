@@ -1,7 +1,10 @@
 (defproject maksut "0.1.0-SNAPSHOT"
   ;TODO Tässä on todennäköisesti paljon kopioitua depsejä mitä ei tarvita, käy läpi myöhemmin mitkä voi jättää pois
   :dependencies [[org.clojure/clojure "1.11.1"]
-                 [camel-snake-kebab "0.4.3"]
+                 [org.clojure/clojurescript "1.11.132"
+                  :exclusions [com.google.javascript/closure-compiler-unshaded
+                               org.clojure/google-closure-library
+                               org.clojure/google-closure-library-third-party]][camel-snake-kebab "0.4.3"]
                  [cheshire "5.12.0"]
                  [clj-http "3.12.3"]
                  [clj-time "0.15.2"]
@@ -31,6 +34,8 @@
                  [org.clojure/core.match "1.1.0"]
                  [org.postgresql/postgresql "42.7.2"]
                  [com.layerware/hugsql "0.5.3"]
+                 [re-frame "1.4.3"]
+                 [reagent "1.2.0"]
                  [markdown-clj "1.11.9"]
                  [com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer "20220608.1" :exclusions [com.google.guava/guava]]
                  [com.fasterxml.jackson.core/jackson-core "2.15.2"]
@@ -39,8 +44,11 @@
                  [ring/ring-json "0.5.1"]
                  [ring/ring-session-timeout "0.3.0"]
                  [selmer "1.12.59"]
+                 [stylefy "3.2.0"
+                  :exclusions [[org.clojure/core.async]]]
                  [stylefy/reagent "3.0.0"]
                  [prismatic/schema "1.4.1"]
+                 [thheller/shadow-cljs "2.27.4"]
                  [yogthos/config "1.2.0"]
                  [environ "1.2.0"]
                  [com.sun.mail/jakarta.mail "2.0.1"]
@@ -53,11 +61,13 @@
 
   :main maksut.core
 
-  :source-paths ["src/clj" "src/cljc"]
+  :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
 
-  :clean-targets ^{:protect false} ["target"]
-
+  :clean-targets ^{:protect false} ["resources/public/maksut/js/compiled"
+                                    "target"
+                                    ".shadow-cljs"
+                                    ".ts-out"]
 
   :shell {:commands {"open" {:windows ["cmd" "/c" "start"]
                              :macosx  "open"
@@ -67,7 +77,7 @@
 
   :aliases {"server:dev"    ["with-profile" "dev" "run"]
             "build-report"  ["with-profile" "prod" "do"
-                             ["maksut" "target/build-report.html"]
+                             ["run" "-m" "shadow.cljs.devtools.cli" "run" "shadow.cljs.build-report" "maksut" "target/build-report.html"]
                              ["shell" "open" "target/build-report.html"]]
             "lint"          ["with-profile" "dev" "do"
                              ["run" "-m" "clj-kondo.main" "--config" "oph-configuration/clj-kondo.config.edn" "--lint" "src"]]}
@@ -78,14 +88,20 @@
   {:dev
             {:dependencies [[binaryage/devtools "1.0.7"]
                             [clj-kondo "2024.02.12"]
+                            [day8.re-frame/re-frame-10x "1.9.8"]
+                            [day8.re-frame/tracing "0.6.2"]
                             [reloaded.repl "0.2.4"]
                             [clj-http-fake "1.0.4"]]
-             :source-paths ["dev/clj"]}
+             :source-paths ["dev/clj" "dev/cljs"]}
+
+   :prod    {:dependencies [[day8.re-frame/tracing-stubs "0.6.2"]]}
 
    :uberjar {:source-paths ["env/prod/clj"]
+             :dependencies [[day8.re-frame/tracing-stubs "0.6.2"]]
              :omit-source  false
              :aot          [maksut.core]
-             :uberjar-name "maksut.jar"}}
+             :uberjar-name "maksut.jar"
+             :prep-tasks   ["compile" ["frontend:prod"]]}}
 
   :repositories [["releases" {:url           "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
                               :sign-releases false
