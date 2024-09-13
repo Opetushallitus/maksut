@@ -10,6 +10,7 @@
                  [clj-http "3.12.3"]
                  [clj-time "0.15.2"]
                  [com.amazonaws/aws-java-sdk-s3 "1.12.663"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]
                  [com.taoensso/timbre "6.3.1"]
                  [com.fzakaria/slf4j-timbre "0.4.1"]
                  [timbre-ns-pattern-level "0.1.2"]
