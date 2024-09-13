@@ -4,7 +4,8 @@
                  [org.clojure/clojurescript "1.11.132"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
-                               org.clojure/google-closure-library-third-party]][camel-snake-kebab "0.4.3"]
+                               org.clojure/google-closure-library-third-party]]
+                 [camel-snake-kebab "0.4.3"]
                  [cheshire "5.12.0"]
                  [clj-http "3.12.3"]
                  [clj-time "0.15.2"]

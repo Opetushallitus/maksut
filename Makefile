@@ -29,9 +29,11 @@ kill-docker-test:
 	@$(DOCKER_COMPOSE) kill maksut-e2e-db-local
 
 start: $(NODE_MODULES) start-docker
+    @$(PM2) start pm2.config.js --only maksut-frontend
 	@$(PM2) start pm2.config.js --only maksut-backend
 
 start-local: $(NODE_MODULES) start-docker-local
+    @$(PM2) start pm2.config.js --only maksut-frontend
 	@$(PM2) start pm2.config.js --only maksut-backend
 
 log: $(NODE_MODULES)
@@ -46,6 +48,7 @@ kill: $(NODE_MODULES) kill-docker
 	@$(PM2) kill
 
 start-test: start-docker-test
+    @$(PM2) start pm2.config.js --only maksut-frontend
 	@$(PM2) start pm2.config.js --only maksut-backend-test
 
 kill-test: kill-docker-test
@@ -57,4 +60,5 @@ restart-test: kill-test start-test
 
 reload:
 	@$(PM2) kill
+	@$(PM2) start pm2.config.js --only maksut-frontend
 	@$(PM2) start pm2.config.js --only maksut-backend
