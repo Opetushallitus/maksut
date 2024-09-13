@@ -77,6 +77,10 @@
   :jvm-opts ["-Dclojure.main.report=stderr"]
 
   :aliases {"server:dev"    ["with-profile" "dev" "run"]
+            "frontend:dev"  ["with-profile" "dev" "do"
+                             ["run" "-m" "shadow.cljs.devtools.cli" "watch" "maksut"]]
+            "frontend:prod" ["with-profile" "prod" "do"
+                             ["run" "-m" "shadow.cljs.devtools.cli" "release" "maksut"]]
             "build-report"  ["with-profile" "prod" "do"
                              ["run" "-m" "shadow.cljs.devtools.cli" "run" "shadow.cljs.build-report" "maksut" "target/build-report.html"]
                              ["shell" "open" "target/build-report.html"]]
