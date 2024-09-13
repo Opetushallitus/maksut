@@ -163,8 +163,8 @@ test.describe("Mocked Paytrail", () => {
         linkin takaisin maksut-sovellukseen.
         */
     const callbackUrl =
-      `/maksut/api/payment/paytrail/success?tutulocale=fi` +
-      `&tutusecret=${invoice.secret}` +
+      `/maksut/api/payment/paytrail/success?locale=fi` +
+      `&secret=${invoice.secret}` +
       `&checkout-account=${checkoutData["checkout-account"]}` +
       `&checkout-algorithm=${checkoutData["checkout-algorithm"]}` +
       `&checkout-amount=${checkoutData["checkout-amount"]}` +
