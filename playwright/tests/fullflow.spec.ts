@@ -63,14 +63,14 @@ const expectPageAccessibilityOk = async (page: Page) => {
   await expect(accessibilityScanResults.violations).toEqual([]);
 };
 
-const assertInvoiceMarkedPaid: (secret: string) => void = async (secret) => {
+const assertInvoiceMarkedPaid = async (secret: string) => {
   await expect(userPage).toHaveURL(`/maksut/?secret=${secret}&locale=fi`, {
     timeout: 20000,
   });
   await expect(userPage.getByText("Maksettu", { exact: true })).toBeVisible();
 };
 
-const assertEmailsSent: (payerEmail: string) => void = async (payerEmail) => {
+const assertEmailsSent = async (payerEmail: string) => {
   await expect
     .poll(async () => {
       const emailResponse = await apiContext.get(
@@ -195,9 +195,9 @@ test.describe("Mocked Paytrail", () => {
     // tämä osuus mokattu, selain palaa automaattisesti takaisin maksut-sovellukseen
 
     // varmistetaan että ollaan käyttäjänä palattu maksuihin tehdyn maksun sivulle ja maksu merkitty maksetuksi
-    assertInvoiceMarkedPaid(invoice.secret);
+    await assertInvoiceMarkedPaid(invoice.secret);
 
     // varmistetaan että kuitit on lähetetty
-    assertEmailsSent(invoice.payerEmail);
+    await assertEmailsSent(invoice.payerEmail);
   });
 });
