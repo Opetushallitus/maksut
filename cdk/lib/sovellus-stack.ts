@@ -37,7 +37,7 @@ export class SovellusStack extends cdk.Stack {
       this,
       'SiteCertificate',
       {
-        domainName: `maksut.${publicHostedZones[props.environmentName]}`,
+        domainName: `maksut-ui.${publicHostedZones[props.environmentName]}`,
         hostedZone: zone,
         region: 'us-east-1', // Cloudfront only checks this region for certificates.
       },
