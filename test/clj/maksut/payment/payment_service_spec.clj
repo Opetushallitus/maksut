@@ -94,7 +94,7 @@
           (is (= (count emails-to-user) 2))
           (is (= subjects #{"Opetushallitus: Käsittelymaksusi on vastaanotettu" "Opetushallitus: Kuitti tutkintojen tunnustamisen maksusta"}))
           (is (true? (s/includes? (:body receipt)
-                                  "/maksut/images/OPH-logo.png")))
+                                  "/images/OPH-logo.png")))
           (reset-emails!)))
 
     (testing "Try to pay invoice after it has been paid"
