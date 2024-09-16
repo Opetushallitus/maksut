@@ -184,7 +184,7 @@ test.describe("Mocked Paytrail", () => {
         },
       },
     );
-    await expect(newStub.ok()).toBeTruthy();
+    expect(newStub.ok()).toBeTruthy();
 
     // mennään käyttäjänä maksusivulle
     await userPage.goto(`/maksut/?secret=${invoice.secret}&locale=fi`);
@@ -195,9 +195,9 @@ test.describe("Mocked Paytrail", () => {
     // tämä osuus mokattu, selain palaa automaattisesti takaisin maksut-sovellukseen
 
     // varmistetaan että ollaan käyttäjänä palattu maksuihin tehdyn maksun sivulle ja maksu merkitty maksetuksi
-    await assertInvoiceMarkedPaid(invoice.secret);
+    assertInvoiceMarkedPaid(invoice.secret);
 
     // varmistetaan että kuitit on lähetetty
-    await assertEmailsSent(invoice.payerEmail);
+    assertEmailsSent(invoice.payerEmail);
   });
 });
