@@ -61,11 +61,11 @@
 (defn get-laskut-by-secret [db secret]
   (all-linked-laskut-by-secret db {:secret secret}))
 
-(defn get-laskut-by-reference [db origin reference]
-  (all-linked-laskut-by-reference db {:origin origin :reference reference}))
+(defn get-laskut-by-reference [db reference]
+  (all-linked-laskut-by-reference db {:reference reference}))
 
-(defn check-laskut-statuses-by-reference [db origin refs]
-  (get-linked-lasku-statuses-by-reference db {:origin origin :refs refs}))
+(defn check-laskut-statuses-by-reference [db refs]
+  (get-linked-lasku-statuses-by-reference db {:refs refs}))
 
 (defn create-payment [db order-number payment-id amount timestamp]
   (with-db-transaction

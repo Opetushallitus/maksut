@@ -53,7 +53,7 @@
 
 (defn- generate-json-data [{:keys [callback-uri]}
                            {:keys [language-code amount order-number secret first-name last-name email]}]
-  (let [query (str "?tutulocale=" (encode language-code) "&tutusecret=" (encode secret))
+  (let [query (str "?locale=" (encode language-code) "&secret=" (encode secret))
         callback-urls {"success" (str callback-uri "/success" query)
                        "cancel"  (str callback-uri "/cancel" query)}
         amount-in-euro-cents (* 100 amount)]
@@ -125,7 +125,7 @@
     (json/write-str (generate-json-data paytrail-config p))))
 
 ;Instead of directly searching by order-id, use secret to prevent order-id brute-forcing
-(defn- tutu-payment [this db audit-logger session {:keys [order-id locale secret]}]
+(defn- payment [this db audit-logger session {:keys [order-id locale secret]}]
   (let [laskut (maksut-queries/get-laskut-by-secret db secret)
         lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))]
     (cond
@@ -207,6 +207,19 @@
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
                                        :vat vat-zero}]
                                      storage-engine oppija-baseurl))
+    "astu" (do
+             ;TODO: astu email
+             (handle-tutu-email-confirmation email-service email locale order-id
+                                             reference)
+             (handle-payment-receipt email-service email locale
+                                     first-name last-name
+                                     order-id (* 1000 timestamp)
+                                     (/ checkout-amount-in-euro-cents 100)
+                                     [{:description (create-receipt-description locale order-id)
+                                       :units 1
+                                       :unit-price (/ checkout-amount-in-euro-cents 100)
+                                       :vat vat-zero}]
+                                     storage-engine oppija-baseurl))
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]
@@ -256,8 +269,8 @@
            ))
 
   payment-service-protocol/PaymentServiceProtocol
-  (tutu-payment [this session params]
-    (tutu-payment this db audit-logger session params))
+  (payment [this session params]
+    (payment this db audit-logger session params))
   (process-success-callback [this params locale notify?]
     (process-success-callback this db email-service params locale storage-engine notify?))
   (get-kuitti [this session params]

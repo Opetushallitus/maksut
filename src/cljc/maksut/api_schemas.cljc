@@ -8,6 +8,11 @@
     "sv"
     "en"))
 
+(s/defschema Origin
+  (s/enum
+    "tutu"
+    "astu"))
+
 (s/defschema LocalizationEntity
   {:id       s/Int
    :category s/Str
@@ -27,9 +32,8 @@
 
 ;Läpilasketut kentät (Tutu-specificc, näitä ei välttämättä tarvita geneeriselle maksulle)
 (s/defschema TutuPassthruCallbackRequest
-  {
-    :tutusecret s/Str
-    :tutulocale s/Str})
+  {:secret s/Str
+   :locale s/Str})
 
 (s/defschema TutuPaytrailCallbackRequest
   (st/merge
@@ -52,24 +56,25 @@
    :email s/Str
    :amount s/Str
    (s/optional-key :due-date) (s/maybe s/Str)
-   :index (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
-   })
+   :index (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)})
 
 (s/defschema LaskuCreate
-  {:order-id s/Str
+  {(s/optional-key :order-id) s/Str
    :first-name s/Str
    :last-name s/Str
    :email s/Str
    :amount s/Str
    (s/optional-key :due-date) (s/maybe s/Str) ;If not defined, then due-days used
    :due-days (s/constrained s/Int #(> % 0) 'positive-due-days)
-   :origin s/Str
-   :reference s/Str})
+   :origin Origin
+   :reference s/Str
+   (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)})
 
 (s/defschema LaskuStatus
   {:order-id s/Str
    :reference s/Str
-   :status PaymentStatus})
+   :status PaymentStatus
+   :origin Origin})
 
 (s/defschema ErrorResponse
   {:error s/Bool
@@ -86,10 +91,8 @@
    :status PaymentStatus
    (s/optional-key :secret) s/Str
    (s/optional-key :paid_at) s/Str  ;java.time.LocalDate - Does not port to CLJS
-   :origin s/Str
-   :reference s/Str
-   })
+   :origin Origin
+   :reference s/Str})
 
 (s/defschema Laskut
   [Lasku])
-

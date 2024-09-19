@@ -78,8 +78,7 @@ JOIN (
 ) sharing_refs ON (ai.origin = sharing_refs.origin AND ai.reference = sharing_refs.reference AND ai.reference IS NOT NULL);
 
 -- :name all-linked-laskut-by-reference :? :*
-SELECT * FROM all_invoices WHERE reference = :reference AND origin = :origin;
-
+SELECT * FROM all_invoices WHERE reference = :reference;
 
 -- :name get-linked-lasku-statuses-by-reference :? :*
-SELECT order_id, reference, status FROM all_invoices WHERE reference IN (:v*:refs) AND origin = :origin ORDER BY order_id;
+SELECT order_id, reference, status, origin FROM all_invoices WHERE reference IN (:v*:refs) ORDER BY order_id;
