@@ -63,14 +63,14 @@ const expectPageAccessibilityOk = async (page: Page) => {
   await expect(accessibilityScanResults.violations).toEqual([]);
 };
 
-const assertInvoiceMarkedPaid: (secret: string) => void = async (secret) => {
+const assertInvoiceMarkedPaid = async (secret: string) => {
   await expect(userPage).toHaveURL(`/maksut/?secret=${secret}&locale=fi`, {
     timeout: 20000,
   });
   await expect(userPage.getByText("Maksettu", { exact: true })).toBeVisible();
 };
 
-const assertEmailsSent: (payerEmail: string) => void = async (payerEmail) => {
+const assertEmailsSent = async (payerEmail: string) => {
   await expect
     .poll(async () => {
       const emailResponse = await apiContext.get(
@@ -103,7 +103,6 @@ test.afterAll(async () => {
 });
 
 test("Accessibility", async () => {
-  test.skip();
   // luodaan ataruna uusi lasku
   const invoice = await createInvoice(apiContext);
 
@@ -115,7 +114,6 @@ test("Accessibility", async () => {
 });
 
 test.describe("Real Paytrail", () => {
-  test.skip();
   test.skip(() => process.env.WITH_PAYTRAIL != "TRUE");
 
   test("Paytrail maksuflow", async () => {
@@ -141,7 +139,6 @@ test.describe("Real Paytrail", () => {
 });
 
 test.describe("Mocked Paytrail", () => {
-  test.skip();
   test.skip(() => process.env.WITH_PAYTRAIL == "TRUE");
 
   test("Paytrail mocked maksuflow", async () => {
@@ -166,8 +163,8 @@ test.describe("Mocked Paytrail", () => {
         linkin takaisin maksut-sovellukseen.
         */
     const callbackUrl =
-      `/maksut/api/payment/paytrail/success?tutulocale=fi` +
-      `&tutusecret=${invoice.secret}` +
+      `/maksut/api/payment/paytrail/success?locale=fi` +
+      `&secret=${invoice.secret}` +
       `&checkout-account=${checkoutData["checkout-account"]}` +
       `&checkout-algorithm=${checkoutData["checkout-algorithm"]}` +
       `&checkout-amount=${checkoutData["checkout-amount"]}` +
@@ -187,7 +184,7 @@ test.describe("Mocked Paytrail", () => {
         },
       },
     );
-    await expect(newStub.ok()).toBeTruthy();
+    expect(newStub.ok()).toBeTruthy();
 
     // mennään käyttäjänä maksusivulle
     await userPage.goto(`/maksut/?secret=${invoice.secret}&locale=fi`);

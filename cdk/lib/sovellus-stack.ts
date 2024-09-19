@@ -37,7 +37,7 @@ export class SovellusStack extends cdk.Stack {
       this,
       'SiteCertificate',
       {
-        domainName: `maksut.${publicHostedZones[props.environmentName]}`,
+        domainName: `maksut-ui.${publicHostedZones[props.environmentName]}`,
         hostedZone: zone,
         region: 'us-east-1', // Cloudfront only checks this region for certificates.
       },
@@ -45,13 +45,13 @@ export class SovellusStack extends cdk.Stack {
 
     const nextjs = new Nextjs(this, 'maksut-ui', {
       nextjsPath: '../src/maksut-ui', // relative path from your project root to NextJS
-      basePath: '/maksut',
+      basePath: '/maksut-ui',
       environment: {
         STANDALONE: 'true',
         MAKSUT_URL: `https://virkailija.${publicHostedZones[props.environmentName]}/maksut/api`,
       },
       domainProps: {
-        domainName: `maksut.${publicHostedZones[props.environmentName]}`,
+        domainName: `maksut-ui.${publicHostedZones[props.environmentName]}`,
         certificate: certificate,
         hostedZone: zone
       },

@@ -16,9 +16,9 @@
                                             :merchant-id      s/Int
                                             :merchant-secret  s/Str}
                           :callback-uri       s/Str
-                          :order-id-prefix    s/Str
-                          :currency           s/Str
-                          }
+                          :order-id-prefix    {:tutu s/Str
+                                               :astu s/Str}
+                          :currency           s/Str}
    :tutu                 {:lasku-origin       s/Str
                           :order-id-prefix    s/Str}
    :file-store           {:engine s/Keyword
