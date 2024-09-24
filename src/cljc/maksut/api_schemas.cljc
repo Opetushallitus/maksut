@@ -75,7 +75,6 @@
     (or due-date due-days))
     'must-have-either-due-date-or-due-days))
 
-
 (s/defschema LaskuStatus
   {:order-id s/Str
    :reference s/Str
