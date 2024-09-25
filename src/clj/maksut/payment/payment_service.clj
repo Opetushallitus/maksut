@@ -24,6 +24,14 @@
            (java.time ZoneOffset ZonedDateTime)
            (java.time.format DateTimeFormatter)))
 
+(defn- merchant-key-from-order-id
+  [this order-id]
+  (let [prefixes (-> this :config :order-id-prefix)]
+    ; Only hakemusmaksu ought to be using its own non-default merchant account for now.
+    (if (str/starts-with? order-id (:kkhakemusmaksu prefixes))
+      :kkhakemusmaksu
+      :default)))
+
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
 
 (def op-get-kuitti (audit/->operation "KuitinHakeminen"))
@@ -76,11 +84,11 @@
      "callbackUrls" callback-urls
      }))
 
-(defn- get-paytrail-config [this]
+(defn- get-paytrail-config [this merchant-key]
   (let [config (:config this)]
-    {:paytrail-host   (-> config :paytrail-config :host)
-     :merchant-id     (-> config :paytrail-config :merchant-id)
-     :merchant-secret (-> config :paytrail-config :merchant-secret)
+    {:paytrail-host   (-> config :paytrail-config merchant-key :host)
+     :merchant-id     (-> config :paytrail-config merchant-key :merchant-id)
+     :merchant-secret (-> config :paytrail-config merchant-key :merchant-secret)
      :callback-uri    (-> config :callback-uri)}))
 
 (defn- authentication-headers [method merchant-id transaction-id]
@@ -136,7 +144,8 @@
     (when (not= (:status lasku) "active")
           (maksut-error :invoice-not-active (str "Maksua ei voi enää maksaa: " secret)))
 
-    (let [paytrail-config (get-paytrail-config this)
+    (let [merchant-key (merchant-key-from-order-id this order-id)
+          paytrail-config (get-paytrail-config this merchant-key)
           paytrail-host (:paytrail-host paytrail-config)
           merchant-id (:merchant-id paytrail-config)
           merchant-secret (:merchant-secret paytrail-config)
@@ -237,7 +246,8 @@
 
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]
   (let [{:keys [checkout-status checkout-reference checkout-amount checkout-stamp timestamp]} pt-params
-        pt-config (get-paytrail-config this)
+        merchant-key (merchant-key-from-order-id this checkout-reference)
+        pt-config (get-paytrail-config this merchant-key)
         oppija-baseurl (get-in this [:config :oppija-baseurl])
         signed-headers (sign-request (:merchant-secret pt-config) (stringify-keys pt-params) nil)
         return-error (fn [code msg]
@@ -271,9 +281,12 @@
     (s/validate (p/extends-class-pred email-protocol/EmailServiceProtocol) email-service)
     (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
 
-    (s/validate s/Str (get-in config [:payment :paytrail-config :host]))
-    (s/validate s/Int (get-in config [:payment :paytrail-config :merchant-id]))
-    (s/validate s/Str (get-in config [:payment :paytrail-config :merchant-secret]))
+    (s/validate s/Str (get-in config [:payment :paytrail-config :default :host]))
+    (s/validate s/Int (get-in config [:payment :paytrail-config :default :merchant-id]))
+    (s/validate s/Str (get-in config [:payment :paytrail-config :default :merchant-secret]))
+    (s/validate s/Str (get-in config [:payment :paytrail-config :kkhakemusmaksu :host]))
+    (s/validate s/Int (get-in config [:payment :paytrail-config :kkhakemusmaksu :merchant-id]))
+    (s/validate s/Str (get-in config [:payment :paytrail-config :kkhakemusmaksu :merchant-secret]))
 
     (assoc this :config (merge (:payment config) (:urls config))))
   (stop [this]
