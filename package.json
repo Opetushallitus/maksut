@@ -42,7 +42,6 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-playwright": "^0.15.3",
     "eslint-plugin-prettier": "^5.0.0",
-    "husky": "^9.0.11",
     "lint-prepush": "^2.1.0",
     "lint-staged": "^10.5.0",
     "pm2": "^4.5.6",
@@ -53,6 +52,7 @@
   "dependencies": {
     "@opetushallitus/oph-design-system": "github:opetushallitus/oph-design-system#v0.0.1",
     "create-react-class": "^15.7.0",
+    "husky": "^9.1.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

@@ -3,6 +3,7 @@
 import { Lasku } from "@/app/lib/types";
 import TutuPanel from "@/app/components/TutuPanel";
 import AstuPanel from "@/app/components/AstuPanel";
+import KkHakemusmaksuPanel from "@/app/components/KkHakemusmaksuPanel";
 import { Box, useTheme } from "@mui/material";
 import { Button, colors } from "@opetushallitus/oph-design-system"
 import { backendUrl } from "@/app/lib/configurations";
@@ -22,6 +23,8 @@ export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<L
         return <TutuPanel laskut={laskut}/>
       case 'astu':
         return <AstuPanel lasku={activeLasku}/>
+      case 'kkhakemusmaksu':
+        return <KkHakemusmaksuPanel lasku={activeLasku}/>
     }
   }
 
