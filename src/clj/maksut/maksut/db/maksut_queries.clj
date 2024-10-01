@@ -21,6 +21,7 @@
 (declare select-payment)
 (declare insert-payment!)
 (declare insert-secret-for-invoice!)
+(declare insert-metadata!)
 
 (defn- insert-new-secret [db invoice-id order-id]
   ;prefix secrets with order-id to force them unique even if random would generate two identical
@@ -32,9 +33,12 @@
                                  :secret     full})))
 
 (defn- insert-lasku-create-secret [db lasku]
-  (let [{:keys [id]} (insert-lasku! db lasku)
+  (let [{:keys [id]} (insert-lasku! db (dissoc lasku :metadata))
         order-id (:order-id lasku)]
     (log/info "Created invoice id=" id ", generating secret...")
+    (when (some? (:metadata lasku))
+      (insert-metadata! db {:invoice-id id
+                            :metadata (:metadata lasku)}))
     (insert-new-secret db id order-id)
     (get-lasku-by-order-id db {:order-id order-id})))
 
@@ -113,7 +117,7 @@
                (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id])))))
 
      (or
-      ;RETURN previous (potentially updated version), if any
+      ;RETURN previous (potentially updated version), if anyq
       (get-lasku-by-order-id tx {:order-id (:order-id lasku)})
       ;or CREATE new
       (insert-lasku-create-secret db lasku))))

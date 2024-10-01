@@ -1,4 +1,7 @@
-ALTER TABLE invoices ADD COLUMN metadata JSONB;
+CREATE TABLE metadata (
+    fk_invoice  INTEGER REFERENCES invoices(id) NOT NULL UNIQUE,
+    metadata    JSONB NOT NULL DEFAULT '{}'::JSONB
+);
 
 CREATE OR REPLACE VIEW all_invoices
 AS
@@ -20,7 +23,8 @@ SELECT
         ELSE 'active'
         END AS status,
     p.paid_at,
-    i.metadata
+    m.metadata
 FROM invoices i
          LEFT OUTER JOIN latest_secrets s on (i.id = s.id)
-         LEFT OUTER JOIN latest_payments p on (i.id = p.id);
+         LEFT OUTER JOIN latest_payments p on (i.id = p.id)
+         LEFT OUTER JOIN metadata m on (i.id = m.fk_invoice);

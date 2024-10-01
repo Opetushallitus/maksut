@@ -16,13 +16,18 @@
 
 ;Näin koska CLJS ei tue BigDecimal/LocalDate tyyppejä
 (defn Lasku->json [lasku]
-      (assoc
-        (select-keys lasku [:order_id :first_name :last_name :origin :reference :metadata])
-        :secret (str (:secret lasku))
-        :amount (str (:amount lasku))
-        :due_date (str (:due_date lasku))
-        :status (keyword (:status lasku))
-        :paid_at (str (:paid_at lasku))))
+      (cond->
+        (select-keys lasku [:order_id :first_name :last_name :origin :reference])
+        true
+        (assoc
+          :secret (str (:secret lasku))
+          :amount (str (:amount lasku))
+          :due_date (str (:due_date lasku))
+          :status (keyword (:status lasku))
+          :paid_at (str (:paid_at lasku)))
+        (some? (:metadata lasku))
+        (assoc
+          :metadata (:metadata lasku))))
 
 (defn LaskuStatus->json [lasku]
   (assoc
@@ -34,7 +39,7 @@
   ;this constrain cannot be in schema-def as CLJS does not support BigDecimal
   (s/validate (s/constrained s/Str #(>= (bigdec %) 0.65M) 'valid-payment-amount) (:amount lasku))
   (assoc
-   (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference])
+   (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference :metadata])
     :due-date (or
                (iso-date-str->date (:due-date lasku))
                (time/plus (time/today) (time/days (:due-days lasku))))

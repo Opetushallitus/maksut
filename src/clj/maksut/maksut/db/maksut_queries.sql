@@ -82,3 +82,13 @@ SELECT * FROM all_invoices WHERE reference = :reference;
 
 -- :name get-linked-lasku-statuses-by-reference :? :*
 SELECT order_id, reference, status, origin FROM all_invoices WHERE reference IN (:v*:refs) ORDER BY order_id;
+
+-- :name insert-metadata! :! :n
+INSERT INTO metadata (
+    fk_invoice,
+    metadata
+)
+VALUES (
+    :invoice-id,
+    :metadata
+)
