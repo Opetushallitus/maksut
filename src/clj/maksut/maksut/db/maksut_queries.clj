@@ -114,7 +114,7 @@
                (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :metadata])))))
 
      (or
-      ;RETURN previous (potentially updated version), if anyq
+      ;RETURN previous (potentially updated version), if any
       (get-lasku-by-order-id tx {:order-id (:order-id lasku)})
       ;or CREATE new
       (insert-lasku-create-secret db lasku))))
