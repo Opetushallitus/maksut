@@ -8,6 +8,7 @@
             [maksut.api-schemas :as schema]
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.config :as c]
+            [maksut.error :refer [maksut-error]]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
             [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
@@ -164,7 +165,7 @@
          {:post {:middleware auth
                  :tags       ["Lasku"]
                  :summary    "Palauttaa useamman laskun statuksen"
-                 ;:responses  {200 {:body [schema/LaskuStatus]}}
+                 :responses  {200 {:body schema/LaskuStatusList}}
                  :parameters {:body schema/LaskuRefList}
                  :handler    (fn [{session :session {input :body} :parameters}]
                                (log/info "Check invoice statuses for" (count input) "keys")
@@ -211,9 +212,14 @@
                 :responses  {200 {:body schema/Laskut}}
                 :parameters {:path {:application-key s/Str}}
                 :handler    (fn [{session :session {input :path} :parameters}]
-                              (response/ok (filter
-                                             #(= "tutu" (:origin %))
-                                             (maksut-protocol/list-laskut maksut-service session input))))}}]]
+                              (let [laskut (filter
+                                                #(= "tutu" (:origin %))
+                                                (maksut-protocol/list-laskut maksut-service session input))]
+                                (if (< 0 (count laskut))
+                                  (response/ok laskut)
+                                  (maksut-error
+                                    :invoice-notfound
+                                    (str "Laskuja ei löytynyt hakemusavaimella " (:application-key input))))))}}]]
 
        ["/lasku/:order-id/maksa"
         [""

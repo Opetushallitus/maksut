@@ -16,13 +16,18 @@
 
 ;Näin koska CLJS ei tue BigDecimal/LocalDate tyyppejä
 (defn Lasku->json [lasku]
-      (assoc
+      (cond->
         (select-keys lasku [:order_id :first_name :last_name :origin :reference])
-        :secret (str (:secret lasku))
-        :amount (str (:amount lasku))
-        :due_date (str (:due_date lasku))
-        :status (keyword (:status lasku))
-        :paid_at (str (:paid_at lasku))))
+        true
+        (assoc
+          :secret (str (:secret lasku))
+          :amount (str (:amount lasku))
+          :due_date (str (:due_date lasku))
+          :status (keyword (:status lasku))
+          :paid_at (str (:paid_at lasku)))
+        (not-empty (:metadata lasku))
+        (assoc
+          :metadata (:metadata lasku))))
 
 (defn LaskuStatus->json [lasku]
   (assoc
@@ -38,7 +43,8 @@
     :due-date (or
                (iso-date-str->date (:due-date lasku))
                (time/plus (time/today) (time/days (:due-days lasku))))
-    :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)))
+    :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)
+    :metadata (or (:metadata lasku) {})))
 
 (defn- parse-order-id [prefixes lasku]
   (let [trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
@@ -121,7 +127,8 @@
       (s/validate s/Str application-key)
       (if-let [laskut (seq (maksut-queries/get-laskut-by-reference db application-key))]
         (map Lasku->json laskut)
-        (maksut-error :invoice-notfound (str "Laskuja ei löytynyt hakemusavaimella " application-key)))))
+        (do (log/warn (str "Laskuja ei löytynyt hakemusavaimella " application-key))
+            []))))
 
   (check-status [_ _ input]
     (let [{:keys [keys]} input

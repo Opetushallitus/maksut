@@ -43,7 +43,8 @@
    (not= (:first-name new) (:first_name old))
    (not= (:last-name new) (:last_name old))
    (not= (:email new) (:email old))
-   (not= (:amount new) (:amount old))))
+   (not= (:amount new) (:amount old))
+   (not= (:metadata new) (:metadata old))))
 
 (defn can-be-updated? [old-ai new]
   (let [status      (:status old-ai)
@@ -110,7 +111,7 @@
        (let [current_ai (get-lasku-by-order-id tx {:order-id (:order-id lasku)})]
          (when (and (has-changed? current_ai lasku) (can-be-updated? current_ai lasku))
                (log/info (str "Incoming input has changed fields, and they will be updated"))
-               (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id])))))
+               (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :metadata])))))
 
      (or
       ;RETURN previous (potentially updated version), if any

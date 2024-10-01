@@ -21,6 +21,9 @@
    :value    s/Str
    s/Any     s/Any})
 
+(s/defschema Metadata
+  {(s/optional-key :form-name) s/Str})
+
 ;Paytrail palauttamat kentät (konfiguroitavissa PARAMS-OUT kentässä)
 (s/defschema PaytrailCallbackRequest
   {:ORDER_NUMBER s/Str
@@ -30,15 +33,15 @@
    :STATUS s/Str
    :RETURN_AUTHCODE s/Str})
 
-;Läpilasketut kentät (Tutu-specificc, näitä ei välttämättä tarvita geneeriselle maksulle)
-(s/defschema TutuPassthruCallbackRequest
+;Läpilasketut kentät
+(s/defschema PassthruCallbackRequest
   {:secret s/Str
    :locale s/Str})
 
-(s/defschema TutuPaytrailCallbackRequest
+(s/defschema EnrichedPaytrailCallbackRequest
   (st/merge
     PaytrailCallbackRequest
-    TutuPassthruCallbackRequest))
+    PassthruCallbackRequest))
 
 (s/defschema PaymentStatus
   (s/enum
@@ -68,7 +71,8 @@
    :due-days (s/constrained s/Int #(> % 0) 'positive-due-days)
    :origin Origin
    :reference s/Str
-   (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)})
+   (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
+   (s/optional-key :metadata) Metadata})
 
 (s/defschema LaskuStatus
   {:order-id s/Str
@@ -92,7 +96,11 @@
    (s/optional-key :secret) s/Str
    (s/optional-key :paid_at) s/Str  ;java.time.LocalDate - Does not port to CLJS
    :origin Origin
-   :reference s/Str})
+   :reference s/Str
+   (s/optional-key :metadata) Metadata})
 
 (s/defschema Laskut
   [Lasku])
+
+(s/defschema LaskuStatusList
+  [LaskuStatus])
