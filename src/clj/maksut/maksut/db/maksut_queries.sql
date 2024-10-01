@@ -8,7 +8,8 @@ INSERT INTO invoices (
     amount,
     origin,
     reference,
-    due_date
+    due_date,
+    metadata
 )
 VALUES (
     :order-id,
@@ -18,7 +19,8 @@ VALUES (
     :amount,
     :origin,
     :reference,
-    :due-date
+    :due-date,
+    :metadata
 )
 RETURNING *;
 
@@ -28,7 +30,8 @@ SET
     first_name = :first-name,
     last_name = :last-name,
     email = :email,
-    amount = :amount
+    amount = :amount,
+    metadata = :metadata
 WHERE order_id = :order-id AND CURRENT_DATE <= due_date;
 
 -- :name get-lasku-locked :? :1
@@ -82,13 +85,3 @@ SELECT * FROM all_invoices WHERE reference = :reference;
 
 -- :name get-linked-lasku-statuses-by-reference :? :*
 SELECT order_id, reference, status, origin FROM all_invoices WHERE reference IN (:v*:refs) ORDER BY order_id;
-
--- :name insert-metadata! :! :n
-INSERT INTO metadata (
-    fk_invoice,
-    metadata
-)
-VALUES (
-    :invoice-id,
-    :metadata
-)

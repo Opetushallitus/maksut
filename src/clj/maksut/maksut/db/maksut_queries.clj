@@ -21,7 +21,6 @@
 (declare select-payment)
 (declare insert-payment!)
 (declare insert-secret-for-invoice!)
-(declare insert-metadata!)
 
 (defn- insert-new-secret [db invoice-id order-id]
   ;prefix secrets with order-id to force them unique even if random would generate two identical
@@ -33,12 +32,9 @@
                                  :secret     full})))
 
 (defn- insert-lasku-create-secret [db lasku]
-  (let [{:keys [id]} (insert-lasku! db (dissoc lasku :metadata))
+  (let [{:keys [id]} (insert-lasku! db lasku)
         order-id (:order-id lasku)]
     (log/info "Created invoice id=" id ", generating secret...")
-    (when (some? (:metadata lasku))
-      (insert-metadata! db {:invoice-id id
-                            :metadata (:metadata lasku)}))
     (insert-new-secret db id order-id)
     (get-lasku-by-order-id db {:order-id order-id})))
 
@@ -47,7 +43,8 @@
    (not= (:first-name new) (:first_name old))
    (not= (:last-name new) (:last_name old))
    (not= (:email new) (:email old))
-   (not= (:amount new) (:amount old))))
+   (not= (:amount new) (:amount old))
+   (not= (:metadata new) (:metadata old))))
 
 (defn can-be-updated? [old-ai new]
   (let [status      (:status old-ai)
@@ -114,7 +111,7 @@
        (let [current_ai (get-lasku-by-order-id tx {:order-id (:order-id lasku)})]
          (when (and (has-changed? current_ai lasku) (can-be-updated? current_ai lasku))
                (log/info (str "Incoming input has changed fields, and they will be updated"))
-               (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id])))))
+               (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :metadata])))))
 
      (or
       ;RETURN previous (potentially updated version), if anyq

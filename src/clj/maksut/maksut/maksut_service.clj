@@ -25,7 +25,7 @@
           :due_date (str (:due_date lasku))
           :status (keyword (:status lasku))
           :paid_at (str (:paid_at lasku)))
-        (some? (:metadata lasku))
+        (not-empty (:metadata lasku))
         (assoc
           :metadata (:metadata lasku))))
 
@@ -39,11 +39,12 @@
   ;this constrain cannot be in schema-def as CLJS does not support BigDecimal
   (s/validate (s/constrained s/Str #(>= (bigdec %) 0.65M) 'valid-payment-amount) (:amount lasku))
   (assoc
-   (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference :metadata])
+   (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference])
     :due-date (or
                (iso-date-str->date (:due-date lasku))
                (time/plus (time/today) (time/days (:due-days lasku))))
-    :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)))
+    :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)
+    :metadata (or (:metadata lasku) {})))
 
 (defn- parse-order-id [prefixes lasku]
   (let [trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
