@@ -1,16 +1,25 @@
 'use client'
 
-import { Lasku } from "@/app/lib/types";
+import { Lasku, Locale } from "@/app/lib/types";
 import TutuPanel from "@/app/components/TutuPanel";
 import AstuPanel from "@/app/components/AstuPanel";
 import { Box, useTheme } from "@mui/material";
 import { Button, colors } from "@opetushallitus/oph-design-system"
 import { backendUrl } from "@/app/lib/configurations";
 import { notFound } from "next/navigation";
+import { useEffect } from "react";
+import { useTranslations } from "@/app/i18n/useTranslations";
 
-export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<Lasku>, secret: string, locale: string}) {
+export const dynamic = 'force-dynamic';
+
+export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<Lasku>, secret: string, locale: Locale}) {
   const theme = useTheme()
   const activeLasku = laskut.find((lasku) => lasku.secret === secret)
+  const {t, i18n} = useTranslations();
+
+  useEffect(() => {
+    i18n.changeLanguage(locale)
+  }, [locale, i18n])
 
   if (activeLasku === undefined) {
     notFound()
@@ -41,7 +50,7 @@ export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<L
         href={`${backendUrl}/lasku/${activeLasku.order_id}/maksa?secret=${secret}&locale=${locale}`}
         disabled={activeLasku.status !== 'active'}
       >
-        Maksa
+        {t('maksutPanel.maksa')}
       </Button>
     </Box>
   );

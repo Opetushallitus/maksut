@@ -2,6 +2,7 @@
 
 import { AppBar, Box, useTheme } from "@mui/material";
 import Image from "next/image";
+
 export const TopBar = ({lang}: {lang: string} ) => {
   const theme = useTheme()
   return (

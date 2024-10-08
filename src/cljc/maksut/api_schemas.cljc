@@ -17,12 +17,17 @@
   {:id       s/Int
    :category s/Str
    :key      s/Str
-   :locale   (s/enum "fi" "sv" "en")
+   :locale   Locale
    :value    s/Str
    s/Any     s/Any})
 
+(s/defschema LocalizedString
+  {(s/optional-key :fi) s/Str
+   (s/optional-key :sv) s/Str
+   (s/optional-key :en) s/Str})
+
 (s/defschema Metadata
-  {(s/optional-key :form-name) s/Str})
+  {(s/optional-key :form-name) LocalizedString})
 
 ;Paytrail palauttamat kentät (konfiguroitavissa PARAMS-OUT kentässä)
 (s/defschema PaytrailCallbackRequest
@@ -97,7 +102,7 @@
    (s/optional-key :paid_at) s/Str  ;java.time.LocalDate - Does not port to CLJS
    :origin Origin
    :reference s/Str
-   (s/optional-key :metadata) Metadata})
+   (s/optional-key :metadata) s/Any})
 
 (s/defschema Laskut
   [Lasku])

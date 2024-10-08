@@ -38,6 +38,7 @@ const nextConfig = {
   },
   env: {
     MAKSUT_URL: process.env.MAKSUT_URL,
+    DEVELOPMENT: isStandalone ? 'true' : 'false',
   },
   output: isStandalone ? 'standalone' : undefined,
 };

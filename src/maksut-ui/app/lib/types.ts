@@ -4,6 +4,16 @@ export type Origin = 'tutu' | 'astu' | 'kk'
 
 export type Locale = 'fi' | 'en' | 'sv'
 
+export type LocalizedString = {
+  fi?: string;
+  en?: string;
+  sv?: string;
+}
+
+export type Metadata = {
+  form_name?: LocalizedString;
+}
+
 export type Lasku = {
   order_id: string;
   first_name: string;
@@ -15,6 +25,7 @@ export type Lasku = {
   paid_at: string;
   origin: Origin;
   reference: string;
+  metadata?: Metadata;
 }
 
 
