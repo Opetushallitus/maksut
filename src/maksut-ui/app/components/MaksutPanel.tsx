@@ -7,19 +7,15 @@ import { Box, useTheme } from "@mui/material";
 import { Button, colors } from "@opetushallitus/oph-design-system"
 import { backendUrl } from "@/app/lib/configurations";
 import { notFound } from "next/navigation";
-import { useEffect } from "react";
-import { useTranslations } from "@/app/i18n/useTranslations";
+import { useTranslations } from "use-intl";
+import { getLocale } from "next-intl/server";
 
 export const dynamic = 'force-dynamic';
 
-export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<Lasku>, secret: string, locale: Locale}) {
+export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<Lasku>, secret: string, locale: Locale }) {
   const theme = useTheme()
   const activeLasku = laskut.find((lasku) => lasku.secret === secret)
-  const {t, i18n} = useTranslations();
-
-  useEffect(() => {
-    i18n.changeLanguage(locale)
-  }, [locale, i18n])
+  const t = useTranslations('MaksutPanel')
 
   if (activeLasku === undefined) {
     notFound()
@@ -50,7 +46,7 @@ export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<L
         href={`${backendUrl}/lasku/${activeLasku.order_id}/maksa?secret=${secret}&locale=${locale}`}
         disabled={activeLasku.status !== 'active'}
       >
-        {t('maksutPanel.maksa')}
+        {t('maksa')}
       </Button>
     </Box>
   );

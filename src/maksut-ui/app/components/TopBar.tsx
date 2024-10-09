@@ -2,8 +2,9 @@
 
 import { AppBar, Box, useTheme } from "@mui/material";
 import Image from "next/image";
+import { Locale } from "@/app/lib/types";
 
-export const TopBar = ({lang}: {lang: string} ) => {
+export const TopBar = ({lang}: {lang: Locale} ) => {
   const theme = useTheme()
   return (
     <AppBar position='static' style={{padding: theme.spacing(3, 0)}}>

@@ -1,20 +1,21 @@
 'use client'
 
 import { Lasku } from "@/app/lib/types";
-import styles from "@/app/page.module.css";
+import styles from "@/app/[locale]/page.module.css";
 import Maksu from "@/app/components/Maksu";
 import { Box } from "@mui/material";
-import { useTranslations } from "@/app/i18n/useTranslations";
+import { useTranslations } from "use-intl";
+import { translateLocalizedString } from "@/app/lib/utils";
 
 const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
-  const {t, translateEntity} = useTranslations();
+  const t = useTranslations('AstuPanel')
 
   return (
     <>
-      <h2>{translateEntity(lasku.metadata?.form_name)}</h2>
+      <h2>{translateLocalizedString(lasku.metadata?.form_name)}</h2>
       <span>Hakemuksesi käsitelty jne. loremipsum</span>
       <Box className={styles.maksut}>
-        <Maksu lasku={lasku} title={t('maksu.päätös')}/>
+        <Maksu lasku={lasku} />
       </Box>
     </>)
 }

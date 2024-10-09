@@ -1,11 +1,9 @@
-'use client'
-
 import { Box } from "@mui/material";
 import { Lasku } from "@/app/lib/types";
-import { useTranslations } from "@/app/i18n/useTranslations";
+import { getTranslations } from "next-intl/server";
 
-const Header = ({lasku}: {lasku: Lasku}) => {
-  const {t} = useTranslations();
+const Header = async ({lasku}: {lasku: Lasku}) => {
+  const t = await getTranslations('Header');
 
   return (
     <Box style={{textAlign: 'center'}}>

@@ -1,25 +1,20 @@
 import { Locale, LocalizedString } from "@/app/lib/types";
 
-export const getLocalization = (localized: LocalizedString, locale: Locale) => {
-  switch (locale) {
-    case "fi": return localized.fi
-    case "sv": return localized.sv
-    case "en": return localized.en
+export function translateLocalizedString(
+  translated: LocalizedString | undefined,
+  userLanguage: Locale = 'fi',
+): string {
+  if (!translated) {
+    return ''
   }
-}
-
-export const getFirstLocalization = (localized?: LocalizedString, locale?: Locale, fallback?: string) => {
-  const priority: Array<Locale> = locale ? [locale, 'fi', 'en', 'sv'] : ['fi', 'en', 'sv']
-
-  if (localized) {
-    for (const p of priority) {
-      const v = getLocalization(localized, p);
-
-      if (v) {
-        return v;
-      }
-    }
+  const prop = userLanguage as keyof LocalizedString;
+  const translation = translated[prop];
+  if (translation && translation?.trim().length > 0) {
+    return translated[prop] || '';
+  } else if (translated.fi && translated.fi.trim().length > 0) {
+    return translated.fi;
+  } else if (translated.en && translated.en.trim().length > 0) {
+    return translated.en;
   }
-
-  return fallback || null;
+  return translated.sv || '';
 }

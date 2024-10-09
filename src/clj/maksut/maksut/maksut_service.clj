@@ -33,8 +33,9 @@
 
 (defn LaskuStatus->json [lasku]
   (assoc
-   (select-keys lasku [:order_id :reference :origin])
-   :status (keyword (:status lasku))))
+   (select-keys lasku [:reference :origin])
+    :order-id (:order_id lasku)
+    :status (keyword (:status lasku))))
 
 ;api_schemas/LaskuCreate (ei sisällä gereroituja kenttiä)
 (defn json->LaskuCreate [lasku]
@@ -47,7 +48,7 @@
                (time/plus (time/today) (time/days (:due-days lasku))))
     :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)
     :metadata (cske/transform-keys
-                (csk/->snake_case)
+                csk/->snake_case
                 (or (:metadata lasku) {}))))
 
 (defn- parse-order-id [prefixes lasku]
