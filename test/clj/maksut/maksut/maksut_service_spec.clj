@@ -75,6 +75,35 @@
                  (is (> (count secret) 0))
                  (is (= wo-secret expected)))))
 
+    (testing "Create ASTU invoice"
+      (let [lasku (merge (select-keys hannes [:first-name :last-name :email])
+                         {:reference application-key
+                          :origin "astu"
+                          :amount "1000"
+                          :due-days 14
+                          :index 2
+                          :metadata {:form-name {:fi "ASTU FI"
+                                                 :sv "ASTU SV"
+                                                 :fi "ASTU EN"}}})
+            expected {:order_id order-id-2
+                      :first_name (:first-name hannes)
+                      :last_name (:last-name hannes)
+                      :amount "1000.00"
+                      :due_date (date->iso (time/from-now (time/days 14)))
+                      :status :active
+                      :paid_at ""
+                      :reference application-key
+                      :origin "tutu"
+                      :metadata {:form_name {:fi "ASTU FI"
+                                             :sv "ASTU SV"
+                                             :fi "ASTU EN"}}}]
+        (let [response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)
+              secret    (:secret response)
+              wo-secret (dissoc response :secret)]
+          (is (string? secret))
+          (is (> (count secret) 0))
+          (is (= wo-secret expected)))))
+
     (testing "Edit previously created invoice"
            (let [lasku (merge (select-keys hannes [:first-name :email])
                               {:application-key application-key
@@ -126,7 +155,7 @@
              (let [input {:keys [application-key]}]
                (let [list (maksut-protocol/check-status service maksut-test-fixtures/fake-session input)]
                  (is (= (count list) 2))
-                 (is (->> list (map :order-id) sort first) order-id)
+                 (is (->> list (map :order_id) sort first) order-id)
                  (is (map :status list) '(:active :active)))))
 
     (testing "Get laskut by secret"

@@ -33,8 +33,7 @@
 
 (defn LaskuStatus->json [lasku]
   (assoc
-   (select-keys lasku [:reference :origin])
-    :order-id (:order_id lasku)
+   (select-keys lasku [:order_id :reference :origin])
     :status (keyword (:status lasku))))
 
 ;api_schemas/LaskuCreate (ei sisällä gereroituja kenttiä)

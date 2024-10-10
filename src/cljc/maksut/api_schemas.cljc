@@ -27,6 +27,9 @@
    (s/optional-key :en) s/Str})
 
 (s/defschema Metadata
+  {(s/optional-key :form_name) LocalizedString})
+
+(s/defschema MetadataCreate
   {(s/optional-key :form-name) LocalizedString})
 
 ;Paytrail palauttamat kentät (konfiguroitavissa PARAMS-OUT kentässä)
@@ -77,10 +80,10 @@
    :origin Origin
    :reference s/Str
    (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
-   (s/optional-key :metadata) Metadata})
+   (s/optional-key :metadata) MetadataCreate})
 
 (s/defschema LaskuStatus
-  {:order-id s/Str
+  {:order_id s/Str
    :reference s/Str
    :status PaymentStatus
    :origin Origin})
@@ -102,7 +105,7 @@
    (s/optional-key :paid_at) s/Str  ;java.time.LocalDate - Does not port to CLJS
    :origin Origin
    :reference s/Str
-   (s/optional-key :metadata) s/Any})
+   (s/optional-key :metadata) Metadata})
 
 (s/defschema Laskut
   [Lasku])
