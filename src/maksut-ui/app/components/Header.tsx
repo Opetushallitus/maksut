@@ -7,7 +7,7 @@ const Header = async ({lasku}: {lasku: Lasku}) => {
 
   return (
     <Box style={{textAlign: 'center'}}>
-      <h3>{`${lasku.last_name} ${lasku.first_name}`}</h3>
+      <h3>{`${lasku.first_name} ${lasku.last_name}`}</h3>
       <h1>{t('title')}</h1>
     </Box>
   )

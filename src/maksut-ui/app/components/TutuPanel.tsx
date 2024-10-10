@@ -3,7 +3,7 @@
 import { Lasku } from "@/app/lib/types";
 import styles from "@/app/[locale]/page.module.css";
 import Maksu from "@/app/components/Maksu";
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { useTranslations } from "use-intl";
 
 const TutuPanel = ({laskut}: {laskut: Array<Lasku>}) => {
@@ -11,6 +11,7 @@ const TutuPanel = ({laskut}: {laskut: Array<Lasku>}) => {
   const paatos = laskut.find((lasku) => lasku.order_id.endsWith('-2'))
   const t = useTranslations('TutuPanel')
   const tMaksut = useTranslations('MaksutPanel')
+  const theme = useTheme()
 
   const stateText = () => {
     if (paatos) {
@@ -18,7 +19,7 @@ const TutuPanel = ({laskut}: {laskut: Array<Lasku>}) => {
         return (
           <>
             <span>{t('päätösMaksettu')}</span>
-            <span>{t('yhteiskäytto')}</span>
+            <span>{tMaksut('yhteiskäytto')}</span>
           </>
         )
       } else {
@@ -51,8 +52,19 @@ const TutuPanel = ({laskut}: {laskut: Array<Lasku>}) => {
   return (
     <>
       <h2>{t('title')}</h2>
-      {stateText()}
-      <Box className={styles.maksut}>
+      <Box style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: theme.spacing(2),
+        margin: theme.spacing(2, 4),
+      }}>
+        {stateText()}
+      </Box>
+      <Box style={{
+        display: 'flex',
+        flexDirection: 'row',
+        margin: theme.spacing(2),
+      }}>
         {kasittely && <Maksu lasku={kasittely}/>}
         {paatos && <Maksu lasku={paatos}/>}
       </Box>

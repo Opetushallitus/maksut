@@ -39,6 +39,9 @@
    :Maksu.päätös                       {:fi "Päätösmaksu"
                                         :en "Decision fee"
                                         :sv "Beslutsavgift"}
+   :Maksu.maksu                        {:fi "Maksu"
+                                        :en "Fee"
+                                        :sv "Avgift"}
    :MaksutPanel.maksa                  {:fi "Siirry maksamaan"
                                         :en "Go to payment"
                                         :sv "Gå till betalning"}
@@ -96,6 +99,12 @@
    :TutuPanel.päätösMaksettu           {:fi "Olet maksanut päätösmaksun. Olet saanut vahvistuksen maksun onnistumisesta sähköpostiisi. Olet saanut myös kuitin maksustasi erillisellä sähköpostilla. Lähetämme päätöksen sinulle mahdollisimman pian. Otathan huomioon, että tämä voi viedä jopa kolme työpäivää."
                                         :en "You have paid the decision fee. A confirmation of the transaction has been sent to your email. You have also received a receipt for your payment in a separate email. We will send the decision to you as soon as possible. Please note that this might take up to three working days."
                                         :sv "Du har betalat beslutsavgiften. Du har fått en bekräftelse om betalningen till din e-post. Kvittot på betalningen har du fått som ett separat epost. Vi skickar beslutet till dig så snart som möjligt. Vänligen notera att detta kan ta upp till tre arbetsdagar."}
+   :AstuPanel.päätösMaksettu           {:fi "Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
+                                        :en "EN Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
+                                        :sv "SV Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."}
+   :AstuPanel.päätösMaksamatta         {:fi "Hakemuksesi on käsitelty. Siirry maksamaan maksu."
+                                        :en "EN Hakemuksesi on käsitelty. Siirry maksamaan maksu."
+                                        :sv "SV Hakemuksesi on käsitelty. Siirry maksamaan maksu."}
    :MaksutPanel.yhteiskäytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
                                         :en "If you are using a computer that is in common use, remember to empty the cache and log out from the computer. You can now close this window."
                                         :sv "Om du använder en dator som är i gemensamt bruk, kom ihåg att tomma cacheminnen och logga ut ur datorn. Du kan nu stänga det här fönstret."}

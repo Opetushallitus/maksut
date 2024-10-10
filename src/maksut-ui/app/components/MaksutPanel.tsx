@@ -8,7 +8,6 @@ import { Button, colors } from "@opetushallitus/oph-design-system"
 import { backendUrl } from "@/app/lib/configurations";
 import { notFound } from "next/navigation";
 import { useTranslations } from "use-intl";
-import { getLocale } from "next-intl/server";
 
 export const dynamic = 'force-dynamic';
 
@@ -21,7 +20,7 @@ export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<L
     notFound()
   }
 
-  const panel = () => {
+  const panelContent = () => {
     switch (activeLasku.origin) {
       case 'tutu':
         return <TutuPanel laskut={laskut}/>
@@ -33,21 +32,26 @@ export default function MaksutPanel({ laskut, secret, locale }: {laskut: Array<L
   return (
     <Box
       style={{
-        margin: 'auto',
+        margin: `${theme.spacing(2)}`,
         backgroundColor: colors.white,
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'column',
-        padding: theme.spacing(1, 0),
+        maxWidth: '1200px',
+        filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.30))'
       }}>
-      {panel()}
-      <Button
-        variant={'contained'}
-        href={`${backendUrl}/lasku/${activeLasku.order_id}/maksa?secret=${secret}&locale=${locale}`}
-        disabled={activeLasku.status !== 'active'}
-      >
-        {t('maksa')}
-      </Button>
+      {panelContent()}
+      {activeLasku.status === 'active' &&
+        <Button
+          variant={'contained'}
+          href={`${backendUrl}/lasku/${activeLasku.order_id}/maksa?secret=${secret}&locale=${locale}`}
+          style={{
+            marginBottom: theme.spacing(2)
+          }}
+        >
+          {t('maksa')}
+        </Button>
+      }
     </Box>
   );
 }

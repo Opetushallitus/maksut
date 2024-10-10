@@ -6,6 +6,8 @@ import { AppRouterCacheProvider} from "@mui/material-nextjs/v13-appRouter"
 import { ReactNode } from "react"
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { TopBar } from "@/app/components/TopBar";
+import { Locale } from "@/app/lib/types";
 
 export const metadata: Metadata = {
   title: "Maksut",
@@ -29,6 +31,7 @@ export default async function LocaleLayout({
           <NextIntlClientProvider messages={messages}>
             <ThemeProvider theme={oppijaTheme}>
               <CssBaseline/>
+              <TopBar lang={locale as Locale}></TopBar>
               {children}
             </ThemeProvider>
           </NextIntlClientProvider>
