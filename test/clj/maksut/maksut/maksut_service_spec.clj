@@ -126,7 +126,7 @@
              (let [input {:keys [application-key]}]
                (let [list (maksut-protocol/check-status service maksut-test-fixtures/fake-session input)]
                  (is (= (count list) 2))
-                 (is (->> list (map :order_id) sort first) order-id)
+                 (is (->> list (map :order-id) sort first) order-id)
                  (is (map :status list) '(:active :active)))))
 
     (testing "Get laskut by secret"
