@@ -84,7 +84,7 @@
                           :index 2
                           :metadata {:form-name {:fi "ASTU FI"
                                                  :sv "ASTU SV"
-                                                 :fi "ASTU EN"}}})
+                                                 :en "ASTU EN"}}})
             expected {:order_id order-id-2
                       :first_name (:first-name hannes)
                       :last_name (:last-name hannes)
@@ -96,7 +96,7 @@
                       :origin "tutu"
                       :metadata {:form_name {:fi "ASTU FI"
                                              :sv "ASTU SV"
-                                             :fi "ASTU EN"}}}]
+                                             :en "ASTU EN"}}}]
         (let [response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)
               secret    (:secret response)
               wo-secret (dissoc response :secret)]
