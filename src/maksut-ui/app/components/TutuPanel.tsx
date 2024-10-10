@@ -1,7 +1,6 @@
 'use client'
 
 import { Lasku } from "@/app/lib/types";
-import styles from "@/app/[locale]/page.module.css";
 import Maksu from "@/app/components/Maksu";
 import { Box, useTheme } from "@mui/material";
 import { useTranslations } from "use-intl";

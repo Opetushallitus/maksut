@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import '../globals.css'
 import { oppijaTheme } from "@opetushallitus/oph-design-system/next/theme"
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { AppRouterCacheProvider} from "@mui/material-nextjs/v13-appRouter"
-import { ReactNode } from "react"
+import { CSSProperties, ReactNode } from "react"
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { TopBar } from "@/app/components/TopBar";
 import { Locale } from "@/app/lib/types";
+import { colors } from "@opetushallitus/oph-design-system";
 
 export const metadata: Metadata = {
   title: "Maksut",
@@ -24,9 +24,16 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   console.log(messages);
 
+  const bodyStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: '#F6F6F6',
+  }
+
   return (
     <html lang={locale}>
-      <body>
+      <body style={bodyStyle}>
         <AppRouterCacheProvider>
           <NextIntlClientProvider messages={messages}>
             <ThemeProvider theme={oppijaTheme}>
