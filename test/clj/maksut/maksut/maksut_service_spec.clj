@@ -77,7 +77,7 @@
 
     (testing "Create ASTU invoice"
       (let [lasku (merge (select-keys hannes [:first-name :last-name :email])
-                         {:reference application-key
+                         {:reference (str "astu" application-key)
                           :origin "astu"
                           :amount "1000"
                           :due-days 14
@@ -92,8 +92,8 @@
                       :due_date (date->iso (time/from-now (time/days 14)))
                       :status :active
                       :paid_at ""
-                      :reference application-key
-                      :origin "tutu"
+                      :reference (str "astu" application-key)
+                      :origin "astu"
                       :metadata {:form_name {:fi "ASTU FI"
                                              :sv "ASTU SV"
                                              :en "ASTU EN"}}}]
