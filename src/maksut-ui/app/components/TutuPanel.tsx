@@ -62,7 +62,6 @@ const TutuPanel = ({laskut}: {laskut: Array<Lasku>}) => {
       <Box style={{
         display: 'flex',
         flexDirection: 'row',
-        margin: theme.spacing(2),
       }}>
         {kasittely && <Maksu lasku={kasittely}/>}
         {paatos && <Maksu lasku={paatos}/>}

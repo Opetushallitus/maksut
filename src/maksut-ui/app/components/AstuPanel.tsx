@@ -44,7 +44,6 @@ const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
       <Box style={{
         display: 'flex',
         flexDirection: 'row',
-        margin: theme.spacing(2),
       }}>
         <Maksu lasku={lasku} />
       </Box>

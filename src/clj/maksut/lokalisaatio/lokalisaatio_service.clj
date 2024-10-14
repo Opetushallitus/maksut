@@ -147,7 +147,8 @@
    ;                                                :sv "Status för avgiften är inte tillgänglig. För att reda ut situationen, kontakta Utbildningsstyrelsens enhet för erkännande av examina och språkkunskaper per e-post "}}
    })
 
-(defn parse-messages [messages]
+; Supports only 2 level hierarchy, e.g. "Maksu.status" not "Maksu.status.active"
+(defn- parse-messages [messages]
   (reduce-kv
     (fn [acc ns-key val]
       (let [[namespace key] (str/split (name ns-key) #"\.")
