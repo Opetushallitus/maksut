@@ -40,7 +40,7 @@ const StatusRow = ({ status }: { status: PaymentStatus }) => {
         fontSize:   '14px',
         whiteSpace: 'nowrap',
         width: 'min-content',
-        margin: theme.spacing(1, 0, 1, 2),
+        margin: theme.spacing(1, 0, 1, 'auto'),
         backgroundColor: statusColors[status].backgroundColor,
         color: statusColors[status].text,
       }}>
