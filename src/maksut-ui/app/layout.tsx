@@ -7,7 +7,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { TopBar } from "@/app/components/TopBar";
 import { Locale } from "@/app/lib/types";
-import { colors } from "@opetushallitus/oph-design-system";
 
 export const metadata: Metadata = {
   title: "Maksut",
@@ -22,7 +21,6 @@ export default async function LocaleLayout({
   params: {locale: string};
 }>) {
   const messages = await getMessages();
-  console.log(messages);
 
   const bodyStyle: CSSProperties = {
     display: 'flex',

@@ -49,7 +49,7 @@ const StatusRow = ({ status }: { status: PaymentStatus }) => {
           width: '10px',
           borderRadius: '50%',
           display: 'inline-block',
-          marginRight: '5px',
+          marginRight: theme.spacing(1),
           backgroundColor: statusColors[status].dot,
         }}></Box>
         {t(status)}
@@ -59,10 +59,13 @@ const StatusRow = ({ status }: { status: PaymentStatus }) => {
 }
 
 const Separator = () => {
-  return <span style={{
-    gridColumn: 'span 2',
-    borderBottom: '1px solid #cecfd0',
-  }}></span>
+  return (
+    <span style={{
+      gridColumn: 'span 2',
+      borderBottom: '1px solid #cecfd0',
+    }}>
+    </span>
+  )
 }
 
 const MaksuRow = ({name, value, bold}: { name: string, value: ReactNode, bold?: boolean}) => {
