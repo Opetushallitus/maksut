@@ -39,7 +39,7 @@ const ErrorPanel = () => {
           }}>
         </Image>
       </Box>
-      <h3>{t('title')}</h3>
+      <h2>{t('title')}</h2>
       <span>{t('content')}</span>
     </Box>
   )
