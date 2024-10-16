@@ -1,7 +1,9 @@
+'use client'
+
 import { Box, useTheme } from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done'
 import { useTranslations } from "use-intl";
-import { ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 
 type PaymentState = 'kasittelymaksamatta' | 'kasittelymaksettu' | 'paatosmaksamatta' | 'paatosmaksettu'
 
@@ -42,7 +44,7 @@ const State = ({children}: {children: ReactNode}) => {
   )
 }
 
-const activeHeaderStyle = {
+const activeHeaderStyle: CSSProperties = {
   width: 'min-content',
   whiteSpace: 'nowrap',
   margin: 'auto',
@@ -50,7 +52,7 @@ const activeHeaderStyle = {
   color: '#3A7A10',
 }
 
-const passiveHeaderStyle = {
+const passiveHeaderStyle: CSSProperties = {
   ...activeHeaderStyle,
   color: '#353535'
 }
