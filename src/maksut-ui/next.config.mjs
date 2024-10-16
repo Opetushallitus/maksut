@@ -38,8 +38,13 @@ const nextConfig = {
   },
   env: {
     MAKSUT_URL: process.env.MAKSUT_URL,
+    DEVELOPMENT: isStandalone ? 'true' : 'false',
   },
   output: isStandalone ? 'standalone' : undefined,
 };
 
-export default nextConfig;
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
+
+export default withNextIntl(nextConfig);

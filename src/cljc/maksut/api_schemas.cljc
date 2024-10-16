@@ -17,12 +17,20 @@
   {:id       s/Int
    :category s/Str
    :key      s/Str
-   :locale   (s/enum "fi" "sv" "en")
+   :locale   Locale
    :value    s/Str
    s/Any     s/Any})
 
+(s/defschema LocalizedString
+  {(s/optional-key :fi) s/Str
+   (s/optional-key :sv) s/Str
+   (s/optional-key :en) s/Str})
+
 (s/defschema Metadata
-  {(s/optional-key :form-name) s/Str})
+  {(s/optional-key :form_name) LocalizedString})
+
+(s/defschema MetadataCreate
+  {(s/optional-key :form-name) LocalizedString})
 
 ;Paytrail palauttamat kentät (konfiguroitavissa PARAMS-OUT kentässä)
 (s/defschema PaytrailCallbackRequest
@@ -72,10 +80,10 @@
    :origin Origin
    :reference s/Str
    (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
-   (s/optional-key :metadata) Metadata})
+   (s/optional-key :metadata) MetadataCreate})
 
 (s/defschema LaskuStatus
-  {:order-id s/Str
+  {:order_id s/Str
    :reference s/Str
    :status PaymentStatus
    :origin Origin})
