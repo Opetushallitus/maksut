@@ -10,7 +10,7 @@ import { Locale } from "@/app/lib/types";
 
 export const metadata: Metadata = {
   title: "Maksut",
-  description: "Hakemusmaksujen käyttöliittymä"
+  description: "Maksujen käyttöliittymä"
 };
 
 export default async function LocaleLayout({
