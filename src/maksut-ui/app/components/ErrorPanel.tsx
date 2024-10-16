@@ -3,23 +3,14 @@
 import { useTranslations } from "use-intl";
 import { Box } from "@mui/material";
 import Image from "next/image";
+import Panel from "@/app/components/Panel";
+import PanelContent from "@/app/components/PanelContent";
 
 const ErrorPanel = () => {
   const t = useTranslations('NotFound')
 
   return (
-    <Box
-      style={{
-        margin: '32px',
-        backgroundColor: 'white',
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: '1200px',
-        filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.30))',
-        minWidth: '800px',
-        padding: '24px',
-      }}>
+    <Panel>
       <Box style={{
         backgroundColor: '#cc2f1b',
         borderRadius: '50%',
@@ -39,9 +30,11 @@ const ErrorPanel = () => {
           }}>
         </Image>
       </Box>
-      <h2>{t('title')}</h2>
-      <span>{t('content')}</span>
-    </Box>
+      <PanelContent>
+        <h2>{t('title')}</h2>
+        <span>{t('content')}</span>
+      </PanelContent>
+    </Panel>
   )
 }
 

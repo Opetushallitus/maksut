@@ -112,7 +112,6 @@ const Maksu = ({lasku}: {lasku: Lasku}) => {
     <Box style={{
       backgroundColor: colors.grey50,
       textAlign: 'center',
-      margin: theme.spacing(2),
     }}>
       <h4 style={{margin: theme.spacing(1)}}>{title()}</h4>
       <Box style={{

@@ -1,15 +1,16 @@
 'use client'
 
-import { Lasku } from "@/app/lib/types";
+import { Lasku, Locale } from "@/app/lib/types";
 import Maksu from "@/app/components/Maksu";
-import { Box, useTheme } from "@mui/material";
-import { useTranslations } from "use-intl";
+import { useLocale, useTranslations } from "use-intl";
 import { translateLocalizedString } from "@/app/lib/utils";
+import Panel from "@/app/components/Panel";
+import MaksaButton from "@/app/components/MaksaButton";
 
 const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
   const t = useTranslations('AstuPanel')
+  const locale = useLocale() as Locale
   const tMaksut = useTranslations('MaksutPanel')
-  const theme = useTheme()
 
   const stateText = () => {
     if (lasku.status === 'paid') {
@@ -28,26 +29,13 @@ const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
     }
   }
 
-
   return (
-    <>
-      <h2>{translateLocalizedString(lasku.metadata?.form_name)}</h2>
-      <Box style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: theme.spacing(2),
-        margin: theme.spacing(2, 4),
-      }}>
-        {stateText()}
-      </Box>
-      <Box style={{
-        display: 'flex',
-        flexDirection: 'row',
-      }}>
-        <Maksu lasku={lasku} />
-      </Box>
-    </>)
+    <Panel>
+      <h2>{translateLocalizedString(lasku.metadata?.form_name, locale, "ASTU lomake")}</h2>
+      {stateText()}
+      <Maksu lasku={lasku} />
+      <MaksaButton lasku={lasku}></MaksaButton>
+    </Panel>)
 }
 
 export default AstuPanel

@@ -1,5 +1,7 @@
 export type PaymentStatus = 'active' | 'paid' | 'overdue'
 
+export type PaymentState = 'kasittelymaksamatta' | 'kasittelymaksettu' | 'paatosmaksamatta' | 'paatosmaksettu'
+
 export type Origin = 'tutu' | 'astu' | 'kk'
 
 export type Locale = 'fi' | 'en' | 'sv'

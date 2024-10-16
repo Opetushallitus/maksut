@@ -3,9 +3,10 @@ import { Locale, LocalizedString } from "@/app/lib/types";
 export function translateLocalizedString(
   translated: LocalizedString | undefined,
   userLanguage: Locale = 'fi',
+  fallback: string = ''
 ): string {
   if (!translated) {
-    return ''
+    return fallback
   }
   const prop = userLanguage as keyof LocalizedString;
   const translation = translated[prop];
@@ -16,5 +17,5 @@ export function translateLocalizedString(
   } else if (translated.en && translated.en.trim().length > 0) {
     return translated.en;
   }
-  return translated.sv || '';
+  return translated.sv || fallback;
 }
