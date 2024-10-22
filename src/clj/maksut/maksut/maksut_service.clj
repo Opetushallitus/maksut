@@ -10,7 +10,9 @@
             [clj-time.core :as time]
             [schema.core :as s]
             [ring.util.http-response :as response]
-            [taoensso.timbre :as log])
+            [taoensso.timbre :as log]
+            [camel-snake-kebab.core :as csk]
+            [camel-snake-kebab.extras :as cske])
   (:import (java.math RoundingMode)
            [java.time LocalDate]))
 
@@ -32,7 +34,7 @@
 (defn LaskuStatus->json [lasku]
   (assoc
    (select-keys lasku [:order_id :reference :origin])
-   :status (keyword (:status lasku))))
+    :status (keyword (:status lasku))))
 
 ;api_schemas/LaskuCreate (ei sisällä gereroituja kenttiä)
 (defn json->LaskuCreate [lasku]
@@ -44,7 +46,9 @@
                (iso-date-str->date (:due-date lasku))
                (time/plus (time/today) (time/days (:due-days lasku))))
     :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)
-    :metadata (or (:metadata lasku) {})))
+    :metadata (cske/transform-keys
+                csk/->snake_case
+                (or (:metadata lasku) {}))))
 
 (defn- parse-order-id [prefixes lasku]
   (let [trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
@@ -149,7 +153,6 @@
             passed? #(.isAfter now %)
             all-passed? (every? passed? (mapv :due_date laskut))]
         ;do not let user to the page if all due_dates for all (linked) invoices has passed
-        (log/info "laskut " laskut)
         (if all-passed?
           (throw-specific-old-secret-error laskut secret)
           (map Lasku->json laskut)))

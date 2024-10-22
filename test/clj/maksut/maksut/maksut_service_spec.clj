@@ -21,8 +21,10 @@
 (deftest maksut-create-test
   (let [service (:maksut-service @test-system)
         application-key "1.2.246.562.11.00000000000000123456"
+        application-key2 "1.2.246.562.11.00000000000000654321"
         order-id "TTU123456-1"
         order-id-2 "TTU123456-2"
+        order-id-3 "ASTU654321-2"
         first-secret (atom nil)
         amount "123"
         index 1
@@ -74,6 +76,35 @@
                  (is (string? secret))
                  (is (> (count secret) 0))
                  (is (= wo-secret expected)))))
+
+    (testing "Create ASTU invoice"
+      (let [lasku (merge (select-keys hannes [:first-name :last-name :email])
+                         {:reference application-key2
+                          :origin "astu"
+                          :amount "1000"
+                          :due-days 14
+                          :index 2
+                          :metadata {:form-name {:fi "ASTU FI"
+                                                 :sv "ASTU SV"
+                                                 :en "ASTU EN"}}})
+            expected {:order_id order-id-3
+                      :first_name (:first-name hannes)
+                      :last_name (:last-name hannes)
+                      :amount "1000.00"
+                      :due_date (date->iso (time/from-now (time/days 14)))
+                      :status :active
+                      :paid_at ""
+                      :reference application-key2
+                      :origin "astu"
+                      :metadata {:form_name {:fi "ASTU FI"
+                                             :sv "ASTU SV"
+                                             :en "ASTU EN"}}}]
+        (let [response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)
+              secret    (:secret response)
+              wo-secret (dissoc response :secret)]
+          (is (string? secret))
+          (is (> (count secret) 0))
+          (is (= wo-secret expected)))))
 
     (testing "Edit previously created invoice"
            (let [lasku (merge (select-keys hannes [:first-name :email])
