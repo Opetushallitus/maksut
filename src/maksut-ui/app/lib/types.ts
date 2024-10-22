@@ -1,8 +1,20 @@
 export type PaymentStatus = 'active' | 'paid' | 'overdue'
 
+export type PaymentState = 'kasittelymaksamatta' | 'kasittelymaksettu' | 'paatosmaksamatta' | 'paatosmaksettu'
+
 export type Origin = 'tutu' | 'astu' | 'kk'
 
 export type Locale = 'fi' | 'en' | 'sv'
+
+export type LocalizedString = {
+  fi?: string;
+  en?: string;
+  sv?: string;
+}
+
+export type Metadata = {
+  form_name?: LocalizedString;
+}
 
 export type Lasku = {
   order_id: string;
@@ -15,6 +27,7 @@ export type Lasku = {
   paid_at: string;
   origin: Origin;
   reference: string;
+  metadata?: Metadata;
 }
 
 
