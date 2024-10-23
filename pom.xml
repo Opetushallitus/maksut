@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>290662aaa06defc3d062aae7bb166c35e33ae0ff</tag>
+    <tag>c8c815ee41568ee384964fa5342ea10d97f4fdb8</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -241,7 +241,13 @@
     <dependency>
       <groupId>oph</groupId>
       <artifactId>clj-ring-db-cas-session</artifactId>
-      <version>0.3.1-SNAPSHOT</version>
+      <version>0.3.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>mailapi</artifactId>
+          <groupId>javax.mail</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>hikari-cp</groupId>
@@ -257,6 +263,11 @@
       <groupId>metosin</groupId>
       <artifactId>schema-tools</artifactId>
       <version>0.13.1</version>
+    </dependency>
+    <dependency>
+      <groupId>metosin</groupId>
+      <artifactId>ring-swagger-ui</artifactId>
+      <version>5.9.0</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -374,6 +385,16 @@
       <groupId>environ</groupId>
       <artifactId>environ</artifactId>
       <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>jakarta.mail</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.simplejavamail</groupId>
+      <artifactId>simple-java-mail</artifactId>
+      <version>8.3.1</version>
     </dependency>
     <dependency>
       <groupId>binaryage</groupId>
