@@ -70,18 +70,23 @@
    (s/optional-key :due-date) (s/maybe s/Str)
    :index (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)})
 
+
 (s/defschema LaskuCreate
-  {(s/optional-key :order-id) s/Str
-   :first-name s/Str
-   :last-name s/Str
-   :email s/Str
-   :amount s/Str
-   (s/optional-key :due-date) (s/maybe s/Str) ;If not defined, then due-days used
-   :due-days (s/constrained s/Int #(> % 0) 'positive-due-days)
-   :origin Origin
-   :reference s/Str
-   (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
-   (s/optional-key :metadata) MetadataCreate})
+  (s/constrained
+    {(s/optional-key :order-id) s/Str
+     :first-name s/Str
+     :last-name s/Str
+     :email s/Str
+     :amount s/Str
+     (s/optional-key :due-date) (s/maybe s/Str)
+     (s/optional-key :due-days) (s/constrained s/Int #(> % 0) 'positive-due-days)
+     :origin Origin
+     :reference s/Str
+     (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
+     (s/optional-key :metadata) MetadataCreate}
+    (fn [{:keys [due-date due-days]}]
+      (or due-date due-days))
+    'must-have-either-due-date-or-due-days))
 
 (s/defschema LaskuStatus
   {:order_id s/Str
