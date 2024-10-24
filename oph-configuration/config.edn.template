@@ -10,7 +10,8 @@
                                           :merchant-secret  "{{ maksut_payment_paytrail_secret | default('SAIPPUAKAUPPIAS')}}"}
                         :callback-uri       "{{ maksut_payment_callback_uri }}"
                         :order-id-prefix    {:tutu "TTU"
-                                             :astu "ASTU"}
+                                             :astu "ASTU"
+                                             :kkhakemusmaksu "KKHA"}
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
