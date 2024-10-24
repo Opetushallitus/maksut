@@ -60,6 +60,15 @@
    :AstuPanel.päätösMaksamatta         {:fi "Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :en "EN Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :sv "SV Hakemuksesi on käsitelty. Siirry maksamaan maksu."}
+   :KkHakemusmaksuPanel.title          {:fi "Hakemusmaksu"
+                                        :en "EN Hakemusmaksu"
+                                        :sv "SV Hakemusmaksu"}
+   :KkHakemusmaksuPanel.maksettu       {:fi "Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
+                                        :en "EN Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
+                                        :sv "SV Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."}
+   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan maksu."
+                                        :en "EN Siirry maksamaan maksu."
+                                        :sv "SV Siirry maksamaan maksu."}
    :MaksutPanel.yhteiskäytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
                                         :en "If you are using a computer that is in common use, remember to empty the cache and log out from the computer. You can now close this window."
                                         :sv "Om du använder en dator som är i gemensamt bruk, kom ihåg att tomma cacheminnen och logga ut ur datorn. Du kan nu stänga det här fönstret."}

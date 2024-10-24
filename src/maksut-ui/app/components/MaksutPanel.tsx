@@ -1,6 +1,7 @@
 import { Lasku } from "@/app/lib/types";
 import TutuPanel from "@/app/components/TutuPanel";
 import AstuPanel from "@/app/components/AstuPanel";
+import KkHakemusmaksuPanel from "@/app/components/KkHakemusmaksuPanel";
 import { notFound } from "next/navigation";
 
 export default function MaksutPanel({ laskut, secret }: {laskut: Array<Lasku>, secret: string }) {
@@ -11,6 +12,8 @@ export default function MaksutPanel({ laskut, secret }: {laskut: Array<Lasku>, s
       return <TutuPanel laskut={laskut} activeLasku={activeLasku}/>
     case 'astu':
       return <AstuPanel lasku={activeLasku}/>
+    case 'kkhakemusmaksu':
+      return <KkHakemusmaksuPanel lasku={activeLasku}/>
     default: notFound()
   }
 }
