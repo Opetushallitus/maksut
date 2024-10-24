@@ -14,7 +14,8 @@
                                           :merchant-secret  "SAIPPUAKAUPPIAS"}
                         :callback-uri       "https://maksut-local.test:9000/maksut/api/payment/paytrail"
                         :order-id-prefix    {:tutu "TTU"
-                                             :astu "ASTU"}
+                                             :astu "ASTU"
+                                             :kkhakemusmaksu "KKHA"}
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}

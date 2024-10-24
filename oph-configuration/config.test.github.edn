@@ -10,7 +10,8 @@
                                           :merchant-secret  "sikrot"}
                         :callback-uri       "<ei käytetä mock paytrail käyttöliittymätestissä>"
                         :order-id-prefix    {:tutu "TTU"
-                                             :astu "ASTU"}
+                                             :astu "ASTU"
+                                             :kkhakemusmaksu "KKHA"}
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
