@@ -119,8 +119,8 @@
        :amount           (:amount lasku)
        :order-number     order-id
        :secret           secret
-       :first-name       (:first_name lasku)
-       :last-name        (:last_name lasku)
+       :first-name       (str/join (take 50 (:first_name lasku)))
+       :last-name        (str/join (take 50 (:last_name lasku)))
        :email            (:email lasku)}]
     (json/write-str (generate-json-data paytrail-config p))))
 
