@@ -79,7 +79,9 @@
                         :origin    (:origin lasku)
                         :reference (:reference lasku)
                         :first-name (:first_name lasku)
-                        :last-name (:last_name lasku)}]
+                        :last-name (:last_name lasku)
+                        :form-name (get-in lasku [:metadata :form-name])
+                        :vat (get-in lasku [:metadata :vat])}]
        (if (some? old-payment)
          (do
            (log/warn "Old payment with same payment-id found, duplicate notification " old-payment)

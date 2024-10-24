@@ -131,6 +131,54 @@
                      :total-paid          {:fi "YHTEENSÄ MAKSETTU"
                                            :en "TOTAL PAID"
                                            :sv "TOTALT BETALT"}
-                     :zero-vat-explanation {:fi "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."
-                                            :en "The fees for recognition of qualifications are based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (137/2022). The fees are exempted from VAT."
-                                            :sv "Avgifterna för erkännande av examina är föreskrivna i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (137/2022) och är momsfria."}}})
+                     :vat-explanation     {:fi "Tutkintojen tunnustamisen maksut ovat opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (137/2022) määrättyjä maksuja, joista ei peritä arvonlisäveroa."
+                                           :en "The fees for recognition of qualifications are based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (137/2022). The fees are exempted from VAT."
+                                           :sv "Avgifterna för erkännande av examina är föreskrivna i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (137/2022) och är momsfria."}}
+   :astukuitti      {:otsikko             {:fi "Kuitti maksusta"
+                                           :en "Receipt for payment"
+                                           :sv "Betalningskvitto på avgiften"}
+                     :body-otsikko        {:fi ": kuitti"
+                                           :en ": receipt"
+                                           :sv ": kvitto"}
+                     :oph                 {:fi "Opetushallitus"
+                                           :en "Finnish National Agency for Education"
+                                           :sv "Utbildningsstyrelsen"}
+                     :address1            {:fi "Hakaniemenranta 6"
+                                           :en "Hakaniemenranta 6"
+                                           :sv "Hagnäskajen 6"}
+                     :address2            {:fi "PL 380, 00531 Helsinki"
+                                           :en "P.O. Box 380, 00531 Helsinki, Finland"
+                                           :sv "PB 380, 00531 Helsingfors"}
+                     :contact-details     {:fi "Puhelin: +358 29 533 1000"
+                                           :en "Telephone: +358 29 533 1000"
+                                           :sv "Telefon: +358 29 533 1000"}
+                     :business-id         {:fi "Y-tunnus: 2769790-1"
+                                           :en "Business ID: 2769790-1"
+                                           :sv "FO-nummer: 2769790-1"}
+                     :name-desc           {:fi "Nimi"
+                                           :en "Name"
+                                           :sv "Namn"}
+                     :payment-reference-desc {:fi "Maksuviite"
+                                              :en "Payment reference"
+                                              :sv "Betalningsreferens"}
+                     :date-of-purchase-desc {:fi "Maksupäivä"
+                                             :en "Payment date"
+                                             :sv "Betalningsdatum"}
+                     :description         {:fi "Kuvaus"
+                                           :en "Description"
+                                           :sv "Beskrivning"}
+                     :units               {:fi "Määrä"
+                                           :en "Quantity"
+                                           :sv "Kvantitet"}
+                     :vat                 {:fi "ALV"
+                                           :en "VAT"
+                                           :sv "MOMS"}
+                     :unit-price          {:fi "Yksikköhinta"
+                                           :en "Unit price"
+                                           :sv "Jämförpris"}
+                     :total-paid          {:fi "YHTEENSÄ MAKSETTU"
+                                           :en "TOTAL PAID"
+                                           :sv "TOTALT BETALT"}
+                     :vat-explanation     {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."
+                                           :en "EN Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."
+                                           :sv "SV Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."}}})
