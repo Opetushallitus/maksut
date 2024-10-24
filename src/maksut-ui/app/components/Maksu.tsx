@@ -96,16 +96,13 @@ const Maksu = ({lasku}: {lasku: Lasku}) => {
   }
 
   const title = () => {
-    if (lasku.origin === 'astu') {
-      return t('maksu')
-    }
     if (lasku.origin === 'tutu') {
       if (lasku.order_id.endsWith('-1')) {
         return t('käsittely')
       }
       return t('päätös')
     }
-    return t('käsittely')
+    return t('maksu')
   }
 
   return (
