@@ -47,7 +47,8 @@
 (defn- order-state [order-id]
   (cond
     (str/ends-with? order-id "-1") :käsittely
-    (str/ends-with? order-id "-2") :päätös))
+    (str/ends-with? order-id "-2") :päätös
+    :else                          :käsittely))             ; TODO: remove once tutu-astu-kk logic has stabilized
 
 (defn- create-description [language-code order-id]
   (case (order-state order-id)
