@@ -5,9 +5,12 @@
                         :database-name "{{ maksut_db_name | default('maksut') }}"
                         :host          "{{ maksut_db_host }}"
                         :port          {{ maksut_db_port | default('5432') }}}
- :payment              {:paytrail-config {:host             "{{ maksut_payment_paytrail_host | default('https://services.paytrail.com/payments')}}"
-                                          :merchant-id       {{ maksut_payment_paytrail_id | default('375917')}}
-                                          :merchant-secret  "{{ maksut_payment_paytrail_secret | default('SAIPPUAKAUPPIAS')}}"}
+ :payment              {:paytrail-config {:default {:host             "{{ maksut_payment_paytrail_host | default('https://services.paytrail.com/payments')}}"
+                                                    :merchant-id       {{ maksut_payment_paytrail_id | default('375917')}}
+                                                    :merchant-secret  "{{ maksut_payment_paytrail_secret | default('SAIPPUAKAUPPIAS')}}"}
+                                          :kkhakemusmaksu {:host             "{{ maksut_payment_kkhakemusmaksu_paytrail_host | default('https://services.paytrail.com/payments')}}"
+                                                           :merchant-id       {{ maksut_payment_kkhakemusmaksu_paytrail_id | default('375917')}}
+                                                           :merchant-secret  "{{ maksut_payment_kkhakemusmaksu_paytrail_secret | default('SAIPPUAKAUPPIAS')}}"}}
                         :callback-uri       "{{ maksut_payment_callback_uri }}"
                         :order-id-prefix    {:tutu "TTU"
                                              :astu "ASTU"
