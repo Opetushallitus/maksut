@@ -61,7 +61,7 @@
     :päätös (get-translation (keyword language-code) :kuitti/päätös-lr)))
 
 (defn- generate-json-data [{:keys [callback-uri]}
-                           {:keys [language-code amount order-number secret first-name last-name email]}]
+                           {:keys [language-code amount order-number secret first-name last-name email origin form-name]}]
   (let [query (str "?locale=" (encode language-code) "&secret=" (encode secret))
         callback-urls {"success" (str callback-uri "/success" query)
                        "cancel"  (str callback-uri "/cancel" query)}
@@ -73,7 +73,9 @@
      "amount"       amount-in-euro-cents
      "currency"     "EUR"
      "language"     (case language-code "fi" "FI" "sv" "SV" "en" "EN")
-     "items"        [{"description"   (create-description language-code order-number)
+     "items"        [{"description"   (case origin
+                                        "tutu" (create-description language-code order-number)
+                                        "astu" (str (get-translation (keyword language-code) :astukuitti/oph) " " form-name))
                       "units"         1
                       "unitPrice"     amount-in-euro-cents
                       "vatPercentage" vat-zero
@@ -125,12 +127,14 @@
 
 (defn- lasku-to-json [lasku paytrail-config order-id locale secret]
   (let [p {:language-code    (or locale "fi")
-       :amount           (:amount lasku)
-       :order-number     order-id
-       :secret           secret
-       :first-name       (str/join (take 50 (:first_name lasku)))
-       :last-name        (str/join (take 50 (:last_name lasku)))
-       :email            (:email lasku)}]
+           :amount           (:amount lasku)
+           :order-number     order-id
+           :secret           secret
+           :first-name       (str/join (take 50 (:first_name lasku)))
+           :last-name        (str/join (take 50 (:last_name lasku)))
+           :email            (:email lasku)
+           :form-name        (get-in lasku [:metadata :form-name])
+           :origin           (:origin lasku)}]
     (json/write-str (generate-json-data paytrail-config p))))
 
 ;Instead of directly searching by order-id, use secret to prevent order-id brute-forcing
@@ -188,8 +192,8 @@
   (file-store/create-file-from-bytearray storage-engine (.getBytes contents) key))
 
 (defn- handle-payment-receipt
-  [email-service email locale first-name last-name reference timestamp-millis total-amount items storage-engine oppija-baseurl]
-  (let [msg (email-message-handling/create-payment-receipt email locale first-name last-name reference timestamp-millis total-amount items oppija-baseurl)]
+  [email-service email locale first-name last-name reference timestamp-millis total-amount items storage-engine oppija-baseurl origin form-name]
+  (let [msg (email-message-handling/create-payment-receipt email locale first-name last-name reference timestamp-millis total-amount items oppija-baseurl origin form-name)]
     (future
       (try
         (save-receipt storage-engine (:body msg) reference)
@@ -203,7 +207,7 @@
 
 ;TODO add robustness here, maybe background-job with retry?
 (defn- handle-confirmation-email
-  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference first-name last-name]}]
+  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference first-name last-name vat form-name]}]
   (case origin
     "tutu" (do
              (handle-tutu-email-confirmation email-service email locale order-id
@@ -216,17 +220,19 @@
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
                                        :vat vat-zero}]
-                                     storage-engine oppija-baseurl))
-    "astu" (do
+                                     storage-engine oppija-baseurl origin nil))
+    "astu" (let [form-name-translated ((keyword locale) form-name)]
              (handle-payment-receipt email-service email locale
                                      first-name last-name
                                      order-id (* 1000 timestamp)
                                      (/ checkout-amount-in-euro-cents 100)
-                                     [{:description (create-receipt-description locale order-id)
+                                     [{:description (str
+                                                      (get-translation (keyword locale) :astukuitti/oph)
+                                                      "\n" form-name-translated)
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
-                                       :vat vat-zero}]
-                                     storage-engine oppija-baseurl))
+                                       :vat (or vat vat-zero)}]
+                                     storage-engine oppija-baseurl origin form-name-translated))
     "kkhakemusmaksu" (do
                        (handle-payment-receipt email-service email locale
                                                first-name last-name
@@ -236,7 +242,7 @@
                                                  :units 1
                                                  :unit-price (/ checkout-amount-in-euro-cents 100)
                                                  :vat vat-zero}]
-                                               storage-engine oppija-baseurl))
+                                               storage-engine oppija-baseurl origin nil))
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]
