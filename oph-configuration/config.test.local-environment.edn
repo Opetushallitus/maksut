@@ -5,9 +5,12 @@
                         :database-name "maksut"
                         :host          "localhost"
                         :port          15432}
- :payment              {:paytrail-config {:host             "http://localhost:9040/payments"
-                                          :merchant-id      12345
-                                          :merchant-secret  "sikrot"}
+ :payment              {:paytrail-config {:default {:host             "http://localhost:9040/payments"
+                                                    :merchant-id      12345
+                                                    :merchant-secret  "sikrot"}
+                                          :kkhakemusmaksu {:host             "http://localhost:9040/payments"
+                                                           :merchant-id      12345
+                                                           :merchant-secret  "sikrot"}}
                         :callback-uri       "http://localhost:19033/maksut/payment/paytrail"
                         :order-id-prefix    {:tutu "TTU"
                                              :astu "ASTU"

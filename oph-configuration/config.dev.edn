@@ -9,9 +9,12 @@
                         :database-name "maksut"
                         :host          "localhost"
                         :port          15499}
- :payment              {:paytrail-config {:host             "https://services.paytrail.com/payments"
-                                          :merchant-id       375917
-                                          :merchant-secret  "SAIPPUAKAUPPIAS"}
+ :payment              {:paytrail-config {:default {:host             "https://services.paytrail.com/payments"
+                                                    :merchant-id       375917
+                                                    :merchant-secret  "SAIPPUAKAUPPIAS"}
+                                          :kkhakemusmaksu {:host             "https://services.paytrail.com/payments"
+                                                           :merchant-id       375917
+                                                           :merchant-secret  "SAIPPUAKAUPPIAS"}}
                         :callback-uri       "https://maksut-local.test:9000/maksut/api/payment/paytrail"
                         :order-id-prefix    {:tutu "TTU"
                                              :astu "ASTU"
