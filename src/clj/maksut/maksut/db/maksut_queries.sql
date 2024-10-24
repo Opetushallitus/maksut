@@ -8,8 +8,8 @@ INSERT INTO invoices (
     amount,
     origin,
     reference,
-    due_date,
-    metadata
+    due_date
+    --~ (when (contains? params :metadata) ", metadata")
 )
 VALUES (
     :order-id,
@@ -19,8 +19,8 @@ VALUES (
     :amount,
     :origin,
     :reference,
-    :due-date,
-    :metadata
+    :due-date
+--~ (when (contains? params :metadata) ", :metadata")
 )
 RETURNING *;
 

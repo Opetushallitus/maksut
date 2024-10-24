@@ -83,7 +83,7 @@
                                                                                    false)
                                action   (or (:action response) :error)
                                uri-end  (if (= action :error) "&payment=error" "")
-                               uri      (str (get-in config [:urls :oppija-baseurl]) "/?secret=" (encode secret) "&locale=" (encode locale) uri-end)]
+                               uri      (str (get-in config [:urls :oppija-baseurl]) "/" (encode locale) "/?secret=" (encode secret) uri-end)]
                               (response/permanent-redirect uri)))}}]
 
     ["/cancel"
