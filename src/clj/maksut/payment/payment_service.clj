@@ -233,16 +233,15 @@
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
                                        :vat (or vat vat-zero)}]
                                      storage-engine oppija-baseurl origin form-name-translated))
-    "kkhakemusmaksu" (do
-                       (handle-payment-receipt email-service email locale
-                                               first-name last-name
-                                               order-id (* 1000 timestamp)
-                                               (/ checkout-amount-in-euro-cents 100)
-                                               [{:description (create-receipt-description locale order-id)
-                                                 :units 1
-                                                 :unit-price (/ checkout-amount-in-euro-cents 100)
-                                                 :vat vat-zero}]
-                                               storage-engine oppija-baseurl origin nil))
+    "kkhakemusmaksu" (handle-payment-receipt email-service email locale
+                                             first-name last-name
+                                             order-id (* 1000 timestamp)
+                                             (/ checkout-amount-in-euro-cents 100)
+                                             [{:description (create-receipt-description locale order-id)
+                                               :units 1
+                                               :unit-price (/ checkout-amount-in-euro-cents 100)
+                                               :vat vat-zero}]
+                                             storage-engine oppija-baseurl origin nil)
     nil))
 
 (defn- process-success-callback [this db email-service pt-params locale storage-engine _]
