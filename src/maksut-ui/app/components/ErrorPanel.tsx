@@ -11,8 +11,8 @@ const ErrorPanel = ({title, content}: {title?: string, content?: string}) => {
   return (
     <Panel>
       <AlertIcon></AlertIcon>
-      <h2>{title || ''}</h2>
-      <span>{content || ''}</span>
+      {title && <h2>{title}</h2>}
+      {content && <span>{content}</span>}
     </Panel>
   )
 }
