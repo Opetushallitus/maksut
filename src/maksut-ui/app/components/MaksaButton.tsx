@@ -9,14 +9,17 @@ const MaksaButton = ({lasku}: {lasku: Lasku}) => {
   const locale = useLocale()
   const t = useTranslations('MaksutPanel')
 
-  return (
-    <Button
-      variant={'contained'}
-      href={`${backendUrl}/lasku/${lasku.order_id}/maksa?secret=${lasku.secret}&locale=${locale}`}
-    >
-      {t('maksa')}
-    </Button>
-  )
+  if (lasku.status === 'active') {
+    return (
+      <Button
+        variant={'contained'}
+        href={`${backendUrl}/lasku/${lasku.order_id}/maksa?secret=${lasku.secret}&locale=${locale}`}
+      >
+        {t('maksa')}
+      </Button>
+    )
+  }
+  return <></>
 }
 
 export default MaksaButton
