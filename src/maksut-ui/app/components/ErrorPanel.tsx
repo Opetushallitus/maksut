@@ -5,35 +5,14 @@ import { Box } from "@mui/material";
 import Image from "next/image";
 import Panel from "@/app/components/Panel";
 import PanelContent from "@/app/components/PanelContent";
+import AlertIcon from "@/app/components/AlertIcon";
 
-const ErrorPanel = () => {
-  const t = useTranslations('NotFound')
-
+const ErrorPanel = ({title, content}: {title?: string, content?: string}) => {
   return (
     <Panel>
-      <Box style={{
-        backgroundColor: '#cc2f1b',
-        borderRadius: '50%',
-        width: '60px',
-        height: '60px',
-        display: 'flex',
-        alignItems: 'center',
-      }}>
-        <Image
-          src={'/maksut-ui/alert.svg'}
-          alt={t('imageAlt')}
-          width={40}
-          height={40}
-          style={{
-            filter: 'invert(1)',
-            margin: 'auto',
-          }}>
-        </Image>
-      </Box>
-      <PanelContent>
-        <h2>{t('title')}</h2>
-        <span>{t('content')}</span>
-      </PanelContent>
+      <AlertIcon></AlertIcon>
+      <h2>{title || ''}</h2>
+      <span>{content || ''}</span>
     </Panel>
   )
 }

@@ -9,7 +9,7 @@ export const TopBar = ({lang}: {lang?: Locale} ) => {
   return (
     <AppBar position='static' style={{padding: theme.spacing(3, 0)}}>
       <Box style={{margin: 'auto', width: '1000px'}}>
-        <Image src={`/maksut-ui/opintopolku_logo_header_${lang || 'fi'}.svg`} alt="Opintopolku" height={31} width={224}/>
+        <Image src={`/maksut-ui/opintopolku_logo_header_${lang || 'fi'}.svg`} alt="Opintopolku" height={31} width={224} priority/>
       </Box>
     </AppBar>
   )
