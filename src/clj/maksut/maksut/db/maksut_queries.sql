@@ -31,7 +31,7 @@ SET
     last_name = :last-name,
     email = :email,
     amount = :amount
---~ (when (some? (:metadata params)) ", :metadata")
+--~ (when (some? (:metadata params)) ", metadata = :metadata")
 WHERE order_id = :order-id AND CURRENT_DATE <= due_date;
 
 -- :name get-lasku-locked :? :1

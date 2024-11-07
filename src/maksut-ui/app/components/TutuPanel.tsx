@@ -66,7 +66,9 @@ const TutuPanel = ({laskut, activeLasku}: {laskut: Array<Lasku>, activeLasku: La
     <Panel>
       <h2>{t('title')}</h2>
       <TutuStateTracker state={state()}></TutuStateTracker>
-      {stateText()}
+      <Box style={{display: 'flex', flexDirection: 'column', textAlign: 'left', gap: theme.spacing(2)}}>
+        {stateText()}
+      </Box>
       <Box style={{
         display: 'flex',
         flexDirection: 'row',
