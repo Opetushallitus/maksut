@@ -7,6 +7,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { TopBar } from "@/app/components/TopBar";
 import { Locale } from "@/app/lib/types";
+import { routing } from "@/i18n/routing";
+import { notFound, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Maksut",

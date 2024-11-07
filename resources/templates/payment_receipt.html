@@ -9,7 +9,7 @@
 <table style="width: 500px;">
   <tr>
     <td colspan="4" style="padding-left: 20px; padding-top: 10px; font-size: 24px;">
-      {{body-otsikko|safe}}
+      {% if form-name %}{{form-name}}{% endif %}{{body-otsikko|safe}}
     </td>
   </tr>
   <tr>
@@ -67,7 +67,7 @@
   </tr>
   <tr>
     <td colspan="4" style="padding-left: 20px; padding-top: 20px;">
-      {{zero-vat-explanation|safe}}
+      {{vat-explanation|safe}}
     </td>
   </tr>
   <tr>

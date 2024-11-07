@@ -6,9 +6,11 @@ import { useLocale, useTranslations } from "use-intl";
 import { translateLocalizedString } from "@/app/lib/utils";
 import Panel from "@/app/components/Panel";
 import MaksaButton from "@/app/components/MaksaButton";
+import { Box, useTheme } from "@mui/material";
 
 const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
   const t = useTranslations('AstuPanel')
+  const theme = useTheme()
   const locale = useLocale() as Locale
   const tMaksut = useTranslations('MaksutPanel')
 
@@ -32,7 +34,9 @@ const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
   return (
     <Panel>
       <h2>{translateLocalizedString(lasku.metadata?.form_name, locale, "ASTU lomake")}</h2>
-      {stateText()}
+      <Box style={{display: 'flex', flexDirection: 'column', textAlign: 'left', gap: theme.spacing(2)}}>
+        {stateText()}
+      </Box>
       <Maksu lasku={lasku} />
       <MaksaButton lasku={lasku}></MaksaButton>
     </Panel>)
