@@ -75,7 +75,8 @@
                 locale
                 (case origin
                   "tutu" :kuitti
-                  "astu" :astukuitti)
+                  "astu" :astukuitti
+                  "kkhakemusmaksu" :kkmaksukuitti)
                 "templates/payment_receipt.html"
                 :first-name first-name
                 :last-name last-name

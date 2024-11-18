@@ -75,7 +75,8 @@
      "language"     (case language-code "fi" "FI" "sv" "SV" "en" "EN")
      "items"        [{"description"   (case origin
                                         "tutu" (create-description language-code order-number)
-                                        "astu" (str (get-translation (keyword language-code) :astukuitti/oph) " " form-name))
+                                        "astu" (str (get-translation (keyword language-code) :astukuitti/oph) " " form-name)
+                                        "kkhakemusmaksu" (str (get-translation (keyword language-code) :kkmaksukuitti/selite)))
                       "units"         1
                       "unitPrice"     amount-in-euro-cents
                       "vatPercentage" vat-zero

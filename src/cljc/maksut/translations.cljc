@@ -146,4 +146,19 @@
                                            :sv ": kvitto"}
                          :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."
                                            :en "EN Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."
-                                           :sv "SV Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."}})}))
+                                           :sv "SV Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."}})
+
+     :kkmaksukuitti   (merge
+                        kuitti-common
+                        {:otsikko         {:fi "Kuitti maksusta"
+                                           :en "Receipt for payment"
+                                           :sv "Betalningskvitto på avgiften"}
+                         :body-otsikko    {:fi "Hakemusmaksu: kuitti"
+                                           :en "EN Hakemusmaksu: kuitti"
+                                           :sv "SV Hakemusmaksu: kuitti"}
+                         :selite          {:fi "Hakemusmaksu"
+                                           :en "EN Hakemusmaksu"
+                                           :sv "SV Hakemusmaksu"}
+                         :vat-explanation {:fi "ALV-peruste tähän."
+                                           :en "EN ALV-peruste tähän."
+                                           :sv "SV ALV-peruste tähän."}})}))
