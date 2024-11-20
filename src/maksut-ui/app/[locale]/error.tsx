@@ -2,6 +2,6 @@
 
 import ErrorPanel from "@/app/components/ErrorPanel";
 
-export default function NotFound() {
+export default function Error() {
   return <ErrorPanel></ErrorPanel>
 }
