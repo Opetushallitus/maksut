@@ -156,7 +156,12 @@
                   :responses  {200 {:body schema/Lasku}}
                   :parameters {:body schema/LaskuCreate}
                   :handler    (fn [{session :session {lasku :body} :parameters}]
-                                (response/ok (maksut-protocol/create maksut-service session lasku)))}}]
+                                (if
+                                  (and (= "astu" (:origin lasku))
+                                       (or (empty? (get-in lasku [:metadata :form-name]))
+                                           (nil? (get-in lasku [:metadata :order-id-prefix]))))
+                                  (response/bad-request! "Missing form-name or order-id-prefix for astu invoice")
+                                  (response/ok (maksut-protocol/create maksut-service session lasku))))}}]
 
         ]
 

@@ -56,6 +56,13 @@
       {{item.unit-price|number-format:%.2f:fi}} EUR
     </td>
   </tr>
+  {% if item.vat-amount > 0 %}
+    <tr>
+        <td colspan="3" style="padding-left: 20px; text-align: right;">
+            {{item.vat-amount|number-format:%.2f:fi}} EUR
+        </td>
+    </tr>
+  {% endif %}
   {% endfor %}
   <tr>
     <td colspan="3" style="padding-left: 20px; padding-top: 20px;">
