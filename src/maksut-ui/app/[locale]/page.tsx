@@ -7,7 +7,7 @@ import { routing } from "@/i18n/routing";
 import { getLocale } from "next-intl/server";
 
 export default async function Page({ searchParams }: {searchParams: {secret?: string}}) {
-  const { secret } = searchParams
+  const { secret } = await searchParams
   const locale = await getLocale()
 
   if (!routing.locales.includes(locale as any)) {

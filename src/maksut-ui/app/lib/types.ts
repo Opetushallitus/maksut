@@ -14,6 +14,7 @@ export type LocalizedString = {
 
 export type Metadata = {
   form_name?: LocalizedString;
+  order_id_prefix?: string
 }
 
 export type Lasku = {
@@ -28,6 +29,7 @@ export type Lasku = {
   origin: Origin;
   reference: string;
   metadata?: Metadata;
+  vat?: string;
 }
 
 

@@ -27,11 +27,22 @@
    (s/optional-key :sv) s/Str
    (s/optional-key :en) s/Str})
 
+(s/defschema AstuOrderIdPrefix
+  (s/enum
+    "LUSA"
+    "LSST"
+    "HOPT"
+    "TSHA"
+    "OTR"
+    "AKR"))
+
 (s/defschema Metadata
-  {(s/optional-key :form_name) LocalizedString})
+  {(s/optional-key :form_name)       LocalizedString
+   (s/optional-key :order_id_prefix) AstuOrderIdPrefix})
 
 (s/defschema MetadataCreate
-  {(s/optional-key :form-name) LocalizedString})
+  {(s/optional-key :form-name)       LocalizedString
+   (s/optional-key :order-id-prefix) AstuOrderIdPrefix})
 
 ;Paytrail palauttamat kentät (konfiguroitavissa PARAMS-OUT kentässä)
 (s/defschema PaytrailCallbackRequest
@@ -83,7 +94,8 @@
      :origin Origin
      :reference s/Str
      (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
-     (s/optional-key :metadata) MetadataCreate}
+     (s/optional-key :metadata) MetadataCreate
+     (s/optional-key :vat) s/Str}
     (fn [{:keys [due-date due-days]}]
       (or due-date due-days))
     'must-have-either-due-date-or-due-days))
@@ -111,7 +123,8 @@
    (s/optional-key :paid_at) s/Str  ;java.time.LocalDate - Does not port to CLJS
    :origin Origin
    :reference s/Str
-   (s/optional-key :metadata) Metadata})
+   (s/optional-key :metadata) Metadata
+   (s/optional-key :vat) s/Str})
 
 (s/defschema Laskut
   [Lasku])

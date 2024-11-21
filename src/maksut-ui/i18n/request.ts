@@ -1,7 +1,7 @@
 import {getRequestConfig} from 'next-intl/server';
 import { backendUrl } from "@/app/lib/configurations";
 
-const fetchLocalizations = async (locale: string) => {
+const fetchLocalizations = async (locale: string = 'fi') => {
   const response = await fetch(`${backendUrl}/localisation/${locale}`, {cache: "no-cache"})
   if (response.ok) {
     return await response.json()
@@ -10,8 +10,8 @@ const fetchLocalizations = async (locale: string) => {
   }
 }
 
-export default getRequestConfig(async ({locale}) => {
+export default getRequestConfig(async ({requestLocale}) => {
   return {
-    messages: (await fetchLocalizations(locale)),
+    messages: (await fetchLocalizations(await requestLocale)),
   };
 });

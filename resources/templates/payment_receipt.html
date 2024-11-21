@@ -6,7 +6,7 @@
   <title></title>
 </head>
 <body style="margin: 0; font-family: 'Open Sans', Arial, sans-serif;">
-<table style="width: 500px;">
+<table style="width: 600px;">
   <tr>
     <td colspan="4" style="padding-left: 20px; padding-top: 10px; font-size: 24px;">
       {% if form-name %}{{form-name}}{% endif %}{{body-otsikko|safe}}
@@ -31,10 +31,10 @@
     <th style="padding-left: 20px; padding-top: 20px; text-align: left; width: 70%;">
       {{description|safe}}
     </th>
-    <th style="padding-left: 10px; padding-top: 20px; text-align: right;">
+    <th style="padding-left: 10px; padding-top: 20px; text-align: left;">
       {{units|safe}}
     </th>
-    <th style="padding-left: 10px; padding-top: 20px; text-align: right;">
+    <th style="padding-left: 20px; padding-top: 20px; text-align: left;">
       {{vat|safe}}
     </th>
     <th style="padding-left: 10px; padding-top: 20px; text-align: right;">
@@ -43,14 +43,18 @@
   </tr>
   {% for item in items %}
   <tr>
-    <td style="padding-left: 20px; vertical-align: top; width: 70%;">
+    <td style="padding-left: 20px; vertical-align: top; width: 50%;">
       {{item.description|linebreaks-br|safe}}
     </td>
-    <td style="padding-left: 10px; text-align: right; vertical-align: top;">
+    <td style="padding-left: 10px; text-align: left; vertical-align: top;">
       {{item.units|safe}}
     </td>
-    <td style="padding-left: 10px; text-align: right; vertical-align: top;">
+    <td style="padding-left: 20px; text-align: left; vertical-align: top; white-space: nowrap;">
       {{item.vat|safe}} %
+      {% if item.vat-amount > 0 %}
+      <br>
+      {{item.vat-amount|number-format:%.2f:fi}} EUR
+      {% endif %}
     </td>
     <td style="padding-left: 10px; text-align: right; vertical-align: top;">
       {{item.unit-price|number-format:%.2f:fi}} EUR
@@ -97,7 +101,7 @@
   </tr>
   <tr>
     <td colspan="4" style="padding-left: 20px; padding-top: 20px;">
-      <img src="{{oppija-baseurl|safe}}/images/OPH-logo.png" alt="{{oph|safe}}" />
+      <img src="{{oppija-baseurl|safe}}/OPH-logo.png" alt="{{oph|safe}}" />
     </td>
   </tr>
 </table>

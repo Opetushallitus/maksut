@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
-import { oppijaTheme } from "@opetushallitus/oph-design-system/next/theme"
-import { CssBaseline, ThemeProvider } from '@mui/material'
+import { OphNextJsThemeProvider } from "@opetushallitus/oph-design-system/next/theme"
+import { CssBaseline } from '@mui/material'
 import { AppRouterCacheProvider} from "@mui/material-nextjs/v13-appRouter"
 import { CSSProperties, ReactNode } from "react"
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { TopBar } from "@/app/components/TopBar";
 import { Locale } from "@/app/lib/types";
-import { routing } from "@/i18n/routing";
-import { notFound, redirect } from "next/navigation";
+import { OphLanguage } from "@opetushallitus/oph-design-system";
 
 export const metadata: Metadata = {
   title: "Maksut",
@@ -17,12 +16,13 @@ export const metadata: Metadata = {
 
 export default async function LocaleLayout({
   children,
-  params: {locale}
+  params
 }: Readonly<{
   children: ReactNode;
   params: {locale: string};
 }>) {
   const messages = await getMessages();
+  const { locale } = await params
 
   const bodyStyle: CSSProperties = {
     display: 'flex',
@@ -36,11 +36,11 @@ export default async function LocaleLayout({
       <body style={bodyStyle}>
         <AppRouterCacheProvider>
           <NextIntlClientProvider messages={messages}>
-            <ThemeProvider theme={oppijaTheme}>
+            <OphNextJsThemeProvider lang={locale as OphLanguage} variant={"opintopolku"}>
               <CssBaseline/>
               <TopBar lang={locale as Locale}></TopBar>
               {children}
-            </ThemeProvider>
+            </OphNextJsThemeProvider>
           </NextIntlClientProvider>
         </AppRouterCacheProvider>
       </body>

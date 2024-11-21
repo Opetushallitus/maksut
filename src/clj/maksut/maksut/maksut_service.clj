@@ -27,6 +27,8 @@
           :due_date (str (:due_date lasku))
           :status (keyword (:status lasku))
           :paid_at (str (:paid_at lasku)))
+        (some? (:vat lasku))
+        (assoc :vat (str (:vat lasku)))
         (not-empty (:metadata lasku))
         (assoc
           :metadata (cske/transform-keys
@@ -47,7 +49,8 @@
     :due-date (or
                (iso-date-str->date (:due-date lasku))
                (time/plus (time/today) (time/days (:due-days lasku))))
-    :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)))
+    :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)
+    :vat (when (some? (:vat lasku)) (.setScale (bigdec (:vat lasku)) 1 RoundingMode/HALF_UP))))
 
 (defn- parse-order-id [prefixes lasku]
   (let [trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
@@ -56,7 +59,9 @@
         ;Using the last part of application-key OID as unique order-id
         aid (trim-zeroes (last (str/split (:reference lasku) #"[.]")))
         origin (:origin lasku)
-        prefix ((keyword origin) prefixes)
+        prefix (if (= "astu" origin)
+                 (get-in lasku [:metadata :order-id-prefix])
+                 ((keyword origin) prefixes))
         suffix (if (some? (:index lasku))
                  (str "-" (:index lasku))
                  "")]
@@ -93,7 +98,7 @@
            ["overdue" nil] (output :invoice-processing-overdue)
            [_ "paid"]      (output :invoice-decision-oldsecret)
            [_ "overdue"]   (output :invoice-decision-overdue)
-           :else (maksut-error :invoice-notfound-oldsecret (str "Linkki on vanhentunut: " secret)))))
+           :else (maksut-error :invoice-notfound-oldsecret (str "Linkki on vanhentunut: " secret) {:status-code 404}))))
 
 (defrecord MaksutService [audit-logger config db]
   component/Lifecycle
@@ -156,6 +161,6 @@
           (throw-specific-old-secret-error laskut secret)
           (map Lasku->json laskut)))
       (do (log/error (str "Linkki on väärä tai vanhentunut: " secret))
-          (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret))))))
+          (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404})))))
 
 

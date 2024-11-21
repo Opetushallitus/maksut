@@ -61,7 +61,7 @@
     :päätös (get-translation (keyword language-code) :kuitti/päätös-lr)))
 
 (defn- generate-json-data [{:keys [callback-uri]}
-                           {:keys [language-code amount order-number secret first-name last-name email origin form-name]}]
+                           {:keys [language-code amount order-number secret first-name last-name email origin form-name vat]}]
   (let [query (str "?locale=" (encode language-code) "&secret=" (encode secret))
         callback-urls {"success" (str callback-uri "/success" query)
                        "cancel"  (str callback-uri "/cancel" query)}
@@ -79,13 +79,14 @@
                                         "kkhakemusmaksu" (str (get-translation (keyword language-code) :kkmaksukuitti/selite)))
                       "units"         1
                       "unitPrice"     amount-in-euro-cents
-                      "vatPercentage" vat-zero
+                      "vatPercentage" (or vat vat-zero)
                       "productCode"   order-number}]
      "customer"     {"email"     email
                      "firstName" first-name
                      "lastName"  last-name}
      "redirectUrls" callback-urls
      "callbackUrls" callback-urls
+     "usePricesWithoutVat" true
      }))
 
 (defn- get-paytrail-config [this merchant-key]
@@ -135,7 +136,8 @@
            :last-name        (str/join (take 50 (:last_name lasku)))
            :email            (:email lasku)
            :form-name        (get-in lasku [:metadata :form-name])
-           :origin           (:origin lasku)}]
+           :origin           (:origin lasku)
+           :vat              (:vat lasku)}]
     (json/write-str (generate-json-data paytrail-config p))))
 
 ;Instead of directly searching by order-id, use secret to prevent order-id brute-forcing
@@ -208,7 +210,7 @@
 
 ;TODO add robustness here, maybe background-job with retry?
 (defn- handle-confirmation-email
-  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference first-name last-name vat form-name]}]
+  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference first-name last-name vat form-name amount-without-vat]}]
   (case origin
     "tutu" (do
              (handle-tutu-email-confirmation email-service email locale order-id
@@ -220,19 +222,23 @@
                                      [{:description (create-receipt-description locale order-id)
                                        :units 1
                                        :unit-price (/ checkout-amount-in-euro-cents 100)
-                                       :vat vat-zero}]
+                                       :vat vat-zero
+                                       :vat-amount 0}]
                                      storage-engine oppija-baseurl origin nil))
-    "astu" (let [form-name-translated ((keyword locale) form-name)]
+    "astu" (let [form-name-translated ((keyword locale) form-name)
+                 checkout-amount (/ checkout-amount-in-euro-cents 100)
+                 vat-amount (- checkout-amount amount-without-vat)]
              (handle-payment-receipt email-service email locale
                                      first-name last-name
                                      order-id (* 1000 timestamp)
-                                     (/ checkout-amount-in-euro-cents 100)
+                                     checkout-amount
                                      [{:description (str
                                                       (get-translation (keyword locale) :astukuitti/oph)
                                                       "\n" form-name-translated)
                                        :units 1
-                                       :unit-price (/ checkout-amount-in-euro-cents 100)
-                                       :vat (or vat vat-zero)}]
+                                       :unit-price amount-without-vat
+                                       :vat (or vat vat-zero)
+                                       :vat-amount vat-amount}]
                                      storage-engine oppija-baseurl origin form-name-translated))
     "kkhakemusmaksu" (handle-payment-receipt email-service email locale
                                              first-name last-name
@@ -241,7 +247,8 @@
                                              [{:description (create-receipt-description locale order-id)
                                                :units 1
                                                :unit-price (/ checkout-amount-in-euro-cents 100)
-                                               :vat vat-zero}]
+                                               :vat vat-zero
+                                               :vat-amount 0}]
                                              storage-engine oppija-baseurl origin nil)
     nil))
 

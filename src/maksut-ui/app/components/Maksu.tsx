@@ -3,8 +3,9 @@
 import { Lasku, PaymentStatus } from '@/app/lib/types'
 import { useTranslations } from 'use-intl'
 import { Box, useTheme } from '@mui/material'
-import { colors } from '@opetushallitus/oph-design-system'
+import { ophColors } from '@opetushallitus/oph-design-system'
 import { ReactNode } from 'react'
+import { BigNumber } from 'bignumber.js'
 
 const StatusRow = ({ status }: { status: PaymentStatus }) => {
   const t = useTranslations('Maksu')
@@ -17,9 +18,9 @@ const StatusRow = ({ status }: { status: PaymentStatus }) => {
         text: '#612d00',
       },
       'overdue': {
-        backgroundColor: '#ff543b',
-        dot: '#c72828',
-        text: '#f8f8f8',
+        backgroundColor: '#EECFC5',
+        dot: '#cc3300',
+        text: '#1d1d1d',
       },
       'paid': {
         backgroundColor: '#e2fae4',
@@ -105,9 +106,21 @@ const Maksu = ({lasku}: {lasku: Lasku}) => {
     return t('maksu')
   }
 
+  const totalAmount = () => {
+    if (lasku.vat) {
+      return BigNumber(lasku.amount)
+        .plus(BigNumber(lasku.amount)
+          .multipliedBy(
+            BigNumber(lasku.vat).dividedBy(BigNumber(100))
+          )
+        )
+    }
+    return BigNumber(lasku.amount)
+  }
+
   return (
     <Box style={{
-      backgroundColor: colors.grey50,
+      backgroundColor: ophColors.grey50,
       textAlign: 'center',
     }}>
       <h4 style={{margin: theme.spacing(1)}}>{title()}</h4>
@@ -120,7 +133,7 @@ const Maksu = ({lasku}: {lasku: Lasku}) => {
       }}>
         <StatusRow status={lasku.status}/>
         <Separator />
-        <MaksuRow name={t('summa')} value={`${lasku.amount}€`} bold></MaksuRow>
+        <MaksuRow name={t('summa')} value={`${totalAmount().toFixed(2)}€`} bold></MaksuRow>
         <Separator />
         {lasku.status !== 'paid' ?
           <MaksuRow name={t('eräpäivä')} value={parseDate(lasku.due_date)}></MaksuRow> :

@@ -2,8 +2,8 @@
 
 import { TopBar } from "@/app/components/TopBar";
 import ErrorPanel from "@/app/components/ErrorPanel";
-import { oppijaTheme } from "@opetushallitus/oph-design-system/next/theme";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { OphNextJsThemeProvider } from "@opetushallitus/oph-design-system/next/theme";
+import { CssBaseline } from "@mui/material";
 import { CSSProperties } from "react";
 
 export default function NotFound() {
@@ -16,11 +16,11 @@ export default function NotFound() {
   return (
     <html lang="en">
       <body style={bodyStyle}>
-        <ThemeProvider theme={oppijaTheme}>
+        <OphNextJsThemeProvider lang={'en'} variant={'opintopolku'}>
           <CssBaseline/>
           <TopBar></TopBar>
           <ErrorPanel title={'Locale not supported'}></ErrorPanel>
-        </ThemeProvider>
+        </OphNextJsThemeProvider>
       </body>
     </html>
   );
