@@ -24,7 +24,7 @@
         application-key2 "1.2.246.562.11.00000000000000654321"
         order-id "TTU123456-1"
         order-id-2 "TTU123456-2"
-        order-id-3 "ASTU654321-2"
+        order-id-3 "AKR654321-2"
         first-secret (atom nil)
         amount "123"
         index 1
@@ -86,7 +86,8 @@
                           :index 2
                           :metadata {:form-name {:fi "ASTU FI"
                                                  :sv "ASTU SV"
-                                                 :en "ASTU EN"}}})
+                                                 :en "ASTU EN"}
+                                     :order-id-prefix "AKR"}})
             expected {:order_id order-id-3
                       :first_name (:first-name hannes)
                       :last_name (:last-name hannes)
@@ -98,7 +99,8 @@
                       :origin "astu"
                       :metadata {:form_name {:fi "ASTU FI"
                                              :sv "ASTU SV"
-                                             :en "ASTU EN"}}}]
+                                             :en "ASTU EN"}
+                                 :order_id_prefix "AKR"}}]
         (let [response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)
               secret    (:secret response)
               wo-secret (dissoc response :secret)]
