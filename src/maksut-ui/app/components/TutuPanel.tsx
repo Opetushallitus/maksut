@@ -34,21 +34,21 @@ const TutuPanel = ({laskut, activeLasku}: {laskut: Array<Lasku>, activeLasku: La
     switch (state()) {
       case 'kasittelymaksamatta':
         return (
-          <>
+          <Box style={{display: 'flex', flexDirection: 'column', textAlign: 'left', gap: theme.spacing(2)}}>
             <span>{t('käsittelyMaksamatta1')}</span>
             <span>{t('käsittelyMaksamatta2')}</span>
             <span>{t('käsittelyMaksamatta3')}</span>
             <span>{t('käsittelyMaksamatta4')}</span>
-          </>
+          </Box>
         )
       case 'kasittelymaksettu':
         return (
-          <>
+          <Box style={{display: 'flex', flexDirection: 'column', textAlign: 'left', gap: theme.spacing(2)}}>
             <span>{t('käsittelyMaksettu1')}</span>
             <span>{t('käsittelyMaksettu2')}</span>
             <span>{t('käsittelyMaksettu3')}</span>
             <span>{tMaksut('yhteiskäytto')}</span>
-          </>
+          </Box>
         )
       case 'paatosmaksamatta':
         return <span>{t('päätösMaksamatta')}</span>
@@ -66,9 +66,7 @@ const TutuPanel = ({laskut, activeLasku}: {laskut: Array<Lasku>, activeLasku: La
     <Panel>
       <h2>{t('title')}</h2>
       <TutuStateTracker state={state()}></TutuStateTracker>
-      <Box style={{display: 'flex', flexDirection: 'column', textAlign: 'left', gap: theme.spacing(2)}}>
-        {stateText()}
-      </Box>
+      {stateText()}
       <Box style={{
         display: 'flex',
         flexDirection: 'row',

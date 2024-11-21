@@ -34,9 +34,7 @@ const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
   return (
     <Panel>
       <h2>{translateLocalizedString(lasku.metadata?.form_name, locale, "ASTU lomake")}</h2>
-      <Box style={{display: 'flex', flexDirection: 'column', textAlign: 'left', gap: theme.spacing(2)}}>
-        {stateText()}
-      </Box>
+      {stateText()}
       <Maksu lasku={lasku} />
       <MaksaButton lasku={lasku}></MaksaButton>
     </Panel>)
