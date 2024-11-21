@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, useTheme } from "@mui/material";
-import { colors } from "@opetushallitus/oph-design-system";
+import { ophColors } from "@opetushallitus/oph-design-system";
 import { ReactNode } from "react";
 import PanelContent from "@/app/components/PanelContent";
 
@@ -12,7 +12,7 @@ const Panel = ({children}: {children: ReactNode}) => {
     <Box
       style={{
         margin: `${theme.spacing(2)}`,
-        backgroundColor: colors.white,
+        backgroundColor: ophColors.white,
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'column',

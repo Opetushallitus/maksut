@@ -209,7 +209,7 @@
 
 ;TODO add robustness here, maybe background-job with retry?
 (defn- handle-confirmation-email
-  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference first-name last-name vat form-name]}]
+  [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl {:keys [order-id email origin reference first-name last-name vat form-name amount-without-vat]}]
   (case origin
     "tutu" (do
              (handle-tutu-email-confirmation email-service email locale order-id
@@ -226,11 +226,7 @@
                                      storage-engine oppija-baseurl origin nil))
     "astu" (let [form-name-translated ((keyword locale) form-name)
                  checkout-amount (/ checkout-amount-in-euro-cents 100)
-                 checkout-amount-without-vat (if (some? vat)
-                                               (/ checkout-amount
-                                                  (+ 1 (/ vat 100)))
-                                               checkout-amount)
-                 vat-amount (- checkout-amount checkout-amount-without-vat)]
+                 vat-amount (- checkout-amount amount-without-vat)]
              (handle-payment-receipt email-service email locale
                                      first-name last-name
                                      order-id (* 1000 timestamp)
@@ -239,7 +235,7 @@
                                                       (get-translation (keyword locale) :astukuitti/oph)
                                                       "\n" form-name-translated)
                                        :units 1
-                                       :unit-price checkout-amount-without-vat
+                                       :unit-price amount-without-vat
                                        :vat (or vat vat-zero)
                                        :vat-amount vat-amount}]
                                      storage-engine oppija-baseurl origin form-name-translated))
