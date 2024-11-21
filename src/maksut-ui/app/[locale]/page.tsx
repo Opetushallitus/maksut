@@ -6,7 +6,7 @@ import Header from "@/app/components/Header";
 import { routing } from "@/i18n/routing";
 import { getLocale } from "next-intl/server";
 
-export default async function Page({ searchParams }: {searchParams: {secret?: string}}) {
+export default async function Page({ searchParams }: {searchParams: Promise<{secret?: string}>}) {
   const { secret } = await searchParams
   const locale = await getLocale()
 

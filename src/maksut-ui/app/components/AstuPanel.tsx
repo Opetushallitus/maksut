@@ -10,7 +10,6 @@ import { Box, useTheme } from "@mui/material";
 
 const AstuPanel = ({ lasku }: {lasku: Lasku}) => {
   const t = useTranslations('AstuPanel')
-  const theme = useTheme()
   const locale = useLocale() as Locale
   const tMaksut = useTranslations('MaksutPanel')
 
