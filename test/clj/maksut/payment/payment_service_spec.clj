@@ -206,7 +206,7 @@
         (is (= (count emails-to-user) 1))
         (is (= subjects #{"Opetushallitus: Kuitti maksusta"}))
         (is (true? (s/includes? (:body receipt)
-                                "/images/OPH-logo.png")))
+                                "/OPH-logo.png")))
         (reset-emails!)))
 
     (testing "Try to pay invoice after it has been paid"
