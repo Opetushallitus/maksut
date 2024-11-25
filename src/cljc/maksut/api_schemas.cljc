@@ -48,7 +48,7 @@
    (s/optional-key :order-id-prefix) AstuOrderIdPrefix
    (s/optional-key :haku-name)       LocalizedString
    (s/optional-key :alkamiskausi)    s/Str
-   (s/optional-key :alkamisvuosi)    s/Str})
+   (s/optional-key :alkamisvuosi)    s/Int})
 
 ;Paytrail palauttamat kentät (konfiguroitavissa PARAMS-OUT kentässä)
 (s/defschema PaytrailCallbackRequest

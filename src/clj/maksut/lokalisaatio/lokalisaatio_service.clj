@@ -66,9 +66,21 @@
    :KkHakemusmaksuPanel.maksettu       {:fi "Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
                                         :en "EN Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
                                         :sv "SV Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."}
-   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan maksu."
-                                        :en "EN Siirry maksamaan maksu."
-                                        :sv "SV Siirry maksamaan maksu."}
+   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan hakemusmaksu."
+                                        :en "EN Siirry maksamaan hakemusmaksu."
+                                        :sv "SV Siirry maksamaan hakemusmaksu."}
+   :KkHakemusmaksuPanel.eraantynyt     {:fi "Hakemusmaksusi on erääntynyt."
+                                        :en "EN Hakemusmaksusi on erääntynyt."
+                                        :sv "SV Hakemusmaksusi on erääntynyt."}
+   :KkHakemusmaksuPanel.aloituskausi   {:fi "Aloituskausi"
+                                        :en "EN Aloituskausi"
+                                        :sv "SV Aloituskausi"}
+   :KkHakemusmaksuPanel.kausi_s        {:fi "syksy"
+                                        :en "EN syksy"
+                                        :sv "SV syksy"}
+   :KkHakemusmaksuPanel.kausi_k        {:fi "kevät"
+                                        :en "EN kevät"
+                                        :sv "SV kevät"}
    :MaksutPanel.yhteiskäytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
                                         :en "If you are using a computer that is in common use, remember to empty the cache and log out from the computer. You can now close this window."
                                         :sv "Om du använder en dator som är i gemensamt bruk, kom ihåg att tomma cacheminnen och logga ut ur datorn. Du kan nu stänga det här fönstret."}
