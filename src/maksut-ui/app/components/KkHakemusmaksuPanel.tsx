@@ -14,7 +14,7 @@ const KkHakemusmaksuPanel = ({ lasku }: {lasku: Lasku}) => {
   const locale = useLocale() as Locale
   const tMaksut = useTranslations('MaksutPanel')
 
-  const aloituskausiHeader = (aloitusvuosi, aloituskausi) => {
+  const aloituskausiHeader = (aloitusvuosi?: number, aloituskausi?: string) => {
     if (aloitusvuosi && aloituskausi) {
       return (
           <h3 style={{margin: 0}}>{t('aloituskausi')}: {t(aloituskausi)} {aloitusvuosi}</h3>
