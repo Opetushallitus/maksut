@@ -47,8 +47,7 @@
 (defn- order-state [order-id]
   (cond
     (str/ends-with? order-id "-1") :käsittely
-    (str/ends-with? order-id "-2") :päätös
-    :else                          :käsittely))             ; TODO: remove once tutu-astu-kk logic has stabilized
+    (str/ends-with? order-id "-2") :päätös))
 
 (defn- create-description [language-code order-id]
   (case (order-state order-id)
@@ -244,7 +243,8 @@
                                              first-name last-name
                                              order-id (* 1000 timestamp)
                                              (/ checkout-amount-in-euro-cents 100)
-                                             [{:description (create-receipt-description locale order-id)
+                                             [{:description (str
+                                                              (get-translation (keyword locale) :kkmaksukuitti/selite))
                                                :units 1
                                                :unit-price (/ checkout-amount-in-euro-cents 100)
                                                :vat vat-zero
