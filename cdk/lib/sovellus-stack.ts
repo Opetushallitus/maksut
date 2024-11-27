@@ -43,7 +43,7 @@ export class SovellusStack extends cdk.Stack {
       },
     );
 
-    const nextjs = new Nextjs(this, 'maksut-ui', {
+    const nextjs = new Nextjs(this, `${props.environmentName}-maksut-ui`, {
       nextjsPath: '../src/maksut-ui', // relative path from your project root to NextJS
       basePath: '/maksut-ui',
       environment: {
