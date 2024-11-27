@@ -63,18 +63,18 @@
    :KkHakemusmaksuPanel.title          {:fi "Hakemusmaksu"
                                         :en "EN Hakemusmaksu"
                                         :sv "SV Hakemusmaksu"}
-   :KkHakemusmaksuPanel.maksettu       {:fi "Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
-                                        :en "EN Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
-                                        :sv "SV Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."}
-   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan hakemusmaksu."
-                                        :en "EN Siirry maksamaan hakemusmaksu."
-                                        :sv "SV Siirry maksamaan hakemusmaksu."}
-   :KkHakemusmaksuPanel.eraantynyt     {:fi "Hakemusmaksusi on erääntynyt."
-                                        :en "EN Hakemusmaksusi on erääntynyt."
-                                        :sv "SV Hakemusmaksusi on erääntynyt."}
-   :KkHakemusmaksuPanel.aloituskausi   {:fi "Aloituskausi"
-                                        :en "EN Aloituskausi"
-                                        :sv "SV Aloituskausi"}
+   :KkHakemusmaksuPanel.maksettu       {:fi "Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :en "EN Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :sv "SV Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."}
+   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :en "EN Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :sv "SV Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."}
+   :KkHakemusmaksuPanel.eraantynyt     {:fi "Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
+                                        :en "EN Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
+                                        :sv "SV Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."}
+   :KkHakemusmaksuPanel.aloituskausi   {:fi "Alkamiskausi"
+                                        :en "EN Alkamiskausi"
+                                        :sv "SV Alkamiskausi"}
    :KkHakemusmaksuPanel.kausi_s        {:fi "syksy"
                                         :en "EN syksy"
                                         :sv "SV syksy"}
