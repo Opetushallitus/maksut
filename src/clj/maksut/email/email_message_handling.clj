@@ -70,7 +70,8 @@
                 "templates/tutu_payment_decision.html"))
 
 (defn create-payment-receipt
-  [recipient locale first-name last-name payment-reference timestamp-millis total-amount items oppija-baseurl origin form-name]
+  [recipient locale first-name last-name payment-reference timestamp-millis
+   total-amount items oppija-baseurl origin form-name haku-name]
   (create-email recipient
                 locale
                 (case origin
@@ -86,4 +87,5 @@
                 :items items
                 :lang locale
                 :oppija-baseurl oppija-baseurl
-                :form-name form-name))
+                :form-name form-name
+                :haku-name haku-name))

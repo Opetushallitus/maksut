@@ -81,6 +81,7 @@
                         :first-name (:first_name lasku)
                         :last-name (:last_name lasku)
                         :form-name (get-in lasku [:metadata :form-name])
+                        :haku-name (get-in lasku [:metadata :haku-name])
                         :vat (:vat lasku)
                         :amount-without-vat (:amount lasku)}]
        (if (some? old-payment)

@@ -150,15 +150,15 @@
 
      :kkmaksukuitti   (merge
                         kuitti-common
-                        {:otsikko         {:fi "Kuitti maksusta"
-                                           :en "Receipt for payment"
-                                           :sv "Betalningskvitto på avgiften"}
-                         :body-otsikko    {:fi "Hakemusmaksu: kuitti"
-                                           :en "EN Hakemusmaksu: kuitti"
-                                           :sv "SV Hakemusmaksu: kuitti"}
+                        {:otsikko         {:fi "Kuitti hakemusmaksusta"
+                                           :en "EN Kuitti hakemusmaksusta"
+                                           :sv "SV Kuitti hakemusmaksusta"}
+                         :body-otsikko    {:fi ": kuitti hakemusmaksusta"
+                                           :en ": EN kuitti hakemusmaksusta"
+                                           :sv ": SV kuitti hakemusmaksusta"}
                          :selite          {:fi "Hakemusmaksu"
                                            :en "EN Hakemusmaksu"
                                            :sv "SV Hakemusmaksu"}
-                         :vat-explanation {:fi "ALV-peruste tähän."
-                                           :en "EN ALV-peruste tähän."
-                                           :sv "SV ALV-peruste tähän."}})}))
+                         :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."
+                                           :en "EN Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."
+                                           :sv "SV Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."}})}))
