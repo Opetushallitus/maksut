@@ -63,12 +63,24 @@
    :KkHakemusmaksuPanel.title          {:fi "Hakemusmaksu"
                                         :en "EN Hakemusmaksu"
                                         :sv "SV Hakemusmaksu"}
-   :KkHakemusmaksuPanel.maksettu       {:fi "Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
-                                        :en "EN Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."
-                                        :sv "SV Olet maksanut maksun. Lähetämme kuitin maksusta sähköpostiisi."}
-   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan maksu."
-                                        :en "EN Siirry maksamaan maksu."
-                                        :sv "SV Siirry maksamaan maksu."}
+   :KkHakemusmaksuPanel.maksettu       {:fi "Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :en "EN Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :sv "SV Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."}
+   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :en "EN Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :sv "SV Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."}
+   :KkHakemusmaksuPanel.eraantynyt     {:fi "Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
+                                        :en "EN Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
+                                        :sv "SV Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."}
+   :KkHakemusmaksuPanel.aloituskausi   {:fi "Alkamiskausi"
+                                        :en "EN Alkamiskausi"
+                                        :sv "SV Alkamiskausi"}
+   :KkHakemusmaksuPanel.kausi_s        {:fi "syksy"
+                                        :en "EN syksy"
+                                        :sv "SV syksy"}
+   :KkHakemusmaksuPanel.kausi_k        {:fi "kevät"
+                                        :en "EN kevät"
+                                        :sv "SV kevät"}
    :MaksutPanel.yhteiskäytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
                                         :en "If you are using a computer that is in common use, remember to empty the cache and log out from the computer. You can now close this window."
                                         :sv "Om du använder en dator som är i gemensamt bruk, kom ihåg att tomma cacheminnen och logga ut ur datorn. Du kan nu stänga det här fönstret."}

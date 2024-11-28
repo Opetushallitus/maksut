@@ -56,6 +56,11 @@
    :amount (bigdec "100.00")
    :origin "kkhakemusmaksu"
    :reference "1.2.246.562.11.00000000000000123456"
+   :metadata {:haku-name {:fi "Haku FI"
+                          :sv "Haku SV"
+                          :en "Haku EN"}
+              :alkamiskausi "kausi_s"
+              :alkamisvuosi 2025}
    :due_date (to-sql-date date)})
 
 (def params {
@@ -204,7 +209,12 @@
         (is (= (:action response) :created))
         (is-email-count 1)
         (is (= (count emails-to-user) 1))
-        (is (= subjects #{"Opetushallitus: Kuitti maksusta"}))
+        (is (= subjects #{"Opetushallitus: Kuitti hakemusmaksusta"}))
+        (println (:body receipt))
+        (is (true? (s/includes? (:body receipt)
+                                "Opetushallitus<br />Haku FI<br />Hakemusmaksu")))
+        (is (true? (s/includes? (:body receipt)
+                                "Haku FI: kuitti hakemusmaksusta")))
         (is (true? (s/includes? (:body receipt)
                                 "/OPH-logo.png")))
         (reset-emails!)))

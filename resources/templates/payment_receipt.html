@@ -9,7 +9,7 @@
 <table style="width: 600px;">
   <tr>
     <td colspan="4" style="padding-left: 20px; padding-top: 10px; font-size: 24px;">
-      {% if form-name %}{{form-name}}{% endif %}{{body-otsikko|safe}}
+      {% if form-name %}{{form-name}}{% endif %}{% if haku-name %}{{haku-name}}{% endif %}{{body-otsikko|safe}}
     </td>
   </tr>
   <tr>

@@ -38,11 +38,17 @@
 
 (s/defschema Metadata
   {(s/optional-key :form_name)       LocalizedString
-   (s/optional-key :order_id_prefix) AstuOrderIdPrefix})
+   (s/optional-key :order_id_prefix) AstuOrderIdPrefix
+   (s/optional-key :haku_name)       LocalizedString
+   (s/optional-key :alkamiskausi)    s/Str
+   (s/optional-key :alkamisvuosi)    s/Int})
 
 (s/defschema MetadataCreate
   {(s/optional-key :form-name)       LocalizedString
-   (s/optional-key :order-id-prefix) AstuOrderIdPrefix})
+   (s/optional-key :order-id-prefix) AstuOrderIdPrefix
+   (s/optional-key :haku-name)       LocalizedString
+   (s/optional-key :alkamiskausi)    s/Str
+   (s/optional-key :alkamisvuosi)    s/Int})
 
 ;Paytrail palauttamat kentät (konfiguroitavissa PARAMS-OUT kentässä)
 (s/defschema PaytrailCallbackRequest

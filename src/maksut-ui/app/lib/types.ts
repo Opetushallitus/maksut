@@ -15,6 +15,9 @@ export type LocalizedString = {
 export type Metadata = {
   form_name?: LocalizedString;
   order_id_prefix?: string
+  haku_name?: LocalizedString
+  alkamisvuosi?: number
+  alkamiskausi?: string
 }
 
 export type Lasku = {

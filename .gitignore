@@ -30,3 +30,4 @@
 .clj-kondo/
 .open-next
 /test-results/
+*.swp
