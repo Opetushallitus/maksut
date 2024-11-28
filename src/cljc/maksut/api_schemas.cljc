@@ -135,5 +135,9 @@
 (s/defschema Laskut
   [Lasku])
 
+(s/defschema LaskutResponse
+  {:laskut Laskut
+   (s/optional-key :contact) s/Str})
+
 (s/defschema LaskuStatusList
   [LaskuStatus])

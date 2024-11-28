@@ -39,7 +39,9 @@ export default async function LocaleLayout({
             <OphNextJsThemeProvider lang={locale as OphLanguage} variant={"opintopolku"}>
               <CssBaseline/>
               <TopBar lang={locale as Locale}></TopBar>
-              {children}
+              <main>
+                {children}
+              </main>
             </OphNextJsThemeProvider>
           </NextIntlClientProvider>
         </AppRouterCacheProvider>

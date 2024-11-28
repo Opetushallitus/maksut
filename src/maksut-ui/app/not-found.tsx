@@ -19,7 +19,9 @@ export default function NotFound() {
         <OphNextJsThemeProvider lang={'en'} variant={'opintopolku'}>
           <CssBaseline/>
           <TopBar></TopBar>
-          <ErrorPanel title={'Locale not supported'}></ErrorPanel>
+          <ErrorPanel>
+            <h2></h2>
+          </ErrorPanel>
         </OphNextJsThemeProvider>
       </body>
     </html>

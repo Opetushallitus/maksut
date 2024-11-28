@@ -5,6 +5,9 @@ import { notFound, redirect } from "next/navigation";
 import Header from "@/app/components/Header";
 import { routing } from "@/i18n/routing";
 import { getLocale } from "next-intl/server";
+import ErrorPanel from "@/app/components/ErrorPanel";
+import { Span } from "next/dist/server/lib/trace/tracer";
+import ExpiredPanel from "@/app/components/ExpiredPanel";
 
 export default async function Page({ searchParams }: {searchParams: Promise<{secret?: string}>}) {
   const { secret } = await searchParams
@@ -18,18 +21,20 @@ export default async function Page({ searchParams }: {searchParams: Promise<{sec
     notFound()
   }
 
-  const laskut: Array<Lasku> = await fetchLaskutBySecret(secret)
+  const { laskut, contact } = await fetchLaskutBySecret(secret)
   const activeLasku = laskut.find((lasku) => lasku.secret === secret)
 
   if (!laskut.length || !activeLasku) {
-    notFound()
+    return (
+      <ExpiredPanel contact={contact}/>
+    )
   }
 
 
   return (
-    <main>
+    <>
       <Header lasku={activeLasku}></Header>
       <MaksutPanel laskut={laskut} secret={secret}/>
-    </main>
+    </>
   );
 }

@@ -3,13 +3,14 @@
 import Panel from "@/app/components/Panel";
 import AlertIcon from "@/app/components/AlertIcon";
 
-const ErrorPanel = ({title, content}: {title?: string, content?: string}) => {
+const ErrorPanel = ({children}: {children: React.ReactNode}) => {
   return (
-    <Panel>
-      <AlertIcon></AlertIcon>
-      {title && <h2>{title}</h2>}
-      {content && <span>{content}</span>}
-    </Panel>
+    <div style={{marginTop: '72px'}}>
+      <Panel>
+        <AlertIcon></AlertIcon>
+        {children}
+      </Panel>
+    </div>
   )
 }
 
