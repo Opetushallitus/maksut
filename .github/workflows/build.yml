@@ -23,6 +23,14 @@ jobs:
       - name: Prepare clojure env
         uses: ./.github/actions/prepare-clojure-env
 
+      - name: Set up Next env
+        uses: ./.github/actions/setup-next-env
+
+      - name: Lint maksut-ui
+        run: |
+          cd src/maksut-ui
+          npm run lint
+
       - name: Run tests and build uberjar
         env:
           ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
