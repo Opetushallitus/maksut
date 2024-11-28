@@ -6,11 +6,9 @@ import { useLocale, useTranslations } from "use-intl";
 import { translateLocalizedString } from "@/app/lib/utils";
 import Panel from "@/app/components/Panel";
 import MaksaButton from "@/app/components/MaksaButton";
-import { useTheme } from '@mui/material'
 
 const KkHakemusmaksuPanel = ({ lasku }: {lasku: Lasku}) => {
   const t = useTranslations('KkHakemusmaksuPanel')
-  const theme = useTheme()
   const locale = useLocale() as Locale
   const tMaksut = useTranslations('MaksutPanel')
 
