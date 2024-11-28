@@ -1,11 +1,11 @@
 'use client'
 
-import { Box, useTheme } from "@mui/material";
-import { ophColors } from "@opetushallitus/oph-design-system";
-import { ReactNode } from "react";
-import PanelContent from "@/app/components/PanelContent";
+import { Box, useTheme } from '@mui/material'
+import { ophColors } from '@opetushallitus/oph-design-system'
+import { ReactNode } from 'react'
+import PanelContent from '@/app/components/PanelContent'
 
-const Panel = ({children}: {children: ReactNode}) => {
+const Panel = ({ children }: { children: ReactNode }) => {
   const theme = useTheme()
 
   return (
@@ -25,7 +25,7 @@ const Panel = ({children}: {children: ReactNode}) => {
         {children}
       </PanelContent>
     </Box>
-  );
+  )
 }
 
 export default Panel

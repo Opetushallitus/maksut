@@ -20,9 +20,6 @@ const basePath = '/maksut-ui';
 const nextConfig = {
   basePath,
   compress: false,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   async headers() {
     return [
       {
