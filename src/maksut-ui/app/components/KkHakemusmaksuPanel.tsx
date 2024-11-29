@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { Lasku } from "@/app/lib/types";
-import Maksu from "@/app/components/Maksu";
-import { useTranslations } from "use-intl";
-import Panel from "@/app/components/Panel";
-import MaksaButton from "@/app/components/MaksaButton";
+import { Lasku } from '@/app/lib/types';
+import Maksu from '@/app/components/Maksu';
+import { useTranslations } from 'use-intl';
+import Panel from '@/app/components/Panel';
+import MaksaButton from '@/app/components/MaksaButton';
 
-const KkHakemusmaksuPanel = ({ lasku }: {lasku: Lasku}) => {
-  const t = useTranslations('KkHakemusmaksuPanel')
-  const tMaksut = useTranslations('MaksutPanel')
+const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
+  const t = useTranslations('KkHakemusmaksuPanel');
+  const tMaksut = useTranslations('MaksutPanel');
 
   const aloituskausiHeader = (aloitusvuosi?: number, aloituskausi?: string) => {
     if (aloitusvuosi && aloituskausi) {
@@ -40,9 +40,9 @@ const KkHakemusmaksuPanel = ({ lasku }: {lasku: Lasku}) => {
         <>
           <span>{t('maksamatta')}</span>
         </>
-      )
+      );
     }
-  }
+  };
 
   return (
     <Panel>
@@ -51,7 +51,8 @@ const KkHakemusmaksuPanel = ({ lasku }: {lasku: Lasku}) => {
       {stateText()}
       <Maksu lasku={lasku} />
       <MaksaButton lasku={lasku}></MaksaButton>
-    </Panel>)
-}
+    </Panel>
+  );
+};
 
-export default KkHakemusmaksuPanel
+export default KkHakemusmaksuPanel;

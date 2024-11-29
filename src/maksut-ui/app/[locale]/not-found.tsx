@@ -1,8 +1,8 @@
-import { getTranslations } from "next-intl/server";
-import ErrorPanel from "@/app/components/ErrorPanel";
+import { getTranslations } from 'next-intl/server';
+import ErrorPanel from '@/app/components/ErrorPanel';
 
 export default async function NotFound() {
-  const t = await getTranslations('NotFound')
+  const t = await getTranslations('NotFound');
 
   return (
     <ErrorPanel>
@@ -10,5 +10,5 @@ export default async function NotFound() {
       <span>{t('body1')}</span>
       <span>{t('body2')}</span>
     </ErrorPanel>
-  )
+  );
 }

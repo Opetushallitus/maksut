@@ -1,6 +1,5 @@
 (ns maksut.maksut.maksut-service
-  (:require [clojure.core.match :refer [match]]
-            [maksut.error :refer [maksut-error]]
+  (:require [maksut.error :refer [maksut-error]]
             [maksut.maksut.maksut-service-protocol :refer [MaksutServiceProtocol]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.api-schemas :as api-schemas]
@@ -87,18 +86,6 @@
     (maksut-queries/create-or-update-lasku db lasku)
     ;returns created/changed fields from view (including generated fields)
     (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
-
-(defn- throw-specific-old-secret-error [laskut secret]
-  (let [order-id-matcher #(first (filter (fn [x] (str/ends-with? (:order_id x) %)) laskut))
-        processing (order-id-matcher "-1")
-        decision (order-id-matcher "-2")
-        output #(maksut-error % (str "Linkki on vanhentunut: " secret))]
-    (match [(:status processing) (:status decision)]
-           ["paid"    nil] (output :invoice-processing-oldsecret)
-           ["overdue" nil] (output :invoice-processing-overdue)
-           [_ "paid"]      (output :invoice-decision-oldsecret)
-           [_ "overdue"]   (output :invoice-decision-overdue)
-           :else (maksut-error :invoice-notfound-oldsecret (str "Linkki on vanhentunut: " secret) {:status-code 404}))))
 
 (defn- contact-email [lasku]
   (case (or (get-in lasku [:metadata :order-id-prefix])

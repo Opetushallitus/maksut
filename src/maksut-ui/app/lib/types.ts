@@ -1,18 +1,22 @@
-export type PaymentStatus = 'active' | 'paid' | 'overdue'
+export type PaymentStatus = 'active' | 'paid' | 'overdue';
 
-export type PaymentState = 'kasittelymaksamatta' | 'kasittelymaksettu' | 'paatosmaksamatta' | 'paatosmaksettu'
+export type PaymentState =
+  | 'kasittelymaksamatta'
+  | 'kasittelymaksettu'
+  | 'paatosmaksamatta'
+  | 'paatosmaksettu';
 
-export type Origin = 'tutu' | 'astu' | 'kkhakemusmaksu'
+export type Origin = 'tutu' | 'astu' | 'kkhakemusmaksu';
 
-export type Locale = 'fi' | 'en' | 'sv'
+export type Locale = 'fi' | 'en' | 'sv';
 
-export type LocalizedString = {
+export interface LocalizedString {
   fi?: string;
   en?: string;
   sv?: string;
 }
 
-export type Metadata = {
+export interface Metadata {
   form_name?: LocalizedString;
   order_id_prefix?: string
   haku_name?: LocalizedString
@@ -20,7 +24,7 @@ export type Metadata = {
   alkamiskausi?: string
 }
 
-export type Lasku = {
+export interface Lasku {
   order_id: string;
   first_name: string;
   last_name: string;
@@ -34,7 +38,6 @@ export type Lasku = {
   metadata?: Metadata;
   vat?: string;
 }
-
 
 // (s/defschema PaytrailCallbackRequest
 // {:ORDER_NUMBER s/Str

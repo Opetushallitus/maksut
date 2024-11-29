@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { backendUrl } from "@/app/lib/configurations";
-import { OphButton } from "@opetushallitus/oph-design-system";
-import { Lasku } from "@/app/lib/types";
-import { useLocale, useTranslations } from "use-intl";
+import { backendUrl } from '@/app/lib/configurations';
+import { OphButton } from '@opetushallitus/oph-design-system';
+import { Lasku } from '@/app/lib/types';
+import { useLocale, useTranslations } from 'use-intl';
 
-const MaksaButton = ({lasku}: {lasku: Lasku}) => {
-  const locale = useLocale()
-  const t = useTranslations('MaksutPanel')
+const MaksaButton = ({ lasku }: { lasku: Lasku }) => {
+  const locale = useLocale();
+  const t = useTranslations('MaksutPanel');
 
   if (lasku.status === 'active') {
     return (
@@ -17,9 +17,9 @@ const MaksaButton = ({lasku}: {lasku: Lasku}) => {
       >
         {t('maksa')}
       </OphButton>
-    )
+    );
   }
-  return <></>
-}
+  return <></>;
+};
 
-export default MaksaButton
+export default MaksaButton;

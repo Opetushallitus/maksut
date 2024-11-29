@@ -1,12 +1,12 @@
-import { Locale, LocalizedString } from "@/app/lib/types";
+import { Locale, LocalizedString } from '@/app/lib/types';
 
 export function translateLocalizedString(
   translated: LocalizedString | undefined,
   userLanguage: Locale = 'fi',
-  fallback: string = ''
+  fallback = '',
 ): string {
   if (!translated) {
-    return fallback
+    return fallback;
   }
   const prop = userLanguage as keyof LocalizedString;
   const translation = translated[prop];
