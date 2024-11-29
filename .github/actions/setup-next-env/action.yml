@@ -25,4 +25,4 @@ runs:
       shell: bash
       run: |
         cd src/maksut-ui
-        npm ci
+        npm ci --include=dev
