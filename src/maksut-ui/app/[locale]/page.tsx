@@ -20,7 +20,7 @@ export default async function Page({ searchParams }: {searchParams: Promise<{sec
   }
   const { laskut, contact } = await fetchLaskutBySecret(secret)
   const activeLasku = laskut.find((lasku) => lasku.secret === secret)
-
+ var lintTesti = "mou";
   if (!laskut.length || !activeLasku) {
     return (
       <ExpiredPanel contact={contact}/>
