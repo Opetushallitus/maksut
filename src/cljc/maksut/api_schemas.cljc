@@ -112,12 +112,6 @@
    :status PaymentStatus
    :origin Origin})
 
-(s/defschema ErrorResponse
-  {:error s/Bool
-   :type s/Keyword
-   :code s/Keyword
-   :message s/Str})
-
 (s/defschema Lasku
   {:order_id s/Str
    :first_name s/Str
@@ -134,10 +128,6 @@
 
 (s/defschema Laskut
   [Lasku])
-
-(s/defschema LaskutResponse
-  {:laskut Laskut
-   (s/optional-key :contact) s/Str})
 
 (s/defschema LaskuStatusList
   [LaskuStatus])
