@@ -121,7 +121,8 @@
    :NotFound.header                    {:fi "Maksun tietoja ei löydy"}
    :NotFound.body1                     {:fi "Emme löytäneet maksusi tietoja."}
    :NotFound.body2                     {:fi "Ota yhteyttä Opetushallitukseen. Läydät palveluosoitteen saamastasi maksulinkkiviestistä."}
-   :Error.header                       {:fi "Tapahtui virhe"}})
+   :Error.header                       {:fi "Tapahtui virhe"}
+   :PaymentError.header                {:fi "Virhe maksussa"}})
 
 (def local-translations
   (let [kuitti-common {:oph                    {:fi "Opetushallitus"

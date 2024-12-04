@@ -237,12 +237,21 @@
                                       (s/optional-key :locale) (s/maybe schema/Locale)}}
                  :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters}]
                                (log/info "Generate Paytrail form fields for " order-id locale secret)
-                               (let [paytrail-response (payment-protocol/payment payment-service
-                                                                                 session
-                                                                                 {:order-id order-id
-                                                                                  :locale   locale
-                                                                                  :secret   secret})]
-                                 (response/found (:href paytrail-response))))}}]]
+                               (try
+                                 (let [paytrail-response (payment-protocol/payment payment-service
+                                                                                   session
+                                                                                   {:order-id order-id
+                                                                                    :locale   locale
+                                                                                    :secret   secret})]
+                                   (response/found (:href paytrail-response)))
+                                 (catch Exception e
+                                   (let [data (ex-data e)]
+                                     (response/found
+                                       (str (get-in config [:urls :oppija-baseurl])
+                                            "/"
+                                            locale
+                                            "/error?code="
+                                            (name (:code data))))))))}}]]
 
        ["/laskut-by-secret"
         [""

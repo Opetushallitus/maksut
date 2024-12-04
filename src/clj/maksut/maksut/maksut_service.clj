@@ -152,7 +152,7 @@
             passed? #(or (and (or (= "astu" (:origin %))
                                   (= "tutu" (:origin %)))
                               (.isAfter now (:due_date %)))
-                         (.isAfter (.plusMonths now 3) (:due_date %)))
+                         (.isAfter now (.plusMonths (:due_date %) 3)))
             all-passed? (every? passed? laskut)]
         ;do not let user to the page if all due_dates for all (linked) invoices has passed
         (if all-passed?
@@ -167,5 +167,3 @@
     (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
       {:contact (contact-email (first laskut))}
       (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404}))))
-
-
