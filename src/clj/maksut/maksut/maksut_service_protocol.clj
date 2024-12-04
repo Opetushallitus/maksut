@@ -6,4 +6,5 @@
   (list-laskut [this session input])
   (check-status [this session input])
   (get-lasku [this session order-id])
+  (get-lasku-contact [this session secret])
   (get-laskut-by-secret [this session secret]))

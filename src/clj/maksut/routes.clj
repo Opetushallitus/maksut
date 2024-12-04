@@ -249,10 +249,20 @@
          {:get {;No authentication for this service, accessed from /maksut/ Web-page
                 :tags       ["Laskut"]
                 :summary    "Palauttaa laskut salaisuuden perusteella"
-                :responses  {200 {:body schema/LaskutResponse}}
+                :responses  {200 {:body schema/Laskut}}
                 :parameters {:query {:secret s/Str}}
                 :handler    (fn [{session :session {secret :query} :parameters}]
                               (response/ok (maksut-protocol/get-laskut-by-secret maksut-service session (:secret secret))))}}]]
+
+       ["/lasku-contact"
+        [""
+         {:get {;No authentication for this service, accessed from /maksut/ Web-page
+                :tags       ["Laskut"]
+                :summary    "Palauttaa laskun yhteystiedot salaisuuden perusteella"
+                :responses  {200 {:body {:contact s/Str}}}
+                :parameters {:query {:secret s/Str}}
+                :handler    (fn [{session :session {secret :query} :parameters}]
+                              (response/ok (maksut-protocol/get-lasku-contact maksut-service session (:secret secret))))}}]]
 
        ["/kuitti/:file-key"
         [""

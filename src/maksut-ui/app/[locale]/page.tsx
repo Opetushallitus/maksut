@@ -1,4 +1,4 @@
-import { fetchLaskutBySecret } from '@/app/lib/data';
+import { fetchLaskuContact, fetchLaskutBySecret } from '@/app/lib/data';
 import MaksutPanel from '@/app/components/MaksutPanel';
 import { notFound, redirect } from 'next/navigation';
 import Header from '@/app/components/Header';
@@ -22,10 +22,11 @@ export default async function Page({
   if (!secret) {
     notFound();
   }
-  const { laskut, contact } = await fetchLaskutBySecret(secret);
+  const laskut = await fetchLaskutBySecret(secret);
   const activeLasku = laskut.find((lasku) => lasku.secret === secret);
 
   if (!laskut.length || !activeLasku) {
+    const { contact } = await fetchLaskuContact(secret);
     return <ExpiredPanel contact={contact} />;
   }
 

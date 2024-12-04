@@ -90,7 +90,7 @@
 (defn- contact-email [lasku]
   (case (or (get-in lasku [:metadata :order-id-prefix])
             (:origin lasku))
-    "kkhakemusmaksu" "hakemusmaksut@oph.fi"
+    "kkhakemusmaksu" "applicationfee@oph.fi"
     "OTR" "oikeustulkkirekisteri@oph.fi"
     "AKR" "auktoris.lautakunta@oph.fi"
     "recognition@oph.fi"))
@@ -158,10 +158,14 @@
         (if all-passed?
           (do
             (log/warn (str "Kaikki laskut vanhentuneet, laskut: " laskut))
-            {:laskut []
-             :contact (contact-email (first laskut))})
-          {:laskut (map Lasku->json laskut)}))
+            [])
+          (map Lasku->json laskut)))
       (do (log/error (str "Linkki on väärä tai vanhentunut: " secret))
-          (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404})))))
+          (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404}))))
+
+  (get-lasku-contact [_ _ secret]
+    (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
+      {:contact (contact-email (first laskut))}
+      (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404}))))
 
 
