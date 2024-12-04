@@ -20,7 +20,12 @@ export default function NotFound() {
           <CssBaseline />
           <TopBar></TopBar>
           <ErrorPanel>
-            <h2></h2>
+            <h2>Maksun tietoja ei löydy</h2>
+            <span>Emme löytäneet maksusi tietoja.</span>
+            <span>
+              Ota yhteyttä Opetushallitukseen. Läydät palveluosoitteen
+              saamastasi maksulinkkiviestistä.
+            </span>
           </ErrorPanel>
         </OphNextJsThemeProvider>
       </body>
