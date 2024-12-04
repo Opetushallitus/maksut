@@ -1,17 +1,19 @@
-import {getRequestConfig} from 'next-intl/server';
-import { backendUrl } from "@/app/lib/configurations";
+import { getRequestConfig } from 'next-intl/server';
+import { backendUrl } from '@/app/lib/configurations';
 
-const fetchLocalizations = async (locale: string = 'fi') => {
-  const response = await fetch(`${backendUrl}/localisation/${locale}`, {cache: "no-cache"})
+const fetchLocalizations = async (locale = 'fi') => {
+  const response = await fetch(`${backendUrl}/localisation/${locale}`, {
+    cache: 'no-cache',
+  });
   if (response.ok) {
-    return await response.json()
+    return await response.json();
   } else {
-    throw Error(response.statusText)
+    throw Error(response.statusText);
   }
-}
+};
 
-export default getRequestConfig(async ({requestLocale}) => {
+export default getRequestConfig(async ({ requestLocale }) => {
   return {
-    messages: (await fetchLocalizations(await requestLocale)),
+    messages: await fetchLocalizations(await requestLocale),
   };
 });

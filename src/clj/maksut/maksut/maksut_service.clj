@@ -1,6 +1,5 @@
 (ns maksut.maksut.maksut-service
-  (:require [clojure.core.match :refer [match]]
-            [maksut.error :refer [maksut-error]]
+  (:require [maksut.error :refer [maksut-error]]
             [maksut.maksut.maksut-service-protocol :refer [MaksutServiceProtocol]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.api-schemas :as api-schemas]
@@ -50,7 +49,7 @@
                (iso-date-str->date (:due-date lasku))
                (time/plus (time/today) (time/days (:due-days lasku))))
     :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)
-    :vat (when (some? (:vat lasku)) (.setScale (bigdec (:vat lasku)) 1 RoundingMode/HALF_UP))))
+    :vat (when (not-empty (:vat lasku)) (.setScale (bigdec (:vat lasku)) 1 RoundingMode/HALF_UP))))
 
 (defn- parse-order-id [prefixes lasku]
   (let [trim-zeroes (fn this [str] (if (clojure.string/starts-with? str "0")
@@ -88,17 +87,13 @@
     ;returns created/changed fields from view (including generated fields)
     (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
 
-(defn- throw-specific-old-secret-error [laskut secret]
-  (let [order-id-matcher #(first (filter (fn [x] (str/ends-with? (:order_id x) %)) laskut))
-        processing (order-id-matcher "-1")
-        decision (order-id-matcher "-2")
-        output #(maksut-error % (str "Linkki on vanhentunut: " secret))]
-    (match [(:status processing) (:status decision)]
-           ["paid"    nil] (output :invoice-processing-oldsecret)
-           ["overdue" nil] (output :invoice-processing-overdue)
-           [_ "paid"]      (output :invoice-decision-oldsecret)
-           [_ "overdue"]   (output :invoice-decision-overdue)
-           :else (maksut-error :invoice-notfound-oldsecret (str "Linkki on vanhentunut: " secret) {:status-code 404}))))
+(defn- contact-email [lasku]
+  (case (or (get-in lasku [:metadata :order-id-prefix])
+            (:origin lasku))
+    "kkhakemusmaksu" "applicationfee@oph.fi"
+    "OTR" "oikeustulkkirekisteri@oph.fi"
+    "AKR" "auktoris.lautakunta@oph.fi"
+    "recognition@oph.fi"))
 
 (defrecord MaksutService [audit-logger config db]
   component/Lifecycle
@@ -154,13 +149,23 @@
   (get-laskut-by-secret [_ _ secret]
     (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
       (let [now (. LocalDate (now))
-            passed? #(.isAfter now %)
-            all-passed? (every? passed? (mapv :due_date laskut))]
+            passed? #(or (and (or (= "astu" (:origin %))
+                                  (= "tutu" (:origin %)))
+                              (.isAfter now (:due_date %)))
+                         (.isAfter (.plusMonths now 3) (:due_date %)))
+            all-passed? (every? passed? laskut)]
         ;do not let user to the page if all due_dates for all (linked) invoices has passed
         (if all-passed?
-          (throw-specific-old-secret-error laskut secret)
+          (do
+            (log/warn (str "Kaikki laskut vanhentuneet, laskut: " laskut))
+            [])
           (map Lasku->json laskut)))
       (do (log/error (str "Linkki on väärä tai vanhentunut: " secret))
-          (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404})))))
+          (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404}))))
+
+  (get-lasku-contact [_ _ secret]
+    (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
+      {:contact (contact-email (first laskut))}
+      (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404}))))
 
 
