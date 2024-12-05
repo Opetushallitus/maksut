@@ -12,11 +12,18 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
   const locale = useLocale() as Locale;
   const tMaksut = useTranslations('MaksutPanel');
 
+  const aloituskausiText = (aloitusvuosi?: number, aloituskausi?: string) => {
+    if (aloitusvuosi && aloituskausi) {
+      return `${t(aloituskausi)} ${aloitusvuosi}`;
+    }
+    return null;
+  };
+
   const aloituskausiHeader = (aloitusvuosi?: number, aloituskausi?: string) => {
     if (aloitusvuosi && aloituskausi) {
       return (
         <h3 style={{ margin: 0 }}>
-          {t('aloituskausi')}: {t(aloituskausi)} {aloitusvuosi}
+          {t('aloituskausi')}: {aloituskausiText(aloitusvuosi, aloituskausi)}
         </h3>
       );
     }
@@ -28,6 +35,15 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
       return (
         <>
           <span>{t('maksettu')}</span>
+          <span>
+            {t('maksettu2')}{' '}
+            {aloituskausiText(
+              lasku.metadata?.alkamisvuosi,
+              lasku.metadata?.alkamiskausi,
+            )}
+            . {t('maksettu3')}
+          </span>
+          <span>{t('maksettu4')}</span>
           <span>{tMaksut('yhteiskäytto')}</span>
         </>
       );
@@ -41,6 +57,7 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
       return (
         <>
           <span>{t('maksamatta')}</span>
+          <span>{t('maksamatta2')}</span>
         </>
       );
     }

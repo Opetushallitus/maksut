@@ -56,26 +56,38 @@
                                         :en "EN Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :sv "SV Hakemuksesi on käsitelty. Siirry maksamaan maksu."}
    :KkHakemusmaksuPanel.title          {:fi "Hakemusmaksu"
-                                        :en "EN Hakemusmaksu"
-                                        :sv "SV Hakemusmaksu"}
-   :KkHakemusmaksuPanel.maksettu       {:fi "Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
-                                        :en "EN Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
-                                        :sv "SV Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena. Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."}
-   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
-                                        :en "EN Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
-                                        :sv "SV Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi. Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."}
+                                        :en "Application fee"
+                                        :sv "Ansökningsavgift"}
+   :KkHakemusmaksuPanel.maksettu       {:fi "Olet nyt maksanut hakemusmaksun. Saat kuitin maksusta sähköpostiisi."
+                                        :en "You have now paid the application fee. You will receive a receipt of the payment to your email."
+                                        :sv "Du har nu betalat ansökningsavgiften. Du får ett kvitto på betalningen till din e-post."}
+   :KkHakemusmaksuPanel.maksettu2      {:fi "Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena:"
+                                        :en "The payment is valid to all study programmes that start in the academic term"
+                                        :sv "Avgiften gäller för alla utbildningar som börjar under terminen:"}
+   :KkHakemusmaksuPanel.maksettu3      {:fi "Sinun ei siis tarvitse maksaa hakemusmaksua uudelleen, jos haet muihin samana lukukautena alkaviin koulutuksiin."
+                                        :en "You do not need to pay the application fee again, if you apply to other study programmes staring in the same academic term."
+                                        :sv "Du behöver alltså inte betala ansökningsavgiften på nytt om du söker till andra utbildningar som börjar samma termin."}
+   :KkHakemusmaksuPanel.maksettu4      {:fi "Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :en "Please note that paying the application fee does not mean that you will be automatically offered admission."
+                                        :sv "Observera att betalning av ansökningsavgift ännu inte innebär att du blir antagen till utbildningen."}
+   :KkHakemusmaksuPanel.maksamatta     {:fi "Siirry maksamaan hakemusmaksu. Kun olet maksanut hakemusmaksun, saat kuitin maksusta sähköpostiisi."
+                                        :en "Proceed to pay the application fee. You will receive a receipt for your payment in your email after paying the application fee."
+                                        :sv "Gå vidare till att betala ansökningsavgiften. När du har betalat ansökningsavgiften får du ett kvitto på betalningen till din e-post."}
+   :KkHakemusmaksuPanel.maksamatta2    {:fi "Huomioithan, että hakemusmaksun maksaminen ei vielä tarkoita, että sinut hyväksytään koulutukseen."
+                                        :en "Please note that paying the application fee does not mean that you will be automatically offered admission."
+                                        :sv "Observera att betalning av ansökningsavgift ännu inte innebär att du blir antagen till utbildningen."}
    :KkHakemusmaksuPanel.eraantynyt     {:fi "Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
-                                        :en "EN Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
-                                        :sv "SV Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."}
+                                        :en "The due date for your application fee payment has expired. You can no longer pay the application fee. Your application will not be reviewed, and you cannot be offered admission. If the application period is still ongoing, you can fill in and send a new application."
+                                        :sv "Tidsfristen för ansökningsavgiften har gått ut och du kan inte längre betala avgiften. Din ansökan behandlas inte och du kan inte bli antagen till utbildningen. Om ansökningstiden ännu pågår kan du fylla i en ny ansökan."}
    :KkHakemusmaksuPanel.aloituskausi   {:fi "Alkamiskausi"
-                                        :en "EN Alkamiskausi"
-                                        :sv "SV Alkamiskausi"}
+                                        :en "Start term"
+                                        :sv "Starttermin"}
    :KkHakemusmaksuPanel.kausi_s        {:fi "syksy"
-                                        :en "EN syksy"
-                                        :sv "SV syksy"}
+                                        :en "autumn"
+                                        :sv "höst"}
    :KkHakemusmaksuPanel.kausi_k        {:fi "kevät"
-                                        :en "EN kevät"
-                                        :sv "SV kevät"}
+                                        :en "spring"
+                                        :sv "vår"}
    :MaksutPanel.yhteiskäytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
                                         :en "If you are using a computer that is in common use, remember to empty the cache and log out from the computer. You can now close this window."
                                         :sv "Om du använder en dator som är i gemensamt bruk, kom ihåg att tomma cacheminnen och logga ut ur datorn. Du kan nu stänga det här fönstret."}
@@ -275,14 +287,14 @@
      :kkmaksukuitti   (merge
                         kuitti-common
                         {:otsikko         {:fi "Kuitti hakemusmaksusta"
-                                           :en "EN Kuitti hakemusmaksusta"
-                                           :sv "SV Kuitti hakemusmaksusta"}
+                                           :en "Receipt for payment of the fee for application"
+                                           :sv "Betalningskvitto på avgiften"}
                          :body-otsikko    {:fi ": kuitti hakemusmaksusta"
-                                           :en ": EN kuitti hakemusmaksusta"
-                                           :sv ": SV kuitti hakemusmaksusta"}
+                                           :en ": receipt"
+                                           :sv ": kvitto"}
                          :selite          {:fi "Hakemusmaksu"
-                                           :en "EN Hakemusmaksu"
-                                           :sv "SV Hakemusmaksu"}
+                                           :en "Application fee"
+                                           :sv "Ansökningsavgift"}
                          :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."
-                                           :en "EN Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."
-                                           :sv "SV Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."}})}))
+                                           :en "The fees for recognition of qualifications are based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (1188/2023). The fees are exempted from VAT."
+                                           :sv "Ansökningsavgiften är föreskriven i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (1188/2023)."}})}))
