@@ -275,14 +275,14 @@
      :kkmaksukuitti   (merge
                         kuitti-common
                         {:otsikko         {:fi "Kuitti hakemusmaksusta"
-                                           :en "EN Kuitti hakemusmaksusta"
-                                           :sv "SV Kuitti hakemusmaksusta"}
+                                           :en "Receipt for payment of the fee for application"
+                                           :sv "Betalningskvitto på avgiften"}
                          :body-otsikko    {:fi ": kuitti hakemusmaksusta"
-                                           :en ": EN kuitti hakemusmaksusta"
-                                           :sv ": SV kuitti hakemusmaksusta"}
+                                           :en ": receipt"
+                                           :sv ": kvitto"}
                          :selite          {:fi "Hakemusmaksu"
-                                           :en "EN Hakemusmaksu"
-                                           :sv "SV Hakemusmaksu"}
+                                           :en "Application fee"
+                                           :sv "Ansökningsavgift"}
                          :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."
-                                           :en "EN Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."
-                                           :sv "SV Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."}})}))
+                                           :en "The fees for recognition of qualifications are based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (1188/2023). The fees are exempted from VAT."
+                                           :sv "Ansökningsavgiften är föreskriven i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (1188/2023)."}})}))
