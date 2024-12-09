@@ -168,8 +168,7 @@
       {:contact (contact-email (first laskut))}
       (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404})))
 
-  ; NB: only marks the payments invalid on our side so that it can't be accidentally paid anymore.
-  ; The actual Paytrail payment is still open and updated internally.
+  ; Marks the payments invalid on our side so that it can't be accidentally paid anymore.
   (invalidate-laskut [_ _ input]
     (log/info (str "Invalidating invoices with references:" keys))
     (let [{:keys [keys]} input
