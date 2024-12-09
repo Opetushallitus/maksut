@@ -7,4 +7,5 @@
   (check-status [this session input])
   (get-lasku [this session order-id])
   (get-lasku-contact [this session secret])
-  (get-laskut-by-secret [this session secret]))
+  (get-laskut-by-secret [this session secret])
+  (invalidate-laskut [this session input]))

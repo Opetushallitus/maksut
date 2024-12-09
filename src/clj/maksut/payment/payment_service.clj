@@ -86,7 +86,7 @@
      "items"        [{"description"   (case origin
                                         "tutu" (create-description language-code order-number)
                                         "astu" (str (get-translation (keyword language-code) :astukuitti/oph) " " form-name)
-                                        "kkhakemusmaksu" (create-kk-payment-description language-code form-name))
+                                        "kkhakemusmaksu" (create-kk-payment-description language-code haku-name))
                       "units"         1
                       "unitPrice"     amount-in-euro-cents
                       "vatPercentage" (or vat vat-zero)
@@ -158,6 +158,7 @@
     (cond
       (not (some? lasku)) (maksut-error :invoice-notfound (str "Laskua ei löydy: " secret))
       (= (:status lasku) "overdue") (maksut-error :invoice-invalidstate-overdue (str "Lasku on erääntynyt: " secret))
+      (= (:status lasku) "invalidated") (maksut-error :invoice-invalidstate-invalidated (str "Lasku on mitätöity: " secret))
       (= (:status lasku) "paid") (maksut-error :invoice-invalidstate-paid (str "Lasku on jo maksettu: " secret)))
 
     (when (not= (:status lasku) "active")

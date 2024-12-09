@@ -73,7 +73,8 @@
   (s/enum
     :active
     :paid
-    :overdue))
+    :overdue
+    :invalidated))
 
 (s/defschema LaskuRefList
   {:keys [s/Str]})

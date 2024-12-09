@@ -21,6 +21,10 @@
 (declare select-payment)
 (declare insert-payment!)
 (declare insert-secret-for-invoice!)
+(declare invalidate-laskut-by-reference!)
+
+(defn invalidate-laskut-by-reference [db refs]
+  (invalidate-laskut-by-reference! db {:refs refs}))
 
 (defn- insert-new-secret [db invoice-id order-id]
   ;prefix secrets with order-id to force them unique even if random would generate two identical
@@ -50,9 +54,10 @@
   (let [status      (:status old-ai)
         same-origin (= (:origin old-ai) (:origin new))]
     (cond
-     (= status "overdue") (maksut-error :invoice-invalidstate-overdue (str "Ei voi muuttaa, eräpäivä mennyt: " new))
-     (= status "paid")    (maksut-error :invoice-invalidstate-paid (str "Ei voi muuttaa, lasku on jo maksettu: " new))
-     (not same-origin)   (maksut-error :invoice-createerror-originclash (str "Sama lasku eri lähteestä on jo olemassa: " new)))
+     (= status "overdue")     (maksut-error :invoice-invalidstate-overdue (str "Ei voi muuttaa, eräpäivä mennyt: " new))
+     (= status "paid")        (maksut-error :invoice-invalidstate-paid (str "Ei voi muuttaa, lasku on jo maksettu: " new))
+     (= status "invalidated") (maksut-error :invoice-invalidstate-invalidated (str "Ei voi muuttaa, mitätöity: " new))
+     (not same-origin)        (maksut-error :invoice-createerror-originclash (str "Sama lasku eri lähteestä on jo olemassa: " new)))
     true))
 
 (defn get-lasku [db order-id]
