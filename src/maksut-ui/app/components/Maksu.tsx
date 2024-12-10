@@ -154,7 +154,11 @@ const Maksu = ({ lasku }: { lasku: Lasku }) => {
         textAlign: 'center',
       }}
     >
-      <OphTypography variant={'h4'} style={{ margin: theme.spacing(1) }}>
+      <OphTypography
+        variant={'h4'}
+        component={'p'}
+        style={{ margin: theme.spacing(1) }}
+      >
         {title()}
       </OphTypography>
       <Box

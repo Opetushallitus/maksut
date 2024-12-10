@@ -8,7 +8,7 @@ export default defineConfig({
     reporter: 'list',
     use: {
         // All requests we send go to this API endpoint.
-        baseURL: process.env.WITH_PAYTRAIL == "TRUE" ? 'https://maksut-local.test:9000' : 'http://localhost:19033',
+        baseURL: 'http://localhost:3000', //process.env.WITH_PAYTRAIL == "TRUE" ? 'https://maksut-local.test:9000' : 'http://localhost:19033',
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',
     }

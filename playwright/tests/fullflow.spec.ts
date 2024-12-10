@@ -16,6 +16,8 @@ const MERCHANT_KEY =
   process.env.WITH_PAYTRAIL == "TRUE" ? "SAIPPUAKAUPPIAS" : "sikrot";
 const ACCOUNT_ID = process.env.WITH_PAYTRAIL == "TRUE" ? "375917" : "12345";
 
+const BACKEND_URL = "https://localhost:9000";
+
 let userPage: Page;
 let apiContext: APIRequestContext;
 
@@ -37,17 +39,20 @@ const createInvoice: (
 ) => Promise<Invoice> = async () => {
   const invoiceKey = "K" + uuid();
   const payerEmail = `${uuid()}@maksut-local.test`;
-  const newInvoice = await apiContext.post(`/maksut/api/lasku-tutu`, {
-    data: {
-      "application-key": invoiceKey,
-      "first-name": "test1",
-      "last-name": "test1",
-      email: payerEmail,
-      amount: "256",
-      "due-date": "2030-03-03",
-      index: 1,
+  const newInvoice = await apiContext.post(
+    `${BACKEND_URL}/maksut/api/lasku-tutu`,
+    {
+      data: {
+        "application-key": invoiceKey,
+        "first-name": "test1",
+        "last-name": "test1",
+        email: payerEmail,
+        amount: "256",
+        "due-date": "2030-03-03",
+        index: 1,
+      },
     },
-  });
+  );
   expect(newInvoice.ok()).toBeTruthy();
   const newInvoiceResponseJson = await newInvoice.json();
 
@@ -64,7 +69,7 @@ const expectPageAccessibilityOk = async (page: Page) => {
 };
 
 const assertInvoiceMarkedPaid = async (secret: string) => {
-  await expect(userPage).toHaveURL(`/maksut/?secret=${secret}&locale=fi`, {
+  await expect(userPage).toHaveURL(`/maksut-ui/fi?secret=${secret}`, {
     timeout: 20000,
   });
   await expect(userPage.getByText("Maksettu", { exact: true })).toBeVisible();
@@ -94,7 +99,7 @@ test.beforeAll(async ({ playwright }) => {
   apiContext = await playwright.request.newContext({ ignoreHTTPSErrors: true });
 
   // kirjaudutaan ataruna sisään maksut-sovellukseen
-  await apiContext.get("/maksut/auth/cas?ticket=abc");
+  await apiContext.get(`${BACKEND_URL}/maksut/auth/cas?ticket=abc`);
 });
 
 test.afterAll(async () => {
@@ -103,27 +108,25 @@ test.afterAll(async () => {
 });
 
 test("Accessibility", async () => {
-  test.skip()
   // luodaan ataruna uusi lasku
   const invoice = await createInvoice(apiContext);
 
   // mennään käyttäjänä maksusivulle
-  await userPage.goto(`/maksut/?secret=${invoice.secret}&locale=fi`);
+  await userPage.goto(`/maksut-ui/fi?secret=${invoice.secret}`);
 
   // saavutettavuuden pitäisi olla ok
   await expectPageAccessibilityOk(userPage);
 });
 
 test.describe("Real Paytrail", () => {
-  test.skip()
-  test.skip(() => process.env.WITH_PAYTRAIL != "TRUE");
+  // test.skip(() => process.env.WITH_PAYTRAIL != "TRUE");
 
   test("Paytrail maksuflow", async () => {
     // luodaan ataruna uusi lasku
     const invoice = await createInvoice(apiContext);
 
     // mennään käyttäjänä maksusivulle
-    await userPage.goto(`/maksut/?secret=${invoice.secret}&locale=fi`);
+    await userPage.goto(`/maksut-ui/fi?secret=${invoice.secret}`);
 
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole("link", { name: "Siirry maksamaan" }).click();
@@ -141,7 +144,7 @@ test.describe("Real Paytrail", () => {
 });
 
 test.describe("Mocked Paytrail", () => {
-  test.skip()
+  test.skip();
   test.skip(() => process.env.WITH_PAYTRAIL == "TRUE");
 
   test("Paytrail mocked maksuflow", async () => {
@@ -190,7 +193,7 @@ test.describe("Mocked Paytrail", () => {
     expect(newStub.ok()).toBeTruthy();
 
     // mennään käyttäjänä maksusivulle
-    await userPage.goto(`/maksut/?secret=${invoice.secret}&locale=fi`);
+    await userPage.goto(`/maksut-ui/fi?secret=${invoice.secret}`);
 
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole("link", { name: "Siirry maksamaan" }).click();

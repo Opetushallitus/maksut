@@ -70,6 +70,24 @@ const passiveHeaderStyle: CSSProperties = {
   color: ophColors.grey800,
 };
 
+const KasittelyLabel = ({
+  active,
+  content,
+}: {
+  active: boolean;
+  content: string;
+}) => {
+  return (
+    <OphTypography
+      variant={'h4'}
+      component={'p'}
+      style={active ? activeHeaderStyle : passiveHeaderStyle}
+    >
+      {content}
+    </OphTypography>
+  );
+};
+
 const KasittelyState = ({ state }: { state: PaymentState }) => {
   const t = useTranslations('TutuStateTracker');
 
@@ -77,27 +95,31 @@ const KasittelyState = ({ state }: { state: PaymentState }) => {
     switch (state) {
       case 'kasittelymaksamatta':
         return (
-          <OphTypography variant={'h4'} style={activeHeaderStyle}>
-            {t('käsittelymaksu')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('käsittelymaksu')}
+            active={true}
+          ></KasittelyLabel>
         );
       case 'kasittelymaksettu':
         return (
-          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
-            {t('käsittelymaksu')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('käsittelymaksu')}
+            active={false}
+          ></KasittelyLabel>
         );
       case 'paatosmaksamatta':
         return (
-          <OphTypography variant={'h4'} style={activeHeaderStyle}>
-            {t('käsittely')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('käsittely')}
+            active={true}
+          ></KasittelyLabel>
         );
       case 'paatosmaksettu':
         return (
-          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
-            {t('käsittely')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('käsittely')}
+            active={false}
+          ></KasittelyLabel>
         );
     }
   };
@@ -121,27 +143,31 @@ const PaatosState = ({ state }: { state: PaymentState }) => {
     switch (state) {
       case 'kasittelymaksamatta':
         return (
-          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
-            {t('käsittely')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('käsittely')}
+            active={false}
+          ></KasittelyLabel>
         );
       case 'kasittelymaksettu':
         return (
-          <OphTypography variant={'h4'} style={activeHeaderStyle}>
-            {t('käsittely')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('käsittely')}
+            active={true}
+          ></KasittelyLabel>
         );
       case 'paatosmaksamatta':
         return (
-          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
-            {t('päätösmaksu')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('päätösmaksu')}
+            active={false}
+          ></KasittelyLabel>
         );
       case 'paatosmaksettu':
         return (
-          <OphTypography variant={'h4'} style={activeHeaderStyle}>
-            {t('päätösmaksu')}
-          </OphTypography>
+          <KasittelyLabel
+            content={t('päätösmaksu')}
+            active={true}
+          ></KasittelyLabel>
         );
     }
   };
@@ -169,7 +195,7 @@ const TutuStateTracker = ({ state }: { state: PaymentState }) => {
         justifyContent: 'space-evenly',
         marginBottom: theme.spacing(2),
         maxWidth: '600px',
-        width: '100%',
+        width: '80%',
       }}
     >
       <KasittelyState state={state}></KasittelyState>
