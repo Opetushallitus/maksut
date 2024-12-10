@@ -5,9 +5,9 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      build-number:
-        type: number
-        description: Github Actions build number
+      commit:
+        type: string
+        description: Commit hash if you want to deploy a specific version
       environment:
         type: choice
         description: Environment where to deploy
@@ -15,11 +15,14 @@ on:
           - untuva
           - hahtuva
           - pallero
+          - sade
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -30,11 +33,18 @@ jobs:
           cd ../../cdk
           npm ci
           npm install -g aws-cdk
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials for DEV
         if: ${{ inputs.environment == 'hahtuva' || inputs.environment == 'untuva' || inputs.environment == 'pallero' }}
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
         with:
           role-to-assume: ${{ secrets.AWS_OPINTOPOLKU_DEV_ROLE_ARN }}
+          role-session-name: maksut-ui-deploy
+          aws-region: eu-west-1
+      - name: Configure AWS credentials for PROD
+        if: ${{ inputs.environment == 'sade' }}
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OPINTOPOLKU_PROD_ROLE_ARN }}
           role-session-name: maksut-ui-deploy
           aws-region: eu-west-1
       - name: Deploy Next.js app

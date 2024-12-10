@@ -258,10 +258,11 @@
                                    (response/found (:href paytrail-response)))
                                  (catch Exception e
                                    (let [data (ex-data e)]
+                                     (log/error "Maksun" order-id "maksaminen epäonnistui:" e)
                                      (response/found
                                        (str (get-in config [:urls :oppija-baseurl])
                                             "/"
-                                            locale
+                                            (or locale "fi")
                                             "/error?code="
                                             (name (:code data))))))))}}]]
 
