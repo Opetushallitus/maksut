@@ -8,6 +8,18 @@ import Panel from '@/app/components/Panel';
 import MaksaButton from '@/app/components/MaksaButton';
 import TutuStateTracker from '@/app/components/TutuStateTracker';
 import { OphTypography } from '@opetushallitus/oph-design-system';
+import { styled } from '@mui/system';
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+  },
+  [theme.breakpoints.up('sm')]: {
+    flexDirection: 'row',
+  },
+  gap: theme.spacing(4),
+}));
 
 const TutuPanel = ({
   laskut,
@@ -88,16 +100,10 @@ const TutuPanel = ({
       <OphTypography variant={'h2'}>{t('title')}</OphTypography>
       <TutuStateTracker state={state()}></TutuStateTracker>
       {stateText()}
-      <Box
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: theme.spacing(4),
-        }}
-      >
+      <StyledBox>
         {kasittely && <Maksu lasku={kasittely} />}
         {paatos && <Maksu lasku={paatos} />}
-      </Box>
+      </StyledBox>
       <MaksaButton lasku={activeLasku}></MaksaButton>
     </Panel>
   );

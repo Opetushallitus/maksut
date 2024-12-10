@@ -49,7 +49,7 @@ const State = ({ children }: { children: ReactNode }) => {
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
-        width: '200px',
+        width: '40%',
         gap: '10px',
       }}
     >
@@ -59,8 +59,7 @@ const State = ({ children }: { children: ReactNode }) => {
 };
 
 const activeHeaderStyle: CSSProperties = {
-  width: 'min-content',
-  whiteSpace: 'nowrap',
+  width: '100%',
   margin: 'auto',
   fontWeight: 400,
   color: ophColors.green2,
@@ -167,7 +166,10 @@ const TutuStateTracker = ({ state }: { state: PaymentState }) => {
       style={{
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'space-evenly',
         marginBottom: theme.spacing(2),
+        maxWidth: '600px',
+        width: '100%',
       }}
     >
       <KasittelyState state={state}></KasittelyState>

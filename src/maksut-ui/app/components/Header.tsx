@@ -7,7 +7,7 @@ const Header = async ({ lasku }: { lasku: Lasku }) => {
   const t = await getTranslations('Header');
 
   return (
-    <Box style={{ textAlign: 'center' }}>
+    <Box style={{ textAlign: 'center', margin: '20px' }}>
       <OphTypography
         variant={'h3'}
       >{`${lasku.first_name} ${lasku.last_name}`}</OphTypography>

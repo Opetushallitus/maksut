@@ -29,10 +29,11 @@ export default async function LocaleLayout({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: ophColors.grey50,
+    minWidth: '100%',
   };
 
   return (
-    <html lang={locale}>
+    <html lang={locale} style={{ margin: 0, padding: 0, width: '100%' }}>
       <body style={bodyStyle}>
         <AppRouterCacheProvider>
           <NextIntlClientProvider messages={messages}>
