@@ -166,4 +166,12 @@
   (get-lasku-contact [_ _ secret]
     (if-let [laskut (seq (maksut-queries/get-laskut-by-secret db secret))]
       {:contact (contact-email (first laskut))}
-      (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404}))))
+      (maksut-error :invoice-notfound-secret (str "Linkki on väärä tai vanhentunut: " secret) {:status-code 404})))
+
+  ; Marks the payments invalid on our side so that it can't be accidentally paid anymore.
+  (invalidate-laskut [_ _ input]
+    (log/info (str "Invalidating invoices with references:" keys))
+    (let [{:keys [keys]} input
+          _ (maksut-queries/invalidate-laskut-by-reference db keys)
+          statuses (maksut-queries/check-laskut-statuses-by-reference db keys)]
+      (map LaskuStatus->json statuses))))

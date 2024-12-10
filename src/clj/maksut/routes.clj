@@ -177,6 +177,18 @@
                                (let [x (maksut-protocol/check-status maksut-service session input)]
                                  (response/ok x)))}}]]
 
+       ["/lasku-invalidate"
+        [""
+         {:post {:middleware auth
+                 :tags       ["Lasku"]
+                 :summary    "Mitätöi yhden tai useamman laskun viitenumeron perusteella"
+                 :responses  {200 {:body schema/LaskuStatusList}}
+                 :parameters {:body schema/LaskuRefList}
+                 :handler    (fn [{session :session {input :body} :parameters}]
+                               (log/info "Invalidate invoices for" (count input) "keys")
+                               (let [resp (maksut-protocol/invalidate-laskut maksut-service session input)]
+                                 (response/ok resp)))}}]]
+
        ["/lasku/:application-key"
         [""
          {:get {:middleware auth

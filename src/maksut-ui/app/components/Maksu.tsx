@@ -27,6 +27,11 @@ const StatusRow = ({ status }: { status: PaymentStatus }) => {
       dot: '#61a33b',
       text: '#237a00',
     },
+    invalidated: {
+      backgroundColor: '#e2fae4',
+      dot: '#61a33b',
+      text: '#237a00',
+    },
   };
 
   return (

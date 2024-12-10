@@ -53,6 +53,12 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
           <span>{t('eraantynyt')}</span>
         </>
       );
+    } else if (lasku.status === 'invalidated') {
+      return (
+        <>
+          <span>{t('mitatoity')}</span>
+        </>
+      );
     } else {
       return (
         <>

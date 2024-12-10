@@ -79,6 +79,9 @@
    :KkHakemusmaksuPanel.eraantynyt     {:fi "Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
                                         :en "The due date for your application fee payment has expired. You can no longer pay the application fee. Your application will not be reviewed, and you cannot be offered admission. If the application period is still ongoing, you can fill in and send a new application."
                                         :sv "Tidsfristen för ansökningsavgiften har gått ut och du kan inte längre betala avgiften. Din ansökan behandlas inte och du kan inte bli antagen till utbildningen. Om ansökningstiden ännu pågår kan du fylla i en ny ansökan."}
+   :KkHakemusmaksuPanel.mitatoity      {:fi "Olet jo maksanut hakemusmaksun tälle aloituskaudelle."
+                                        :en "EN Olet jo maksanut hakemusmaksun tälle aloituskaudelle."
+                                        :sv "SV Olet jo maksanut hakemusmaksun tälle aloituskaudelle."}
    :KkHakemusmaksuPanel.aloituskausi   {:fi "Alkamiskausi"
                                         :en "Start term"
                                         :sv "Starttermin"}
@@ -118,6 +121,9 @@
    :Maksu.overdue                      {:fi "Erääntynyt"
                                         :en "Expired"
                                         :sv "Förfallen"}
+   :Maksu.invalidated                  {:fi "Mitätöity"
+                                        :en "EN: mitätöity"
+                                        :sv "SV: mitätöity"}
    :Maksu.summa                        {:fi "Määrä"
                                         :en "Amount"
                                         :sv "Summa"}

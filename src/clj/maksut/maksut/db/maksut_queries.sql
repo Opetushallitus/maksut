@@ -36,6 +36,11 @@ SET
 --~ (when (some? (:metadata params)) ", metadata = :metadata")
 WHERE order_id = :order-id AND CURRENT_DATE <= due_date;
 
+-- :name invalidate-laskut-by-reference! :! :n
+UPDATE invoices
+SET invalidated_at = now()
+WHERE reference IN (:v*:refs) AND CURRENT_DATE <= due_date;
+
 -- :name get-lasku-locked :? :1
 SELECT *
 FROM invoices

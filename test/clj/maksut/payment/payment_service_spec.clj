@@ -376,6 +376,45 @@
                  (is (= (:code data) :invoice-invalidstate-overdue)))))
     ))
 
+(deftest pay-invalidated-invoice
+  (let [service (:payment-service @test-system)
+        maksut-service (:maksut-service @test-system)
+        db      (:db @test-system)
+
+        due-date (time/from-now (time/days +7))
+        db-data (db-invoice-hakemusmaksu due-date)
+        secret  "foobar"
+        invoice-insert (test-fixtures/add-invoice! db
+                                                   (merge db-data {:invalidated_at (to-sql-date "2024-12-09 10:23:54")}))
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret secret})
+
+    (testing "Try to pay invoice that has been invalidated"
+      (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                             {:order-id (:order_id db-data)
+                                                              :locale "fi"
+                                                              :secret secret}))
+            data (:data exc)]
+        (is (= (:type data) :maksut.error))
+        (is (= (:code data) :invoice-invalidstate-invalidated))
+        ))
+
+    (testing "Try to edit invalidated invoice"
+      (let [lasku {:reference (:reference db-data)
+                   :first-name (:first_name db-data)
+                   :last-name (:last_name db-data)
+                   :email (:email db-data)
+                   :amount "222.00"
+                   :due-days 7
+                   :origin (:origin db-data)}]
+        (let [exc (catch-thrown-info (maksut-protocol/create maksut-service maksut-test-fixtures/fake-session lasku))
+              data (:data exc)]
+          (is (= (:type data) :maksut.error))
+          (is (= (:code data) :invoice-invalidstate-invalidated)))))
+    ))
+
 (deftest pay-at-due-date
   (let [service (:payment-service @test-system)
         db      (:db @test-system)

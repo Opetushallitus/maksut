@@ -1,4 +1,4 @@
-export type PaymentStatus = 'active' | 'paid' | 'overdue';
+export type PaymentStatus = 'active' | 'paid' | 'overdue' | 'invalidated';
 
 export type PaymentState =
   | 'kasittelymaksamatta'
