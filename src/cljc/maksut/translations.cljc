@@ -79,9 +79,12 @@
    :KkHakemusmaksuPanel.eraantynyt     {:fi "Hakemusmaksun määräaika on erääntynyt, etkä voi enää maksaa hakemusmaksua. Hakemustasi ei käsitellä, etkä voi tulla valituksi koulutukseen. Mikäli hakuaikaa on vielä jäljellä, voit täyttää uuden hakemuksen."
                                         :en "The due date for your application fee payment has expired. You can no longer pay the application fee. Your application will not be reviewed, and you cannot be offered admission. If the application period is still ongoing, you can fill in and send a new application."
                                         :sv "Tidsfristen för ansökningsavgiften har gått ut och du kan inte längre betala avgiften. Din ansökan behandlas inte och du kan inte bli antagen till utbildningen. Om ansökningstiden ännu pågår kan du fylla i en ny ansökan."}
-   :KkHakemusmaksuPanel.mitatoity      {:fi "Olet jo maksanut hakemusmaksun tälle aloituskaudelle."
-                                        :en "EN Olet jo maksanut hakemusmaksun tälle aloituskaudelle."
-                                        :sv "SV Olet jo maksanut hakemusmaksun tälle aloituskaudelle."}
+   :KkHakemusmaksuPanel.mitatoity      {:fi "Olet jo maksanut hakemusmaksun toisessa haussa samana lukukautena alkavaan koulutukseen. Maksu on voimassa kaikkiin koulutuksiin, jotka alkavat lukukautena:"
+                                        :en "You have already paid the application fee for another application starting in the same academic term. The payment is valid to all study programmes that start in the academic term:"
+                                        :sv "Du har redan betalat ansökningsavgiften för en annan ansökan till en utbildning som börjar samma termin. Avgiften gäller för alla utbildningar som börjar under terminen:"}
+   :KkHakemusmaksuPanel.mitatoity2     {:fi "Sinun ei siis tarvitse maksaa enää hakemusmaksua uudelleen."
+                                        :en "You do not need to pay the application fee again."
+                                        :sv "Du behöver alltså inte betala ansökningsavgiften på nytt om du söker till andra utbildningar som börjar samma termin."}
    :KkHakemusmaksuPanel.aloituskausi   {:fi "Alkamiskausi"
                                         :en "Start term"
                                         :sv "Starttermin"}
@@ -121,9 +124,9 @@
    :Maksu.overdue                      {:fi "Erääntynyt"
                                         :en "Expired"
                                         :sv "Förfallen"}
-   :Maksu.invalidated                  {:fi "Mitätöity"
-                                        :en "EN: mitätöity"
-                                        :sv "SV: mitätöity"}
+   :Maksu.invalidated                  {:fi "Ei vaadittu"
+                                        :en "Not required"
+                                        :sv "SV: Not required"}
    :Maksu.summa                        {:fi "Määrä"
                                         :en "Amount"
                                         :sv "Summa"}

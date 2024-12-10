@@ -56,7 +56,15 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
     } else if (lasku.status === 'invalidated') {
       return (
         <>
-          <span>{t('mitatoity')}</span>
+          <span>
+            {t('mitatoity')}{' '}
+            {aloituskausiText(
+              lasku.metadata?.alkamisvuosi,
+              lasku.metadata?.alkamiskausi,
+            )}
+            . {t('mitatoity2')}
+          </span>
+          <span>{tMaksut('yhteiskäytto')}</span>
         </>
       );
     } else {
