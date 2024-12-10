@@ -15,10 +15,9 @@
     "@mui/material": "^6.1.7",
     "@mui/material-nextjs": "^6.1.7",
     "@opentelemetry/api": "^1.9.0",
-    "@opetushallitus/oph-design-system": "github:opetushallitus/oph-design-system",
     "bignumber.js": "^9.1.2",
     "dompurify": "^3.0.11",
-    "next": "^15.0.3",
+    "next": "^15.0.4",
     "next-intl": "^3.25.1",
     "react": "^18",
     "react-dom": "^18",
@@ -27,6 +26,7 @@
     "use-debounce": "^10.0.0"
   },
   "devDependencies": {
+    "@opetushallitus/oph-design-system": "github:opetushallitus/oph-design-system",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -1,11 +1,12 @@
 import Image from 'next/image';
 import { Box } from '@mui/material';
+import { ophColors } from '@opetushallitus/oph-design-system';
 
 const AlertIcon = () => {
   return (
     <Box
       style={{
-        backgroundColor: '#cc2f1b',
+        backgroundColor: ophColors.orange3,
         borderRadius: '50%',
         width: '60px',
         height: '60px',

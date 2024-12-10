@@ -5,13 +5,14 @@ import ErrorPanel from '@/app/components/ErrorPanel';
 import { OphNextJsThemeProvider } from '@opetushallitus/oph-design-system/next/theme';
 import { CssBaseline } from '@mui/material';
 import { CSSProperties } from 'react';
+import { ophColors, OphTypography } from '@opetushallitus/oph-design-system';
 
 export default function NotFound() {
   const bodyStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: ophColors.grey50,
   };
   return (
     <html lang="en">
@@ -20,12 +21,14 @@ export default function NotFound() {
           <CssBaseline />
           <TopBar></TopBar>
           <ErrorPanel>
-            <h2>Maksun tietoja ei löydy</h2>
-            <span>Emme löytäneet maksusi tietoja.</span>
-            <span>
+            <OphTypography variant={'h2'}>
+              Maksun tietoja ei löydy
+            </OphTypography>
+            <OphTypography>Emme löytäneet maksusi tietoja.</OphTypography>
+            <OphTypography>
               Ota yhteyttä Opetushallitukseen. Läydät palveluosoitteen
               saamastasi maksulinkkiviestistä.
-            </span>
+            </OphTypography>
           </ErrorPanel>
         </OphNextJsThemeProvider>
       </body>

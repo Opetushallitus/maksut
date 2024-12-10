@@ -3,7 +3,7 @@
 import { Lasku, PaymentStatus } from '@/app/lib/types';
 import { useTranslations } from 'use-intl';
 import { Box, useTheme } from '@mui/material';
-import { ophColors } from '@opetushallitus/oph-design-system';
+import { ophColors, OphTypography } from '@opetushallitus/oph-design-system';
 import { ReactNode } from 'react';
 import { BigNumber } from 'bignumber.js';
 
@@ -36,14 +36,14 @@ const StatusRow = ({ status }: { status: PaymentStatus }) => {
 
   return (
     <>
-      <span
+      <OphTypography
         style={{
           textAlign: 'left',
           margin: theme.spacing(1.5, 2, 1.5, 0),
         }}
       >
         {t('tila')}
-      </span>
+      </OphTypography>
       <Box
         style={{
           padding: theme.spacing(0.5, 1, 0.5, 1),
@@ -96,15 +96,15 @@ const MaksuRow = ({
 
   return (
     <>
-      <span
+      <OphTypography
         style={{
           textAlign: 'left',
           margin: theme.spacing(1, 2, 1, 0),
         }}
       >
         {name}
-      </span>
-      <span
+      </OphTypography>
+      <OphTypography
         style={{
           textAlign: 'right',
           margin: theme.spacing(1, 0, 1, 2),
@@ -112,7 +112,7 @@ const MaksuRow = ({
         }}
       >
         {value}
-      </span>
+      </OphTypography>
     </>
   );
 };
@@ -154,7 +154,9 @@ const Maksu = ({ lasku }: { lasku: Lasku }) => {
         textAlign: 'center',
       }}
     >
-      <h4 style={{ margin: theme.spacing(1) }}>{title()}</h4>
+      <OphTypography variant={'h4'} style={{ margin: theme.spacing(1) }}>
+        {title()}
+      </OphTypography>
       <Box
         style={{
           display: 'grid',

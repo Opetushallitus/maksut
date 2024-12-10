@@ -7,7 +7,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { TopBar } from '@/app/components/TopBar';
 import { Locale } from '@/app/lib/types';
-import { OphLanguage } from '@opetushallitus/oph-design-system';
+import { OphLanguage, ophColors } from '@opetushallitus/oph-design-system';
 
 export const metadata: Metadata = {
   title: 'Maksut',
@@ -28,7 +28,7 @@ export default async function LocaleLayout({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: ophColors.grey50,
   };
 
   return (

@@ -7,6 +7,7 @@ import { useTranslations } from 'use-intl';
 import Panel from '@/app/components/Panel';
 import MaksaButton from '@/app/components/MaksaButton';
 import TutuStateTracker from '@/app/components/TutuStateTracker';
+import { OphTypography } from '@opetushallitus/oph-design-system';
 
 const TutuPanel = ({
   laskut,
@@ -48,10 +49,10 @@ const TutuPanel = ({
               gap: theme.spacing(2),
             }}
           >
-            <span>{t('käsittelyMaksamatta1')}</span>
-            <span>{t('käsittelyMaksamatta2')}</span>
-            <span>{t('käsittelyMaksamatta3')}</span>
-            <span>{t('käsittelyMaksamatta4')}</span>
+            <OphTypography>{t('käsittelyMaksamatta1')}</OphTypography>
+            <OphTypography>{t('käsittelyMaksamatta2')}</OphTypography>
+            <OphTypography>{t('käsittelyMaksamatta3')}</OphTypography>
+            <OphTypography>{t('käsittelyMaksamatta4')}</OphTypography>
           </Box>
         );
       case 'kasittelymaksettu':
@@ -64,19 +65,19 @@ const TutuPanel = ({
               gap: theme.spacing(2),
             }}
           >
-            <span>{t('käsittelyMaksettu1')}</span>
-            <span>{t('käsittelyMaksettu2')}</span>
-            <span>{t('käsittelyMaksettu3')}</span>
-            <span>{tMaksut('yhteiskäytto')}</span>
+            <OphTypography>{t('käsittelyMaksettu1')}</OphTypography>
+            <OphTypography>{t('käsittelyMaksettu2')}</OphTypography>
+            <OphTypography>{t('käsittelyMaksettu3')}</OphTypography>
+            <OphTypography>{tMaksut('yhteiskäytto')}</OphTypography>
           </Box>
         );
       case 'paatosmaksamatta':
-        return <span>{t('päätösMaksamatta')}</span>;
+        return <OphTypography>{t('päätösMaksamatta')}</OphTypography>;
       case 'paatosmaksettu':
         return (
           <>
-            <span>{t('päätösMaksettu')}</span>
-            <span>{tMaksut('yhteiskäytto')}</span>
+            <OphTypography>{t('päätösMaksettu')}</OphTypography>
+            <OphTypography>{tMaksut('yhteiskäytto')}</OphTypography>
           </>
         );
     }
@@ -84,7 +85,7 @@ const TutuPanel = ({
 
   return (
     <Panel>
-      <h2>{t('title')}</h2>
+      <OphTypography variant={'h2'}>{t('title')}</OphTypography>
       <TutuStateTracker state={state()}></TutuStateTracker>
       {stateText()}
       <Box

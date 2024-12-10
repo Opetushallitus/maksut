@@ -4,6 +4,7 @@ import { Box, useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import { useTranslations } from 'use-intl';
 import { CSSProperties, ReactNode } from 'react';
+import { ophColors, OphTypography } from '@opetushallitus/oph-design-system';
 
 type PaymentState =
   | 'kasittelymaksamatta'
@@ -25,17 +26,17 @@ const CircleIcon = ({
   return (
     <Box
       style={{
-        backgroundColor: active ? '#3A7A10' : '#ffffff',
-        border: `2px solid ${active ? '#3A7A10' : '#aeaeae'}`,
+        backgroundColor: active ? ophColors.green2 : ophColors.white,
+        border: `2px solid ${active ? ophColors.green2 : ophColors.grey400}`,
         borderRadius: '50%',
         fontWeight: '600',
         height: theme.spacing(5),
         width: theme.spacing(5),
-        color: active ? '#ffffff' : '#101010',
+        color: active ? ophColors.white : ophColors.black,
       }}
     >
       <Box style={{ marginTop: theme.spacing(0.75) }}>
-        {done ? <DoneIcon></DoneIcon> : <span>{index}</span>}
+        {done ? <DoneIcon></DoneIcon> : <OphTypography>{index}</OphTypography>}
       </Box>
     </Box>
   );
@@ -62,12 +63,12 @@ const activeHeaderStyle: CSSProperties = {
   whiteSpace: 'nowrap',
   margin: 'auto',
   fontWeight: 400,
-  color: '#3A7A10',
+  color: ophColors.green2,
 };
 
 const passiveHeaderStyle: CSSProperties = {
   ...activeHeaderStyle,
-  color: '#353535',
+  color: ophColors.grey800,
 };
 
 const KasittelyState = ({ state }: { state: PaymentState }) => {
@@ -76,13 +77,29 @@ const KasittelyState = ({ state }: { state: PaymentState }) => {
   const header = () => {
     switch (state) {
       case 'kasittelymaksamatta':
-        return <h4 style={activeHeaderStyle}>{t('käsittelymaksu')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={activeHeaderStyle}>
+            {t('käsittelymaksu')}
+          </OphTypography>
+        );
       case 'kasittelymaksettu':
-        return <h4 style={passiveHeaderStyle}>{t('käsittelymaksu')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
+            {t('käsittelymaksu')}
+          </OphTypography>
+        );
       case 'paatosmaksamatta':
-        return <h4 style={activeHeaderStyle}>{t('käsittely')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={activeHeaderStyle}>
+            {t('käsittely')}
+          </OphTypography>
+        );
       case 'paatosmaksettu':
-        return <h4 style={passiveHeaderStyle}>{t('käsittely')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
+            {t('käsittely')}
+          </OphTypography>
+        );
     }
   };
 
@@ -104,13 +121,29 @@ const PaatosState = ({ state }: { state: PaymentState }) => {
   const header = () => {
     switch (state) {
       case 'kasittelymaksamatta':
-        return <h4 style={passiveHeaderStyle}>{t('käsittely')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
+            {t('käsittely')}
+          </OphTypography>
+        );
       case 'kasittelymaksettu':
-        return <h4 style={activeHeaderStyle}>{t('käsittely')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={activeHeaderStyle}>
+            {t('käsittely')}
+          </OphTypography>
+        );
       case 'paatosmaksamatta':
-        return <h4 style={passiveHeaderStyle}>{t('päätösmaksu')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={passiveHeaderStyle}>
+            {t('päätösmaksu')}
+          </OphTypography>
+        );
       case 'paatosmaksettu':
-        return <h4 style={activeHeaderStyle}>{t('päätösmaksu')}</h4>;
+        return (
+          <OphTypography variant={'h4'} style={activeHeaderStyle}>
+            {t('päätösmaksu')}
+          </OphTypography>
+        );
     }
   };
 

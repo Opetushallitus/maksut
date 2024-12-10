@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from 'use-intl';
 import { translateLocalizedString } from '@/app/lib/utils';
 import Panel from '@/app/components/Panel';
 import MaksaButton from '@/app/components/MaksaButton';
+import { OphTypography } from '@opetushallitus/oph-design-system';
 
 const AstuPanel = ({ lasku }: { lasku: Lasku }) => {
   const t = useTranslations('AstuPanel');
@@ -16,14 +17,14 @@ const AstuPanel = ({ lasku }: { lasku: Lasku }) => {
     if (lasku.status === 'paid') {
       return (
         <>
-          <span>{t('päätösMaksettu')}</span>
-          <span>{tMaksut('yhteiskäytto')}</span>
+          <OphTypography>{t('päätösMaksettu')}</OphTypography>
+          <OphTypography>{tMaksut('yhteiskäytto')}</OphTypography>
         </>
       );
     } else {
       return (
         <>
-          <span>{t('päätösMaksamatta')}</span>
+          <OphTypography>{t('päätösMaksamatta')}</OphTypography>
         </>
       );
     }
@@ -31,13 +32,13 @@ const AstuPanel = ({ lasku }: { lasku: Lasku }) => {
 
   return (
     <Panel>
-      <h2>
+      <OphTypography variant={'h2'}>
         {translateLocalizedString(
           lasku.metadata?.form_name,
           locale,
           'ASTU lomake',
         )}
-      </h2>
+      </OphTypography>
       {stateText()}
       <Maksu lasku={lasku} />
       <MaksaButton lasku={lasku}></MaksaButton>
