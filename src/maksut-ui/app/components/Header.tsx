@@ -2,13 +2,8 @@ import { Box } from '@mui/material';
 import { Lasku } from '@/app/lib/types';
 import { getTranslations } from 'next-intl/server';
 import { OphTypography } from '@opetushallitus/oph-design-system';
-import { ReactNode } from 'react';
 
-const Header = async ({
-  lasku,
-}: {
-  lasku: Lasku;
-}): Promise<Awaited<ReactNode>> => {
+const Header = async ({ lasku }: { lasku: Lasku }) => {
   const t = await getTranslations('Header');
 
   return (
