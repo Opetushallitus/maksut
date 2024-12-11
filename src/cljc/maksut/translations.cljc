@@ -289,9 +289,9 @@
                          :body-otsikko    {:fi ": kuitti"
                                            :en ": receipt"
                                            :sv ": kvitto"}
-                         :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."
-                                           :en "EN Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."
-                                           :sv "SV Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. \nLausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."}})
+                         :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu. Lausuntojen maksuun sisältyy arvonlisäverolain mukainen arvonlisävero."
+                                           :en "The fees for recognition of qualifications are based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (1188/2023). The payment of statements includes value added tax in accordance with the Value Added Tax Act."
+                                           :sv "Avgifterna för offentligrättsliga prestationer är föreskrivna i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (1188/2023). I avgiften ingår moms enligt mervärdesskattelagen."}})
 
      :kkmaksukuitti   (merge
                         kuitti-common
