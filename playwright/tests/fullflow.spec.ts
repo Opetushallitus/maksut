@@ -16,7 +16,7 @@ const MERCHANT_KEY =
   process.env.WITH_PAYTRAIL == "TRUE" ? "SAIPPUAKAUPPIAS" : "sikrot";
 const ACCOUNT_ID = process.env.WITH_PAYTRAIL == "TRUE" ? "375917" : "12345";
 
-const BACKEND_URL = "https://localhost:9000";
+const BACKEND_URL = "https://localhost:19033";
 
 let userPage: Page;
 let apiContext: APIRequestContext;
@@ -119,7 +119,7 @@ test("Accessibility", async () => {
 });
 
 test.describe("Real Paytrail", () => {
-  // test.skip(() => process.env.WITH_PAYTRAIL != "TRUE");
+  test.skip(() => process.env.WITH_PAYTRAIL != "TRUE");
 
   test("Paytrail maksuflow", async () => {
     // luodaan ataruna uusi lasku
@@ -144,7 +144,6 @@ test.describe("Real Paytrail", () => {
 });
 
 test.describe("Mocked Paytrail", () => {
-  test.skip();
   test.skip(() => process.env.WITH_PAYTRAIL == "TRUE");
 
   test("Paytrail mocked maksuflow", async () => {
