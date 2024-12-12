@@ -16,7 +16,7 @@ const MERCHANT_KEY =
   process.env.WITH_PAYTRAIL == "TRUE" ? "SAIPPUAKAUPPIAS" : "sikrot";
 const ACCOUNT_ID = process.env.WITH_PAYTRAIL == "TRUE" ? "375917" : "12345";
 
-const BACKEND_URL = "https://localhost:19033";
+const BACKEND_URL = "http://localhost:19033";
 
 let userPage: Page;
 let apiContext: APIRequestContext;

@@ -14,10 +14,8 @@ export const fetchLaskutBySecret = async (
   );
   if (response.ok) {
     return await response.json();
-  } else if (response.status === 404) {
-    notFound();
   }
-  throw Error(response.statusText);
+  notFound();
 };
 
 export const fetchLaskuContact = async (
@@ -31,8 +29,6 @@ export const fetchLaskuContact = async (
   });
   if (response.ok) {
     return await response.json();
-  } else if (response.status === 404) {
-    notFound();
   }
-  throw Error(response.statusText);
+  notFound();
 };

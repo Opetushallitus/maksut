@@ -156,7 +156,7 @@ const Maksu = ({ lasku }: { lasku: Lasku }) => {
     >
       <OphTypography
         variant={'h4'}
-        component={'p'}
+        component={'h3'}
         style={{ margin: theme.spacing(1) }}
       >
         {title()}

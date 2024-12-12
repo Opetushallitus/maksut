@@ -80,7 +80,7 @@ const KasittelyLabel = ({
   return (
     <OphTypography
       variant={'h4'}
-      component={'p'}
+      component={'h3'}
       style={active ? activeHeaderStyle : passiveHeaderStyle}
     >
       {content}
