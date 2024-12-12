@@ -2,19 +2,19 @@
 
 import ErrorPanel from '@/app/components/ErrorPanel';
 import { useTranslations } from 'use-intl';
-import { OphLink } from '@opetushallitus/oph-design-system';
+import { OphLink, OphTypography } from '@opetushallitus/oph-design-system';
 
 const ExpiredPanel = ({ contact }: { contact: string | undefined }) => {
   const t = useTranslations('ExpiredPanel');
 
   return (
     <ErrorPanel>
-      <h2>{t('header')}</h2>
-      <span>{t('body1')}</span>
-      <span>
+      <OphTypography variant={'h2'}>{t('header')}</OphTypography>
+      <OphTypography>{t('body1')}</OphTypography>
+      <OphTypography>
         {t('body2')}
         <OphLink href={`mailto:${contact}`}>{contact}</OphLink>.
-      </span>
+      </OphTypography>
     </ErrorPanel>
   );
 };

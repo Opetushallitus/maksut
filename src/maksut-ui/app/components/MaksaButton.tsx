@@ -13,6 +13,7 @@ const MaksaButton = ({ lasku }: { lasku: Lasku }) => {
     return (
       <OphButton
         variant={'contained'}
+        target={'_self'}
         href={`${backendUrl}/lasku/${lasku.order_id}/maksa?secret=${lasku.secret}&locale=${locale}`}
       >
         {t('maksa')}

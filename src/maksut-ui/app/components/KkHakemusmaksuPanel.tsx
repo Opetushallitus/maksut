@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from 'use-intl';
 import Panel from '@/app/components/Panel';
 import MaksaButton from '@/app/components/MaksaButton';
 import { translateLocalizedString } from '@/app/lib/utils';
+import { OphTypography } from '@opetushallitus/oph-design-system';
 
 const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
   const t = useTranslations('KkHakemusmaksuPanel');
@@ -22,9 +23,9 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
   const aloituskausiHeader = (aloitusvuosi?: number, aloituskausi?: string) => {
     if (aloitusvuosi && aloituskausi) {
       return (
-        <h3 style={{ margin: 0 }}>
+        <OphTypography variant={'h3'} style={{ margin: 0 }}>
           {t('aloituskausi')}: {aloituskausiText(aloitusvuosi, aloituskausi)}
-        </h3>
+        </OphTypography>
       );
     }
     return null;
@@ -34,44 +35,44 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
     if (lasku.status === 'paid') {
       return (
         <>
-          <span>{t('maksettu')}</span>
-          <span>
+          <OphTypography>{t('maksettu')}</OphTypography>
+          <OphTypography>
             {t('maksettu2')}{' '}
             {aloituskausiText(
               lasku.metadata?.alkamisvuosi,
               lasku.metadata?.alkamiskausi,
             )}
             . {t('maksettu3')}
-          </span>
-          <span>{t('maksettu4')}</span>
-          <span>{tMaksut('yhteiskäytto')}</span>
+          </OphTypography>
+          <OphTypography>{t('maksettu4')}</OphTypography>
+          <OphTypography>{tMaksut('yhteiskäytto')}</OphTypography>
         </>
       );
     } else if (lasku.status === 'overdue') {
       return (
         <>
-          <span>{t('eraantynyt')}</span>
+          <OphTypography>{t('eraantynyt')}</OphTypography>
         </>
       );
     } else if (lasku.status === 'invalidated') {
       return (
         <>
-          <span>
+          <OphTypography>
             {t('mitatoity')}{' '}
             {aloituskausiText(
               lasku.metadata?.alkamisvuosi,
               lasku.metadata?.alkamiskausi,
             )}
             . {t('mitatoity2')}
-          </span>
-          <span>{tMaksut('yhteiskäytto')}</span>
+          </OphTypography>
+          <OphTypography>{tMaksut('yhteiskäytto')}</OphTypography>
         </>
       );
     } else {
       return (
         <>
-          <span>{t('maksamatta')}</span>
-          <span>{t('maksamatta2')}</span>
+          <OphTypography>{t('maksamatta')}</OphTypography>
+          <OphTypography>{t('maksamatta2')}</OphTypography>
         </>
       );
     }
@@ -79,13 +80,13 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
 
   return (
     <Panel>
-      <h2 style={{ margin: 0 }}>
+      <OphTypography variant={'h2'} style={{ margin: 0 }}>
         {translateLocalizedString(
           lasku.metadata?.haku_name,
           locale,
           'Hakemusmaksu',
         )}
-      </h2>
+      </OphTypography>
       {aloituskausiHeader(
         lasku.metadata?.alkamisvuosi,
         lasku.metadata?.alkamiskausi,

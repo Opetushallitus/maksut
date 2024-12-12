@@ -1,28 +1,29 @@
 (ns maksut.routes
   (:require
-            [cheshire.core :as json]
-            [clj-ring-db-session.authentication.auth-middleware :as auth-middleware]
-            [clj-ring-db-session.session.session-client :as session-client]
-            [clj-ring-db-session.session.session-store :refer [create-session-store]]
-            [reitit.swagger :as swagger]
-            [maksut.api-schemas :as schema]
-            [maksut.authentication.auth-routes :as auth-routes]
-            [maksut.config :as c]
-            [maksut.error :refer [maksut-error]]
-            [maksut.maksut.maksut-service-protocol :as maksut-protocol]
-            [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
-            [maksut.payment.payment-service-protocol :as payment-protocol]
-            [maksut.health-check :as health-check]
-            [maksut.oph-url-properties :as oph-urls]
-            [maksut.schemas.class-pred :as p]
-            [maksut.session-timeout :as session-timeout]
-            [maksut.util.url-encoder :refer [encode]]
-            [clj-access-logging]
-            [ring.middleware.session :as ring-session]
-            [ring.util.http-response :as response]
-            [schema.core :as s]
-            [selmer.parser :as selmer]
-            [taoensso.timbre :as log]))
+    [cheshire.core :as json]
+    [clj-ring-db-session.authentication.auth-middleware :as auth-middleware]
+    [clj-ring-db-session.session.session-client :as session-client]
+    [clj-ring-db-session.session.session-store :refer [create-session-store]]
+    [cuerdas.core :as str]
+    [reitit.swagger :as swagger]
+    [maksut.api-schemas :as schema]
+    [maksut.authentication.auth-routes :as auth-routes]
+    [maksut.config :as c]
+    [maksut.error :refer [maksut-error]]
+    [maksut.maksut.maksut-service-protocol :as maksut-protocol]
+    [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
+    [maksut.payment.payment-service-protocol :as payment-protocol]
+    [maksut.health-check :as health-check]
+    [maksut.oph-url-properties :as oph-urls]
+    [maksut.schemas.class-pred :as p]
+    [maksut.session-timeout :as session-timeout]
+    [maksut.util.url-encoder :refer [encode]]
+    [clj-access-logging]
+    [ring.middleware.session :as ring-session]
+    [ring.util.http-response :as response]
+    [schema.core :as s]
+    [selmer.parser :as selmer]
+    [taoensso.timbre :as log]))
 
 ; --- Session ---
 (defn- create-wrap-database-backed-session [config datasource]
@@ -173,7 +174,7 @@
                  :responses  {200 {:body schema/LaskuStatusList}}
                  :parameters {:body schema/LaskuRefList}
                  :handler    (fn [{session :session {input :body} :parameters}]
-                               (log/info "Check invoice statuses for" (count input) "keys")
+                               (log/info "Check invoice statuses for keys:" (str/join ", " input))
                                (let [x (maksut-protocol/check-status maksut-service session input)]
                                  (response/ok x)))}}]]
 
@@ -258,10 +259,11 @@
                                    (response/found (:href paytrail-response)))
                                  (catch Exception e
                                    (let [data (ex-data e)]
+                                     (log/error "Maksun" order-id "maksaminen epäonnistui:" e)
                                      (response/found
                                        (str (get-in config [:urls :oppija-baseurl])
                                             "/"
-                                            locale
+                                            (or locale "fi")
                                             "/error?code="
                                             (name (:code data))))))))}}]]
 

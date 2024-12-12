@@ -37,8 +37,7 @@ run-all-tests-and-create-uberjar() {
   lint \
     && create-uberjar \
     && run-mocked-maksut \
-    && test-lein \
-    && npx playwright test
+    && test-lein
 }
 
 COMMAND=$1

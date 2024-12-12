@@ -1,29 +1,33 @@
 'use client';
 
-import { Box, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import { ophColors } from '@opetushallitus/oph-design-system';
 import { ReactNode } from 'react';
 import PanelContent from '@/app/components/PanelContent';
+import { styled } from '@mui/system';
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  margin: theme.spacing(4),
+  backgroundColor: ophColors.white,
+  alignItems: 'center',
+  display: 'flex',
+  flexDirection: 'column',
+  [theme.breakpoints.down('lg')]: {
+    margin: theme.spacing(2),
+  },
+  [theme.breakpoints.up('lg')]: {
+    maxWidth: '1000px',
+    width: '100%',
+  },
+  filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.30))',
+  padding: theme.spacing(2, 4),
+}));
 
 const Panel = ({ children }: { children: ReactNode }) => {
-  const theme = useTheme();
-
   return (
-    <Box
-      style={{
-        margin: `${theme.spacing(2)}`,
-        backgroundColor: ophColors.white,
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: '1200px',
-        minWidth: '800px',
-        filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.30))',
-        padding: theme.spacing(2, 4),
-      }}
-    >
+    <StyledBox>
       <PanelContent>{children}</PanelContent>
-    </Box>
+    </StyledBox>
   );
 };
 

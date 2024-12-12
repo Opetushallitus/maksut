@@ -4,6 +4,7 @@ import { Nextjs } from 'cdk-nextjs-standalone';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
+import * as shield from 'aws-cdk-lib/aws-shield';
 
 interface MaksutUiStackProps extends cdk.StackProps {
   environmentName: string;
@@ -63,6 +64,12 @@ export class SovellusStack extends cdk.Stack {
         }
       }
     });
+
+    const protection = new shield.CfnProtection(this, 'DistributionShieldProtection', {
+      name: `maksut-ui-${props.environmentName} cloudfront distribution`,
+      resourceArn: `arn:aws:cloudfront::${this.account}:distribution/${nextjs.distribution.distributionId}`,
+    });
+
     new cdk.CfnOutput(this, "CloudFrontDistributionDomain", {
       value: nextjs.distribution.distributionDomain,
     });
