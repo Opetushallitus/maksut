@@ -17,12 +17,14 @@ export class SovellusStack extends cdk.Stack {
       hahtuva: 'hahtuvaopintopolku.fi',
       pallero: 'testiopintopolku.fi',
       untuva: 'untuvaopintopolku.fi',
+      sade: 'opintopolku.fi',
     };
 
     const publicHostedZoneIds: { [p: string]: string } = {
       hahtuva: 'Z20VS6J64SGAG9',
       pallero: 'Z175BBXSKVCV3B',
       untuva: 'Z1399RU36FG2N9',
+      sade: 'ZNMCY72OCXY4M',
     };
 
     const zone = route53.HostedZone.fromHostedZoneAttributes(
