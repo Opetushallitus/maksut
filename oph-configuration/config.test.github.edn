@@ -5,11 +5,16 @@
                         :database-name "maksut"
                         :host          "localhost"
                         :port          5432}
- :payment              {:paytrail-config {:host             "http://localhost:9040/payments"
-                                          :merchant-id      12345
-                                          :merchant-secret  "sikrot"}
+ :payment              {:paytrail-config {:default {:host             "http://localhost:9040/payments"
+                                                    :merchant-id      12345
+                                                    :merchant-secret  "sikrot"}
+                                          :kkhakemusmaksu {:host             "http://localhost:9040/payments"
+                                                           :merchant-id      12345
+                                                           :merchant-secret  "sikrot"}}
                         :callback-uri       "<ei käytetä mock paytrail käyttöliittymätestissä>"
-                        :order-id-prefix    "MKS"
+                        :order-id-prefix    {:tutu "TTU"
+                                             :astu "ASTU"
+                                             :kkhakemusmaksu "KKHA"}
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
@@ -26,8 +31,8 @@
                                    :email           {:service-url-property :cas.service.ryhmasahkoposti-service
                                                      :session-cookie-name  "JSESSIONID"}}}
  :urls                 {:virkailija-baseurl        "http://localhost"
-                        :maksut-url                "http://localhost:19033/maksut/"
-                        :oppija-baseurl            "https://testiopintopolku.fi/maksut"}
+                        :maksut-url                "http://localhost:19033/maksut"
+                        :oppija-baseurl            "http://localhost:3000/maksut-ui"}
  :oph-organisaatio-oid "1.2.246.562.10.00000000001"
  :public-config        {:environment   :it
                         :default-panel :panel/tutu-maksut

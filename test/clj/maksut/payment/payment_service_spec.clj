@@ -48,6 +48,21 @@
    :reference "1.2.246.562.11.00000000000000123456"
    :due_date (to-sql-date date)})
 
+(defn db-invoice-hakemusmaksu [date]
+  {:order_id "KKHA123456"
+   :first_name "Testi"
+   :last_name "Hakija"
+   :email "testihakija@example.com"
+   :amount (bigdec "100.00")
+   :origin "kkhakemusmaksu"
+   :reference "1.2.246.562.11.00000000000000123456"
+   :metadata {:haku-name {:fi "Haku FI"
+                          :sv "Haku SV"
+                          :en "Haku EN"}
+              :alkamiskausi "kausi_s"
+              :alkamisvuosi 2025}
+   :due_date (to-sql-date date)})
+
 (def params {
   :checkout-reference "TTU123456-1"
   :checkout-stamp "106173855345"
@@ -65,6 +80,15 @@
   :checkout-status "ok"
   :signature "0fd5b45cad31cb96b7fe4a9917e6f1ad1ecaf0072fa8de56110a1cb9830ad5c6a83a3d2e180cea58b792648d5afeded86a603c45698272ae6a39720a13ef31ac" ;based on secret "sikrot"
   })
+
+(def params-kk {
+  :checkout-reference "KKHA123456"
+  :checkout-stamp "106173855345"
+  :checkout-amount "100.00"
+  :timestamp 1642348919
+  :checkout-status "ok"
+  :signature "2942935ff05089b822ad938194407be73428cc5e350019552fb56ef9f41df3683ea88e5fcd101b8a75d8a26932ba37513a1e1b8bc46742b0c24027acac537970" ;based on secret "sikrot"
+})
 
 
 (deftest tutu-maksut-complete-happy-flow
@@ -94,12 +118,12 @@
           (is (= (count emails-to-user) 2))
           (is (= subjects #{"Opetushallitus: Käsittelymaksusi on vastaanotettu" "Opetushallitus: Kuitti tutkintojen tunnustamisen maksusta"}))
           (is (true? (s/includes? (:body receipt)
-                                  "https://testiopintopolku.fi/maksut/images/OPH-logo.png")))
+                                  "/OPH-logo.png")))
           (reset-emails!)))
 
     (testing "Try to pay invoice after it has been paid"
-             (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                                         {:order-id (:order_id db-data)
+             (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                                    {:order-id (:order_id db-data)
                                                                           :locale locale
                                                                           :secret secret}))
                    data (:data exc)]
@@ -160,6 +184,84 @@
 
   )
 )
+
+(deftest kkhakemusmaksu-complete-happy-flow
+  (let [service (:payment-service @test-system)
+        db      (:db @test-system)
+        due-date (time/from-now (time/days 7))
+        db-data (db-invoice-hakemusmaksu due-date)
+        locale  "fi"
+        secret  "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)]
+
+    (reset-emails!)
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret secret})
+
+    (testing "Payment success callback"
+      (let [response (payment-protocol/process-success-callback service params-kk locale false)
+            emails-to-user (filter #(= (-> % :recipients first) (:email db-data)) (get-emails))
+            subjects (set (map :subject emails-to-user))
+            receipt (first
+                      (filter #(s/includes? (:subject %) "Kuitti")
+                              emails-to-user))]
+        (is (= (:action response) :created))
+        (is-email-count 1)
+        (is (= (count emails-to-user) 1))
+        (is (= subjects #{"Opetushallitus: Kuitti hakemusmaksusta"}))
+        (println (:body receipt))
+        (is (true? (s/includes? (:body receipt)
+                                "Opetushallitus<br />Haku FI<br />Hakemusmaksu")))
+        (is (true? (s/includes? (:body receipt)
+                                "Haku FI: kuitti hakemusmaksusta")))
+        (is (true? (s/includes? (:body receipt)
+                                "/OPH-logo.png")))
+        (reset-emails!)))
+
+    (testing "Try to pay invoice after it has been paid"
+      (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                             {:order-id (:order_id db-data)
+                                                              :locale locale
+                                                              :secret secret}))
+            data (:data exc)]
+        (is (= (:type data) :maksut.error))
+        (is (= (:code data) :invoice-invalidstate-paid))))
+
+    (testing "Payment with invalid AUTOCODE"
+      (let [inv-params (assoc params-kk
+                         :signature
+                         "5DA539ADFDCAD3E9C4FE1F05974C2E165DC190CF74CF0B681D7DBA4A95CD7E4B")
+            response  (payment-protocol/process-success-callback service inv-params locale false)]
+        (is (= (:action response) :error))
+        (is (= (:code response) :payment-invalid-status))
+        (is-email-count 0)))
+
+    (testing "Payment with invalid STATUS"
+      (let [inv-params (-> params-kk
+                           (assoc :checkout-status "CANCELLED")
+                           (assoc :signature "62549431C803ADBBF4DE66BDCF927833AB5848DBAC686F37EF011807A789B2B0"))
+            response  (payment-protocol/process-success-callback service inv-params locale false)]
+        (is (= (:action response) :error))
+        (is (= (:code response) :payment-invalid-status))
+        (is-email-count 0)))
+
+    (testing "Payment success callback AGAIN" ;invoice from previous test is still in database, but now it's paid
+      (let [response  (payment-protocol/process-success-callback service params-kk locale false)]
+        (is (= (:action response) :not-modified))
+        (is-email-count 0)))
+
+    (testing "Payment 1. notify callback"
+      (let [response  (payment-protocol/process-success-callback service params-kk locale true)]
+        (is (= (:action response) :not-modified))
+        (is-email-count 0)))
+
+    (testing "Payment 2. notify callback"
+      (let [response  (payment-protocol/process-success-callback service params-kk locale true)]
+        (is (= (:action response) :not-modified))
+        (is-email-count 0)))
+    )
+  )
 
 ;Rare use-case where multiple Paytrail sessions are initiated before payments have been finalized,
 ;and then more than one is finalized will results in multiple rows in payments table (with unique PAYMENT_ID)
@@ -226,8 +328,8 @@
 (deftest pay-non-existing-invoice
   (let [service (:payment-service @test-system)]
     (testing "Try to pay invoice after it has been paid"
-             (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                                         {:order-id "TTU123456-1"
+             (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                                    {:order-id "TTU123456-1"
                                                                           :locale "en"
                                                                           :secret "foobar"}))
                    data (:data exc)]
@@ -252,8 +354,8 @@
                                :secret secret})
 
     (testing "Try to pay invoice after due-date"
-             (let [exc (catch-thrown-info (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                                         {:order-id (:order_id db-data)
+             (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                                    {:order-id (:order_id db-data)
                                                                           :locale "fi"
                                                                           :secret secret}))
                    data (:data exc)]
@@ -272,6 +374,45 @@
                      data (:data exc)]
                  (is (= (:type data) :maksut.error))
                  (is (= (:code data) :invoice-invalidstate-overdue)))))
+    ))
+
+(deftest pay-invalidated-invoice
+  (let [service (:payment-service @test-system)
+        maksut-service (:maksut-service @test-system)
+        db      (:db @test-system)
+
+        due-date (time/from-now (time/days +7))
+        db-data (db-invoice-hakemusmaksu due-date)
+        secret  "foobar"
+        invoice-insert (test-fixtures/add-invoice! db
+                                                   (merge db-data {:invalidated_at (to-sql-date "2024-12-09 10:23:54")}))
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret secret})
+
+    (testing "Try to pay invoice that has been invalidated"
+      (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                             {:order-id (:order_id db-data)
+                                                              :locale "fi"
+                                                              :secret secret}))
+            data (:data exc)]
+        (is (= (:type data) :maksut.error))
+        (is (= (:code data) :invoice-invalidstate-invalidated))
+        ))
+
+    (testing "Try to edit invalidated invoice"
+      (let [lasku {:reference (:reference db-data)
+                   :first-name (:first_name db-data)
+                   :last-name (:last_name db-data)
+                   :email (:email db-data)
+                   :amount "222.00"
+                   :due-days 7
+                   :origin (:origin db-data)}]
+        (let [exc (catch-thrown-info (maksut-protocol/create maksut-service maksut-test-fixtures/fake-session lasku))
+              data (:data exc)]
+          (is (= (:type data) :maksut.error))
+          (is (= (:code data) :invoice-invalidstate-invalidated)))))
     ))
 
 (deftest pay-at-due-date
@@ -294,8 +435,8 @@
                                                                    :headers {}
                                                                    :body "{\"href\":\"http://esimerkkilinkki\"}"}
                                                                   )}}
-             (let [{:keys [href]} (payment-protocol/tutu-payment service maksut-test-fixtures/fake-session
-                                                           {:order-id (:order_id db-data)
+             (let [{:keys [href]} (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                            {:order-id (:order_id db-data)
                                                             :locale "fi"
                                                             :secret secret})]
                (is (not-empty href))

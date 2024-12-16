@@ -12,13 +12,17 @@
                           :database-name s/Str
                           :host          s/Str
                           :port          s/Int}
-   :payment              {:paytrail-config {:host             s/Str
-                                            :merchant-id      s/Int
-                                            :merchant-secret  s/Str}
+   :payment              {:paytrail-config {:default {:host             s/Str
+                                                      :merchant-id      s/Int
+                                                      :merchant-secret  s/Str}
+                                            :kkhakemusmaksu {:host             s/Str
+                                                             :merchant-id      s/Int
+                                                             :merchant-secret  s/Str}}
                           :callback-uri       s/Str
-                          :order-id-prefix    s/Str
-                          :currency           s/Str
-                          }
+                          :order-id-prefix    {:tutu s/Str
+                                               :astu s/Str
+                                               :kkhakemusmaksu s/Str}
+                          :currency           s/Str}
    :tutu                 {:lasku-origin       s/Str
                           :order-id-prefix    s/Str}
    :file-store           {:engine s/Keyword

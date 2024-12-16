@@ -71,7 +71,6 @@
                                     ".shadow-cljs"
                                     ".ts-out"]
 
-
   :shell {:commands {"open" {:windows ["cmd" "/c" "start"]
                              :macosx  "open"
                              :linux   "xdg-open"}}}

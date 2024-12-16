@@ -3,7 +3,9 @@
 (defprotocol MaksutServiceProtocol
   (create [this session lasku])
   (create-tutu [this session lasku])
-  (list-tutu [this session input])
-  (check-status-tutu [this session input])
+  (list-laskut [this session input])
+  (check-status [this session input])
   (get-lasku [this session order-id])
-  (get-laskut-by-secret [this session secret]))
+  (get-lasku-contact [this session secret])
+  (get-laskut-by-secret [this session secret])
+  (invalidate-laskut [this session input]))

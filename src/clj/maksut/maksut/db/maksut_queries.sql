@@ -8,7 +8,9 @@ INSERT INTO invoices (
     amount,
     origin,
     reference,
-    due_date
+    due_date,
+    vat
+    --~ (when (contains? params :metadata) ", metadata")
 )
 VALUES (
     :order-id,
@@ -18,7 +20,9 @@ VALUES (
     :amount,
     :origin,
     :reference,
-    :due-date
+    :due-date,
+    :vat
+--~ (when (contains? params :metadata) ", :metadata")
 )
 RETURNING *;
 
@@ -29,7 +33,13 @@ SET
     last_name = :last-name,
     email = :email,
     amount = :amount
+--~ (when (some? (:metadata params)) ", metadata = :metadata")
 WHERE order_id = :order-id AND CURRENT_DATE <= due_date;
+
+-- :name invalidate-laskut-by-reference! :! :n
+UPDATE invoices
+SET invalidated_at = now()
+WHERE reference IN (:v*:refs) AND CURRENT_DATE <= due_date;
 
 -- :name get-lasku-locked :? :1
 SELECT *
@@ -78,8 +88,7 @@ JOIN (
 ) sharing_refs ON (ai.origin = sharing_refs.origin AND ai.reference = sharing_refs.reference AND ai.reference IS NOT NULL);
 
 -- :name all-linked-laskut-by-reference :? :*
-SELECT * FROM all_invoices WHERE reference = :reference AND origin = :origin;
-
+SELECT * FROM all_invoices WHERE reference = :reference;
 
 -- :name get-linked-lasku-statuses-by-reference :? :*
-SELECT order_id, reference, status FROM all_invoices WHERE reference IN (:v*:refs) AND origin = :origin ORDER BY order_id;
+SELECT order_id, reference, status, origin FROM all_invoices WHERE reference IN (:v*:refs) ORDER BY order_id;

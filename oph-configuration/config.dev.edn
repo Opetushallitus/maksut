@@ -9,11 +9,16 @@
                         :database-name "maksut"
                         :host          "localhost"
                         :port          15499}
- :payment              {:paytrail-config {:host             "https://services.paytrail.com/payments"
-                                          :merchant-id       375917
-                                          :merchant-secret  "SAIPPUAKAUPPIAS"}
+ :payment              {:paytrail-config {:default {:host             "https://services.paytrail.com/payments"
+                                                    :merchant-id       375917
+                                                    :merchant-secret  "SAIPPUAKAUPPIAS"}
+                                          :kkhakemusmaksu {:host             "https://services.paytrail.com/payments"
+                                                           :merchant-id       375917
+                                                           :merchant-secret  "SAIPPUAKAUPPIAS"}}
                         :callback-uri       "https://maksut-local.test:9000/maksut/api/payment/paytrail"
-                        :order-id-prefix    "MKS"
+                        :order-id-prefix    {:tutu "TTU"
+                                             :astu "ASTU"
+                                             :kkhakemusmaksu "KKHA"}
                         :currency           "EUR"}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
@@ -30,8 +35,8 @@
                                    :email           {:service-url-property :cas.service.ryhmasahkoposti-service
                                                      :session-cookie-name  "JSESSIONID"}}}
  :urls                 {:virkailija-baseurl        "https://localhost"
-                        :maksut-url                "https://localhost:9000/maksut/"
-                        :oppija-baseurl            "https://testiopintopolku.fi/maksut"}
+                        :maksut-url                "https://localhost:9000/maksut"
+                        :oppija-baseurl            "http://localhost:3000/maksut-ui"}
  :oph-organisaatio-oid "1.2.246.562.10.00000000001"
  :public-config        {:environment   :development
                         :default-panel :panel/tutu-maksut

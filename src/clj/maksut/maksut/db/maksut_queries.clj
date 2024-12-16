@@ -21,6 +21,10 @@
 (declare select-payment)
 (declare insert-payment!)
 (declare insert-secret-for-invoice!)
+(declare invalidate-laskut-by-reference!)
+
+(defn invalidate-laskut-by-reference [db refs]
+  (invalidate-laskut-by-reference! db {:refs refs}))
 
 (defn- insert-new-secret [db invoice-id order-id]
   ;prefix secrets with order-id to force them unique even if random would generate two identical
@@ -43,15 +47,17 @@
    (not= (:first-name new) (:first_name old))
    (not= (:last-name new) (:last_name old))
    (not= (:email new) (:email old))
-   (not= (:amount new) (:amount old))))
+   (not= (:amount new) (:amount old))
+   (not= (:metadata new) (:metadata old))))
 
 (defn can-be-updated? [old-ai new]
   (let [status      (:status old-ai)
         same-origin (= (:origin old-ai) (:origin new))]
     (cond
-     (= status "overdue") (maksut-error :invoice-invalidstate-overdue (str "Ei voi muuttaa, eräpäivä mennyt: " new))
-     (= status "paid")    (maksut-error :invoice-invalidstate-paid (str "Ei voi muuttaa, lasku on jo maksettu: " new))
-     (not same-origin)   (maksut-error :invoice-createerror-originclash (str "Sama lasku eri lähteestä on jo olemassa: " new)))
+     (= status "overdue")     (maksut-error :invoice-invalidstate-overdue (str "Ei voi muuttaa, eräpäivä mennyt: " new))
+     (= status "paid")        (maksut-error :invoice-invalidstate-paid (str "Ei voi muuttaa, lasku on jo maksettu: " new))
+     (= status "invalidated") (maksut-error :invoice-invalidstate-invalidated (str "Ei voi muuttaa, mitätöity: " new))
+     (not same-origin)        (maksut-error :invoice-createerror-originclash (str "Sama lasku eri lähteestä on jo olemassa: " new)))
     true))
 
 (defn get-lasku [db order-id]
@@ -61,11 +67,11 @@
 (defn get-laskut-by-secret [db secret]
   (all-linked-laskut-by-secret db {:secret secret}))
 
-(defn get-laskut-by-reference [db origin reference]
-  (all-linked-laskut-by-reference db {:origin origin :reference reference}))
+(defn get-laskut-by-reference [db reference]
+  (all-linked-laskut-by-reference db {:reference reference}))
 
-(defn check-laskut-statuses-by-reference [db origin refs]
-  (get-linked-lasku-statuses-by-reference db {:origin origin :refs refs}))
+(defn check-laskut-statuses-by-reference [db refs]
+  (get-linked-lasku-statuses-by-reference db {:refs refs}))
 
 (defn create-payment [db order-number payment-id amount timestamp]
   (with-db-transaction
@@ -78,7 +84,11 @@
                         :origin    (:origin lasku)
                         :reference (:reference lasku)
                         :first-name (:first_name lasku)
-                        :last-name (:last_name lasku)}]
+                        :last-name (:last_name lasku)
+                        :form-name (get-in lasku [:metadata :form-name])
+                        :haku-name (get-in lasku [:metadata :haku-name])
+                        :vat (:vat lasku)
+                        :amount-without-vat (:amount lasku)}]
        (if (some? old-payment)
          (do
            (log/warn "Old payment with same payment-id found, duplicate notification " old-payment)
@@ -110,7 +120,7 @@
        (let [current_ai (get-lasku-by-order-id tx {:order-id (:order-id lasku)})]
          (when (and (has-changed? current_ai lasku) (can-be-updated? current_ai lasku))
                (log/info (str "Incoming input has changed fields, and they will be updated"))
-               (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id])))))
+               (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :metadata])))))
 
      (or
       ;RETURN previous (potentially updated version), if any

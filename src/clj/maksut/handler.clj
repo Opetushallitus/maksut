@@ -15,6 +15,7 @@
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
             [maksut.payment.payment-service-protocol :as payment-protocol]
             [maksut.email.email-service-protocol :as email-protocol]
+            [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
             [maksut.health-check :as health-check]
             [maksut.schemas.class-pred :as p]
             [maksut.util.cache-control :as cache-control]
@@ -39,7 +40,8 @@
    :auth-routes-source               (p/extends-class-pred auth-routes/AuthRoutesSource)
    :maksut-service                   (p/extends-class-pred maksut-protocol/MaksutServiceProtocol)
    :payment-service                  (p/extends-class-pred payment-protocol/PaymentServiceProtocol)
-   :email-service                    (p/extends-class-pred email-protocol/EmailServiceProtocol)})
+   :email-service                    (p/extends-class-pred email-protocol/EmailServiceProtocol)
+   :lokalisaatio-service             (p/extends-class-pred lokalisaatio-protocol/LokalisaatioServiceProtocol)})
 
 
 
