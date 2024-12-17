@@ -136,13 +136,27 @@
    :Maksu.maksupäivä                   {:fi "Maksupäivä"
                                         :en "Payment date"
                                         :sv "Betalningsdag"}
-   :ExpiredPanel.header                {:fi "Maksu on vanhentunut"}
-   :ExpiredPanel.body1                 {:fi "Et voi maksaa maksua tämän linkin kautta enää."}
-   :ExpiredPanel.body2                 {:fi "Lähetä sähköpostia osoitteeseen "}
-   :NotFound.header                    {:fi "Maksun tietoja ei löydy"}
-   :NotFound.body1                     {:fi "Emme löytäneet maksusi tietoja."}
-   :NotFound.body2                     {:fi "Ota yhteyttä Opetushallitukseen. Löydät palveluosoitteen saamastasi maksulinkkiviestistä."}
-   :Error.header                       {:fi "Tapahtui virhe"}
+   :ExpiredPanel.header                {:fi "Maksu on vanhentunut"
+                                        :sv "Betalningen har gått ut"
+                                        :en "Payment has expired"}
+   :ExpiredPanel.body1                 {:fi "Et voi maksaa maksua tämän linkin kautta enää."
+                                        :en "You can no longer make the payment through this link."
+                                        :sv "Du kan inte längre betala via denna länk."}
+   :ExpiredPanel.body2                 {:fi "Lähetä sähköpostia osoitteeseen "
+                                        :en "Please send an email to "
+                                        :sv "Vänligen skicka ett e-postmeddelande till "}
+   :NotFound.header                    {:fi "Maksun tietoja ei löydy"
+                                        :en "Payment information not found"
+                                        :sv "Betalningsinformation hittades inte"}
+   :NotFound.body1                     {:fi "Emme löytäneet maksusi tietoja."
+                                        :sv "Vi kunde inte hitta din betalningsinformation."
+                                        :en "We could not find your payment information."}
+   :NotFound.body2                     {:fi "Ota yhteyttä Opetushallitukseen. Löydät palveluosoitteen saamastasi maksulinkkiviestistä."
+                                        :en "Please contact the Finnish National Agency for Education. You can find the service address in the email with the payment link."
+                                        :sv "Vänligen kontakta Utbildningsstyrelsen. Du hittar tjänsteadressen i betalningslänksmeddelandet du fick."}
+   :Error.header                       {:fi "Tapahtui virhe"
+                                        :en "An error occurred"
+                                        :sv "Ett fel inträffade"}
    :PaymentError.header                {:fi "Virhe maksussa"
                                         :sv "Fel i betalningen"
                                         :en "Error in payment"}
