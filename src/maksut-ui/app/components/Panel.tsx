@@ -7,7 +7,7 @@ import PanelContent from '@/app/components/PanelContent';
 import { styled } from '@mui/system';
 
 const StyledBox = styled(Box)(({ theme }) => ({
-  margin: theme.spacing(4),
+  marginTop: theme.spacing(4),
   backgroundColor: ophColors.white,
   alignItems: 'center',
   display: 'flex',
