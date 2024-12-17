@@ -150,7 +150,7 @@
                                         :sv "Betalningen misslyckades."
                                         :en "Payment failed."}
    :PaymentError.body2                 {:fi "Palaa Maksutapahtumat-sivulle ja tarkista maksusi tilanne. Jos maksua ei ole maksettu, yritä maksamista myöhemmin uudelleen."
-                                        :sv "Gå tillbaka till Betalningar-sidan och kontrollera statusen för din betalning. Om betalningen inte har genomförts, försök igen \nsenare."
+                                        :sv "Gå tillbaka till Betalningar-sidan och kontrollera statusen för din betalning. Om betalningen inte har genomförts, försök igen senare."
                                         :en "Return to the Payments page and check the status of your payment. If the payment has not been made, try again later."}
    :PaymentError.body3                 {:fi "Tarvittaessa lähetä sähköpostia osoitteeseen "
                                         :sv "Vid behov, skicka ett e-postmeddelande till "
