@@ -26,7 +26,7 @@ export default function GlobalError() {
             </OphTypography>
             <OphTypography>Emme löytäneet maksusi tietoja.</OphTypography>
             <OphTypography>
-              Ota yhteyttä Opetushallitukseen. Läydät palveluosoitteen
+              Ota yhteyttä Opetushallitukseen. Löydät palveluosoitteen
               saamastasi maksulinkkiviestistä.
             </OphTypography>
           </ErrorPanel>

@@ -29,7 +29,7 @@ export default async function ErrorPage({
       <OphTypography>{t('body1')}</OphTypography>
       <OphTypography>{t('body2')}</OphTypography>
       <OphTypography>
-        {t('body3')}
+        {`${t('body3')} `}
         <OphLink href={`mailto:${contact}`}>{contact}</OphLink>.
       </OphTypography>
       <OphButton variant={'contained'} href={`/${locale}?secret=${secret}`}>

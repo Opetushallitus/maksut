@@ -12,7 +12,7 @@ const ExpiredPanel = ({ contact }: { contact: string | undefined }) => {
       <OphTypography variant={'h2'}>{t('header')}</OphTypography>
       <OphTypography>{t('body1')}</OphTypography>
       <OphTypography>
-        {t('body2')}
+        {`${t('body2')} `}
         <OphLink href={`mailto:${contact}`}>{contact}</OphLink>.
       </OphTypography>
     </ErrorPanel>
