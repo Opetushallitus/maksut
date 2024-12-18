@@ -13,24 +13,24 @@ const StatusRow = ({ status }: { status: PaymentStatus }) => {
 
   const statusColors = {
     active: {
-      backgroundColor: '#f9e39f',
-      dot: '#de9327',
-      text: '#612d00',
+      backgroundColor: '#FAE6A8',
+      dot: ophColors.orange2,
+      text: ophColors.orange1,
     },
     overdue: {
       backgroundColor: '#EECFC5',
-      dot: '#cc3300',
-      text: '#1d1d1d',
+      dot: ophColors.orange3,
+      text: ophColors.grey900,
     },
     paid: {
-      backgroundColor: '#e2fae4',
-      dot: '#61a33b',
-      text: '#237a00',
+      backgroundColor: '#E2FAE4',
+      dot: ophColors.green2,
+      text: ophColors.green1,
     },
     invalidated: {
-      backgroundColor: '#e2fae4',
-      dot: '#61a33b',
-      text: '#237a00',
+      backgroundColor: '#E2FAE4',
+      dot: ophColors.green2,
+      text: ophColors.green1,
     },
   };
 
