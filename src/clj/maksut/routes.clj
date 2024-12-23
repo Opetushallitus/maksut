@@ -77,22 +77,30 @@
     {:get {:parameters {:query s/Any}
            :handler    (fn [{{{:keys [secret locale] :as query} :query} :parameters}]
                          (log/warn "Paytrail success " query)
-                         (let [now      (long  (/ (System/currentTimeMillis) 1000))
-                               response (payment-protocol/process-success-callback payment-service
-                                                                                   (assoc query :timestamp now)
-                                                                                   locale
-                                                                                   false)
-                               action   (or (:action response) :error)
-                               uri-end  (if (= action :error) "&payment=error" "")
-                               uri      (str (get-in config [:urls :oppija-baseurl]) "/" (encode locale) "/?secret=" (encode secret) uri-end)]
-                              (response/permanent-redirect uri)))}}]
+                         (try
+                           (let [now      (long  (/ (System/currentTimeMillis) 1000))
+                                 response (payment-protocol/process-success-callback payment-service
+                                                                                     (assoc query :timestamp now)
+                                                                                     locale
+                                                                                     false)
+                                 action   (or (:action response) :error)
+                                 uri      (str (get-in config [:urls :oppija-baseurl]) "/" (encode locale) (when (= action :error) "/error") "/?secret=" (encode secret))]
+                             (response/permanent-redirect uri))
+                           (catch Exception e
+                             (log/error "Maksun" query "käsittely epäonnistui:" e)
+                             (response/found
+                               (str (get-in config [:urls :oppija-baseurl])
+                                    "/"
+                                    (or (encode locale) "fi")
+                                    "/error?secret="
+                                    (encode secret))))))}}]
 
     ["/cancel"
      {:get {:parameters {:query s/Any}
             :handler (fn [{{{:keys [secret locale] :as query} :query} :parameters}]
                         (log/warn "Paytrail cancel " query)
                         ;Canceling does not really need to be processed in any way, lets just direct back to payment view
-                        (response/permanent-redirect (str (get-in config [:urls :oppija-baseurl]) "/?secret=" (encode secret) "&locale=" (encode locale) "&payment=cancel"))
+                        (response/permanent-redirect (str (get-in config [:urls :oppija-baseurl]) "/" (encode locale) "/?secret=" (encode secret) "&payment=cancel"))
                         )}}]
 
     ["/notify"
@@ -258,14 +266,13 @@
                                                                                     :secret   secret})]
                                    (response/found (:href paytrail-response)))
                                  (catch Exception e
-                                   (let [data (ex-data e)]
-                                     (log/error "Maksun" order-id "maksaminen epäonnistui:" e)
-                                     (response/found
-                                       (str (get-in config [:urls :oppija-baseurl])
-                                            "/"
-                                            (or locale "fi")
-                                            "/error?code="
-                                            (name (:code data))))))))}}]]
+                                   (log/error "Maksun" order-id "maksaminen epäonnistui:" e)
+                                   (response/found
+                                     (str (get-in config [:urls :oppija-baseurl])
+                                          "/"
+                                          (encode (or locale "fi"))
+                                          "/error?secret="
+                                          (encode secret))))))}}]]
 
        ["/laskut-by-secret"
         [""
