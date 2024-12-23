@@ -137,7 +137,7 @@
                                         :en "Payment date"
                                         :sv "Betalningsdag"}
    :ExpiredPanel.header                {:fi "Maksu on vanhentunut"
-                                        :sv "Betalningen har gått ut"
+                                        :sv "Betalningen slutfördes inte"
                                         :en "Payment has expired"}
    :ExpiredPanel.body1                 {:fi "Et voi maksaa maksua tämän linkin kautta enää."
                                         :en "You can no longer make the payment through this link."
@@ -153,7 +153,7 @@
                                         :en "We could not find your payment information."}
    :NotFound.body2                     {:fi "Ota yhteyttä Opetushallitukseen. Löydät palveluosoitteen saamastasi maksulinkkiviestistä."
                                         :en "Please contact the Finnish National Agency for Education. You can find the service address in the email with the payment link."
-                                        :sv "Vänligen kontakta Utbildningsstyrelsen. Du hittar tjänsteadressen i betalningslänksmeddelandet du fick."}
+                                        :sv "Vänligen kontakta Utbildningsstyrelsen. Du hittar e-postadressen i betalningslänksmeddelandet du fick."}
    :Error.header                       {:fi "Tapahtui virhe"
                                         :en "An error occurred"
                                         :sv "Ett fel inträffade"}
@@ -164,7 +164,7 @@
                                         :sv "Betalningen misslyckades."
                                         :en "Payment failed."}
    :PaymentError.body2                 {:fi "Palaa Maksutapahtumat-sivulle ja tarkista maksusi tilanne. Jos maksua ei ole maksettu, yritä maksamista myöhemmin uudelleen."
-                                        :sv "Gå tillbaka till Betalningar-sidan och kontrollera statusen för din betalning. Om betalningen inte har genomförts, försök igen senare."
+                                        :sv "Gå tillbaka till Betalningar-sidan och kontrollera statuset för din betalning. Om betalningen inte har genomförts, försök igen senare."
                                         :en "Return to the Payments page and check the status of your payment. If the payment has not been made, try again later."}
    :PaymentError.body3                 {:fi "Tarvittaessa lähetä sähköpostia osoitteeseen"
                                         :sv "Vid behov, skicka ett e-postmeddelande till"
