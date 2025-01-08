@@ -7,7 +7,7 @@ import { CssBaseline } from '@mui/material';
 import { CSSProperties } from 'react';
 import { ophColors, OphTypography } from '@opetushallitus/oph-design-system';
 
-export default function NotFound() {
+export default function GlobalError() {
   const bodyStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',

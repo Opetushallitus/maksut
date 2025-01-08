@@ -43,7 +43,7 @@ export default async function LocaleLayout({
             >
               <CssBaseline />
               <TopBar lang={locale as Locale}></TopBar>
-              <main>{children}</main>
+              <main style={bodyStyle}>{children}</main>
             </OphNextJsThemeProvider>
           </NextIntlClientProvider>
         </AppRouterCacheProvider>
