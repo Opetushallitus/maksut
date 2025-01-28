@@ -8,7 +8,9 @@ export default function Error() {
   const t = useTranslations('Error');
   return (
     <ErrorPanel>
-      <OphTypography variant={'h2'}>{t('header')}</OphTypography>
+      <OphTypography variant={'h2'} component={'h1'}>
+        {t('header')}
+      </OphTypography>
     </ErrorPanel>
   );
 }

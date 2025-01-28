@@ -21,7 +21,7 @@ export default function NotFound() {
           <CssBaseline />
           <TopBar></TopBar>
           <ErrorPanel>
-            <OphTypography variant={'h2'}>
+            <OphTypography variant={'h2'} component={'h1'}>
               Maksun tietoja ei löydy
             </OphTypography>
             <OphTypography>Emme löytäneet maksusi tietoja.</OphTypography>
