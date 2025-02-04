@@ -1,6 +1,6 @@
-ALTER TABLE invoices_history ADD COLUMN metadata JSONB;
-ALTER TABLE invoices_history ADD COLUMN vat NUMERIC;
-ALTER TABLE invoices_history ADD COLUMN invalidated_at TIMESTAMP;
+ALTER TABLE invoices_history ADD COLUMN IF NOT EXISTS metadata JSONB;
+ALTER TABLE invoices_history ADD COLUMN IF NOT EXISTS vat NUMERIC;
+ALTER TABLE invoices_history ADD COLUMN IF NOT EXISTS invalidated_at TIMESTAMP;
 
 CREATE OR REPLACE FUNCTION update_invoices_history() RETURNS TRIGGER AS
 $$
