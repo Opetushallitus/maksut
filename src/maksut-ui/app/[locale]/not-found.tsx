@@ -7,7 +7,9 @@ export default async function NotFound() {
 
   return (
     <ErrorPanel>
-      <OphTypography variant={'h2'}>{t('header')}</OphTypography>
+      <OphTypography variant={'h2'} component={'h1'}>
+        {t('header')}
+      </OphTypography>
       <OphTypography>{t('body1')}</OphTypography>
       <OphTypography>{t('body2')}</OphTypography>
     </ErrorPanel>
