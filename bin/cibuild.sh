@@ -41,8 +41,8 @@ run-mocked-maksut() {
 }
 
 run-all-tests-and-create-uberjar() {
-  run-all-tests \
-  && create-uberjar
+  create-uberjar \
+  && run-all-tests
 }
 
 COMMAND=$1
