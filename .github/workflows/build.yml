@@ -1,5 +1,8 @@
 name: Maksut
 
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 on:
   workflow_dispatch:
   push:
