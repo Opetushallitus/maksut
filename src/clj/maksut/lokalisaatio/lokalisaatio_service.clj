@@ -4,7 +4,7 @@
             [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
             [clj-http.client :as http]
             [maksut.config :refer [production-environment?]]
-            [maksut.translations :refer [maksut-ui-local-translations]]))
+            [maksut.lokalisaatio.translations :refer [maksut-ui-local-translations]]))
 
 ; Supports only 2 level hierarchy, e.g. "Maksu.active" not "Maksu.status.active"
 (defn- parse-messages [messages]

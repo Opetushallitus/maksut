@@ -13,7 +13,7 @@
   * [Swagger](#swagger)
 * [Testien ajaminen](#testien-ajaminen)
   * [Lint](#lint)
-    * [Clojure(Script) -tiedostojen lint](#clojurescript--tiedostojen-lint)
+    * [Clojure -tiedostojen lint](#clojure--tiedostojen-lint)
 * [REPL-yhteys palvelimeen ja selaimeen](#repl-yhteys-palvelimeen-ja-selaimeen)
 * [Palvelun paikalliset osoitteet](#palvelun-paikalliset-osoitteet)
 * [Tuotantokäyttö](#tuotantokäyttö)
@@ -81,13 +81,6 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
 
 
 7. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
-
-
-8. Käyttöliittymätestit voi ajaa lokaalia kehitysympäristöä ja Paytrailia vasten komennolla:
-
-   ```bash
-    WITH_PAYTRAIL=TRUE npx playwright test
-    ```
 
 ## Palvelun ajaminen paikallisesti testiympäristöä vasten
 
@@ -239,7 +232,7 @@ Swagger JSON löytyy polusta `/maksut/swagger.json`
 
 ### Lint
 
-#### Clojure(Script) -tiedostojen lint
+#### Clojure -tiedostojen lint
 
 ```sh
 npm run lint:clj
@@ -259,6 +252,27 @@ Aja sen jälkeen lein testit käyttäen lokaalia konfiguraatiotiedostoa:
 CONFIG=oph-configuration/config.test.local-environment.edn lein test
 ```
 
+### Playwrigth käyttöliittymätestit
+
+Käynnistä backend kuten backend-testejä varten, sekä käyttöliittymä
+
+```bash
+cd src/maksut-ui
+npm run test
+```
+
+Käynnistä testit (avaa käyttöliittymä lisäämällä --ui flag)
+
+```bash
+npx playwright test
+```
+
+Oikeaa Paytrailia vasten komennolla:
+
+```bash
+WITH_PAYTRAIL=TRUE npx playwright test
+```
+
 ## REPL-yhteys palvelimeen ja selaimeen
 
 REPL-yhteys palvelimelle avautuu sanomalla komentorivillä
@@ -267,16 +281,9 @@ REPL-yhteys palvelimelle avautuu sanomalla komentorivillä
 lein repl :connect localhost:9034
 ```
 
-REPL-yhteys selaimeen avautuu sanomalla em. REPL-yhteyden sisällä. Muistathan ensin avata selaimellasi palvelun (ks. osoite alta).
-
-```clj
-(shadow.cljs.devtools.api/nrepl-select :maksut)
-```
-
 ## Palvelun paikalliset osoitteet
 
 * Palvelun osoite: (http://localhost:9099/maksut)
-* Palvelun Shadow CLJS -palvelimen osoite (http://localhost:9630)
 
 ## Tuotantokäyttö
 

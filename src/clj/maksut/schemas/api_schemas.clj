@@ -1,4 +1,4 @@
-(ns maksut.api-schemas
+(ns maksut.schemas.api-schemas
   (:require [schema.core :as s]
             [schema-tools.core :as st]))
 

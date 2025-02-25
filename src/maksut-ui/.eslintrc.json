@@ -8,5 +8,20 @@
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
-  "root": true
+  "root": true,
+  "overrides": [
+    {
+      "files": "./playwright/*.ts",
+      "extends": "plugin:playwright/recommended",
+      "parserOptions": {
+        "tsconfigRootDir": "__dirname",
+        "parser": "@typescript-eslint/parser",
+        "project": "./playwright/tsconfig.json"
+      },
+      "rules": {
+        "playwright/expect-expect": "off",
+        "@typescript-eslint/no-floating-promises": "error"
+      }
+    }
+  ]
 }

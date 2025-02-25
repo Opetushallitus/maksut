@@ -19,12 +19,6 @@
                          (.addDefault "url-maksut" maksut-url))]
     (reset! url-properties oph-properties)))
 
-(s/defn front-json
-  [config :- c/MaksutConfig]
-  (when (nil? @url-properties)
-    (load-config config))
-  (.frontPropertiesToJson @url-properties))
-
 (s/defn resolve-url
   [key :- s/Keyword
    config :- c/MaksutConfig

@@ -14,10 +14,17 @@ test-lein() {
     lein test
 }
 
+test-e2e() {
+  cd src/maksut-ui
+  npm run test-ci
+  cd -
+}
+
 run-all-tests() {
   lint \
     && run-mocked-maksut \
-    && test-lein
+    && test-lein \
+    && test-e2e
 }
 
 create-uberjar() {
@@ -34,10 +41,8 @@ run-mocked-maksut() {
 }
 
 run-all-tests-and-create-uberjar() {
-  lint \
-    && create-uberjar \
-    && run-mocked-maksut \
-    && test-lein
+  run-all-tests \
+  && create-uberjar
 }
 
 COMMAND=$1
