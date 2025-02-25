@@ -31,4 +31,3 @@
 .open-next
 **/test-results/
 *.swp
-**/.npmrc
