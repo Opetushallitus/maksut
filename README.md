@@ -82,6 +82,7 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
 
 7. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
 
+
 ## Palvelun ajaminen paikallisesti testiympäristöä vasten
 
 Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](https://github.com/Opetushallitus/local-environment) -ympäristö.
@@ -243,7 +244,7 @@ npm run lint:clj
 Käynnistä ensin bäkkäri komennolla
 
 ```
-make start-test
+make start-test CONFIG=oph-configuration/config.test.local-environment.edn
 ```
 
 Aja sen jälkeen lein testit käyttäen lokaalia konfiguraatiotiedostoa:
@@ -258,7 +259,7 @@ Käynnistä backend kuten backend-testejä varten, sekä käyttöliittymä
 
 ```bash
 cd src/maksut-ui
-npm run test
+npm run start-test
 ```
 
 Käynnistä testit (avaa käyttöliittymä lisäämällä --ui flag)

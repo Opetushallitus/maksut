@@ -66,7 +66,7 @@ const createInvoice: (
 };
 
 const goTo = async (page: Page, route: string) => {
-  await page.goto(`${APP_URL}/${route}`);
+  await page.goto(`${APP_URL}${route}`);
 };
 
 const expectPageAccessibilityOk = async (page: Page) => {
