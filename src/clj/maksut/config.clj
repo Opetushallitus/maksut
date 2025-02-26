@@ -1,7 +1,7 @@
 (ns maksut.config
   (:require [clojure.edn :as edn]
             [config.core :as c]
-            [maksut.public-config-schemas :as public]
+            [maksut.schemas.public-config-schemas :as public]
             [schema.core :as s]))
 
 (s/defschema MaksutConfig

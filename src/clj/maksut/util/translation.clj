@@ -1,5 +1,5 @@
 (ns maksut.util.translation
-  (:require [maksut.translations :as translations]
+  (:require [maksut.lokalisaatio.translations :as translations]
             [camel-snake-kebab.core :as csk]))
 
 

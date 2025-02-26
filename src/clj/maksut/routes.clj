@@ -1,12 +1,11 @@
 (ns maksut.routes
   (:require
-    [cheshire.core :as json]
     [clj-ring-db-session.authentication.auth-middleware :as auth-middleware]
     [clj-ring-db-session.session.session-client :as session-client]
     [clj-ring-db-session.session.session-store :refer [create-session-store]]
     [cuerdas.core :as str]
     [reitit.swagger :as swagger]
-    [maksut.api-schemas :as schema]
+    [maksut.schemas.api-schemas :as schema]
     [maksut.authentication.auth-routes :as auth-routes]
     [maksut.config :as c]
     [maksut.error :refer [maksut-error]]
@@ -22,7 +21,6 @@
     [ring.middleware.session :as ring-session]
     [ring.util.http-response :as response]
     [schema.core :as s]
-    [selmer.parser :as selmer]
     [taoensso.timbre :as log]))
 
 ; --- Session ---
@@ -38,36 +36,6 @@
    #(auth-middleware/with-authentication % (oph-urls/resolve-url :cas.login config))
    session-client/wrap-session-client-headers
    (session-timeout/create-wrap-absolute-session-timeout config)])
-
-; --- Handlers ---
-(defn- random-lowercase-string [n]
-  (reduce (fn [acc _] (str acc (char (+ 97 (rand-int 26))))) "" (range n)))
-
-(def ^:private cache-fingerprint (random-lowercase-string 10))
-
-(defn- create-index-handler [config]
-  (let [public-config (-> config :public-config json/generate-string)
-        rendered-page (selmer/render-file
-                        "templates/index.html.template"
-                        {:frontend-config   public-config
-                         :front-properties  (oph-urls/front-json config)
-                         :apply-raamit      (c/production-environment? config)
-                         :cache-fingerprint cache-fingerprint})]
-    (fn [_]
-      (-> (response/ok rendered-page)
-          (response/content-type "text/html")
-          (response/charset "utf-8")))))
-
-(defn- create-error-handler [config]
-  (let [rendered-page (selmer/render-file
-                       "templates/login-error.html.template"
-                       {:apply-raamit (c/production-environment? config)})]
-    (fn [_]
-      (log/warn "Kirjautuminen epäonnistui ja käyttäjä ohjattiin virhesivulle.")
-      (-> (response/forbidden rendered-page)
-          (response/content-type "text/html")
-          (response/charset "utf-8")))))
-
 
 ; --- Routes ---
 (defn- payment-routes [{:keys [payment-service config]}]
@@ -125,16 +93,6 @@
                             (response/content-type "image/x-icon")))}}]
 
      ["/maksut"
-      ["/login-error"
-       {:get {:no-doc  true
-              :handler (create-error-handler config)}}]
-      [""
-       {:get {:no-doc     true
-              :handler    (fn [_] (response/permanent-redirect "/maksut/"))}}]
-      ["/"
-       {:get {:no-doc     true
-              :handler    (create-index-handler config)}}]
-
       ["/swagger.json"
        {:get {:no-doc  true
               :swagger {:info {:title       "Maksut"

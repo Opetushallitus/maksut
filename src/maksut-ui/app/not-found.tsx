@@ -17,9 +17,9 @@ export default function NotFound() {
   return (
     <html lang="en">
       <body style={bodyStyle}>
-        <OphNextJsThemeProvider lang={'en'} variant={'opintopolku'}>
+        <OphNextJsThemeProvider lang={'fi'} variant={'opintopolku'}>
           <CssBaseline />
-          <TopBar></TopBar>
+          <TopBar lang={'fi'}></TopBar>
           <ErrorPanel>
             <OphTypography variant={'h2'} component={'h1'}>
               Maksun tietoja ei löydy

@@ -1,6 +1,8 @@
 import { getRequestConfig } from 'next-intl/server';
 import { backendUrl } from '@/app/lib/configurations';
 import { notFound } from 'next/navigation';
+import { routing } from './routing';
+import { Locale } from '@/app/lib/types';
 
 const fetchLocalizations = async (locale = 'fi') => {
   const response = await fetch(`${backendUrl}/localisation/${locale}`, {
@@ -13,7 +15,14 @@ const fetchLocalizations = async (locale = 'fi') => {
 };
 
 export default getRequestConfig(async ({ requestLocale }) => {
+  let locale = await requestLocale;
+
+  if (!locale || !routing.locales.includes(locale as Locale)) {
+    locale = routing.defaultLocale;
+  }
+
   return {
-    messages: await fetchLocalizations(await requestLocale),
+    locale,
+    messages: await fetchLocalizations(locale),
   };
 });

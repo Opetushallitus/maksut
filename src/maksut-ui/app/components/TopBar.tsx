@@ -19,7 +19,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
   justifyItems: 'center',
 }));
 
-export const TopBar = ({ lang }: { lang?: Locale }) => {
+export const TopBar = ({ lang }: { lang: Locale }) => {
   const theme = useTheme();
   return (
     <AppBar position="static" style={{ padding: theme.spacing(3, 0) }}>

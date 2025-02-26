@@ -29,5 +29,5 @@
 /maksut.ipr
 .clj-kondo/
 .open-next
-/test-results/
+**/test-results/
 *.swp

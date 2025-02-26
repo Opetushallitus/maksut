@@ -1,10 +1,12 @@
+'use client';
+
 import { Box } from '@mui/material';
 import { Lasku } from '@/app/lib/types';
-import { getTranslations } from 'next-intl/server';
 import { OphTypography } from '@opetushallitus/oph-design-system';
+import { useTranslations } from 'use-intl';
 
-const Header = async ({ lasku }: { lasku: Lasku }) => {
-  const t = await getTranslations('Header');
+const Header = ({ lasku }: { lasku: Lasku }) => {
+  const t = useTranslations('Header');
 
   return (
     <Box style={{ textAlign: 'center', marginTop: '20px' }}>

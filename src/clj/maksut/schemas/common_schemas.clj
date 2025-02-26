@@ -1,4 +1,4 @@
-(ns maksut.common-schemas
+(ns maksut.schemas.common-schemas
   (:require [schema.core :as s]))
 
 (s/defschema Nimi

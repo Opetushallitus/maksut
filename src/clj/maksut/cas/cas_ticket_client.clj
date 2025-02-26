@@ -11,7 +11,7 @@
 (defn- check-result [parse-result]
   (if (and (some? parse-result) (> (.length parse-result) 0))
     parse-result
-    (throw (IllegalArgumentException. (str "Ei pystytty jäsentämään käyttäjätunnusta CASin vastauksesta")))))
+    (throw (IllegalArgumentException. "Ei pystytty jäsentämään käyttäjätunnusta CASin vastauksesta"))))
 
 (defn- parse-username [^String xml-response]
   (try

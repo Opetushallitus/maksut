@@ -1,7 +1,13 @@
 name: Maksut-ui deploy
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 permissions:
   id-token: write
   contents: read
+  packages: read
+
 on:
   workflow_dispatch:
     inputs:

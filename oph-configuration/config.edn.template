@@ -35,5 +35,4 @@
                         :oppija-baseurl     "{{ maksut_oppija_base_url }}"}
  :oph-organisaatio-oid "1.2.246.562.10.00000000001"
  :public-config        {:environment   {{ maksut_environment | default(':development') }}
-                        :default-panel :panel/tutu-maksut
                         :caller-id     "{{ maksut_frontend_caller_id | default('1.2.246.562.10.00000000001.maksut.frontend')}}"}}

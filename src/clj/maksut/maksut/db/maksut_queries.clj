@@ -119,7 +119,7 @@
        ;current_ai has all the same fields and more
        (let [current_ai (get-lasku-by-order-id tx {:order-id (:order-id lasku)})]
          (when (and (has-changed? current_ai lasku) (can-be-updated? current_ai lasku))
-               (log/info (str "Incoming input has changed fields, and they will be updated"))
+               (log/info "Incoming input has changed fields, and they will be updated")
                (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :metadata])))))
 
      (or
