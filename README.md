@@ -253,7 +253,7 @@ Aja sen jälkeen lein testit käyttäen lokaalia konfiguraatiotiedostoa:
 CONFIG=oph-configuration/config.test.local-environment.edn lein test
 ```
 
-### Playwrigth käyttöliittymätestit
+### Playwright käyttöliittymätestit
 
 Käynnistä backend kuten backend-testejä varten, sekä käyttöliittymä
 
