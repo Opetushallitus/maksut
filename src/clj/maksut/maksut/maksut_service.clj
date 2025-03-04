@@ -75,15 +75,18 @@
         lasku (assoc
                 (json->LaskuCreate lasku-input)
                 :order-id order-id)
+        extend-deadline (if (= (:origin lasku-input) "kkhakemusmaksu")
+                         (get lasku-input :extend-deadline false)
+                         false)
         {:keys [order-id due-date]} lasku]
 
-    (log/info "Lasku" lasku)
+    (log/info "Lasku" lasku "extend-deadline" extend-deadline)
     (log/info "Current" (maksut-queries/get-lasku db order-id))
 
     (when-not (time/before? (time/today) due-date)
       (maksut-error :invoice-createerror-duedateinpast (str "Due-date needs to be in future: " lasku) :status-code 422))
 
-    (maksut-queries/create-or-update-lasku db lasku)
+    (maksut-queries/create-or-update-lasku db lasku extend-deadline)
     ;returns created/changed fields from view (including generated fields)
     (Lasku->json (maksut-queries/get-lasku-by-order-id db {:order-id order-id}))))
 
