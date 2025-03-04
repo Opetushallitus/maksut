@@ -13,6 +13,7 @@
 ;; HugSQL templatessa määritetyt kyselyt
 (declare insert-lasku!)
 (declare update-lasku!)
+(declare update-lasku-extending-deadline!)
 (declare get-lasku-by-order-id)
 (declare get-linked-lasku-statuses-by-reference)
 (declare all-linked-laskut-by-secret)
@@ -42,22 +43,24 @@
     (insert-new-secret db id order-id)
     (get-lasku-by-order-id db {:order-id order-id})))
 
-(defn has-changed? [old new]
+(defn has-changed? [old new extend-deadline]
   (or
    (not= (:first-name new) (:first_name old))
    (not= (:last-name new) (:last_name old))
    (not= (:email new) (:email old))
    (not= (:amount new) (:amount old))
+   (and extend-deadline
+        (not= (:due-date new) (:due_date old)))
    (not= (:metadata new) (:metadata old))))
 
-(defn can-be-updated? [old-ai new]
+(defn can-be-updated? [old-ai new extend-deadline]
   (let [status      (:status old-ai)
         same-origin (= (:origin old-ai) (:origin new))]
     (cond
-     (= status "overdue")     (maksut-error :invoice-invalidstate-overdue (str "Ei voi muuttaa, eräpäivä mennyt: " new))
-     (= status "paid")        (maksut-error :invoice-invalidstate-paid (str "Ei voi muuttaa, lasku on jo maksettu: " new))
-     (= status "invalidated") (maksut-error :invoice-invalidstate-invalidated (str "Ei voi muuttaa, mitätöity: " new))
-     (not same-origin)        (maksut-error :invoice-createerror-originclash (str "Sama lasku eri lähteestä on jo olemassa: " new)))
+     (= status "paid")                                    (maksut-error :invoice-invalidstate-paid (str "Ei voi muuttaa, lasku on jo maksettu: " new))
+     (and (= status "overdue")     (not extend-deadline)) (maksut-error :invoice-invalidstate-overdue (str "Ei voi muuttaa, eräpäivä mennyt: " new))
+     (and (= status "invalidated") (not extend-deadline)) (maksut-error :invoice-invalidstate-invalidated (str "Ei voi muuttaa, mitätöity: " new))
+     (not same-origin)                                    (maksut-error :invoice-createerror-originclash (str "Sama lasku eri lähteestä on jo olemassa: " new)))
     true))
 
 (defn get-lasku [db order-id]
@@ -108,7 +111,7 @@
        {:action    :error
         :code      :invoice-notfound}))))
 
-(defn create-or-update-lasku [db lasku]
+(defn create-or-update-lasku [db lasku extend-deadline]
   (with-db-transaction
      [tx db]
      ;UPDATE if exists and has been changed
@@ -118,9 +121,12 @@
        ;need to fetch this again to get status-field (current is only used for locking),
        ;current_ai has all the same fields and more
        (let [current_ai (get-lasku-by-order-id tx {:order-id (:order-id lasku)})]
-         (when (and (has-changed? current_ai lasku) (can-be-updated? current_ai lasku))
-               (log/info (str "Incoming input has changed fields, and they will be updated"))
-               (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :metadata])))))
+         (when (and (has-changed? current_ai lasku extend-deadline)
+                    (can-be-updated? current_ai lasku extend-deadline))
+           (log/info "Incoming input has changed fields, and they will be updated")
+           (if extend-deadline
+             (update-lasku-extending-deadline! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :due-date :metadata]))
+             (update-lasku! tx (select-keys lasku [:first-name :last-name :email :amount :order-id :metadata]))))))
 
      (or
       ;RETURN previous (potentially updated version), if any
