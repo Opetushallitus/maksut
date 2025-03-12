@@ -36,6 +36,18 @@ SET
 --~ (when (some? (:metadata params)) ", metadata = :metadata")
 WHERE order_id = :order-id AND CURRENT_DATE <= due_date;
 
+-- :name update-lasku-extending-deadline! :! :n
+UPDATE invoices
+SET
+    first_name = :first-name,
+    last_name = :last-name,
+    email = :email,
+    amount = :amount,
+    due_date = :due-date,
+    invalidated_at = null
+--~ (when (some? (:metadata params)) ", metadata = :metadata")
+WHERE order_id = :order-id;
+
 -- :name invalidate-laskut-by-reference! :! :n
 UPDATE invoices
 SET invalidated_at = now()

@@ -164,7 +164,7 @@
                (is (> (count secret) 0))
                (is (= wo-secret expected)))))
 
-    (testing "Try to change due-date of existing invoice"
+    (testing "Try to change due-date of existing TUTU invoice unsuccessfully"
              (let [new-date (date->iso (time/plus due-date (time/days 30)))
                    lasku (merge (select-keys hannes [:first-name :email])
                                 {:application-key application-key
@@ -172,15 +172,55 @@
                                  :amount "555.12"
                                  :due-date new-date
                                  :index index})
-                   expected {:order_id order-id
-                             :first_name (:first-name hannes)
-                             :last_name "Atria"
-                             :amount "555.12"
-                             :due_date new-date
-                             :status :active
-                             :paid_at ""}]
-               (let [response  (maksut-protocol/create-tutu service maksut-test-fixtures/fake-session lasku)]
-                 (is (= date (:due_date response))))))
+                   response  (maksut-protocol/create-tutu service maksut-test-fixtures/fake-session lasku)]
+               (is (= date (:due_date response)))))
+
+    (testing "Try to change due-date of existing ASTU invoice with extend-deadline unsuccessfully"
+      (let [old-date (date->iso (time/from-now (time/days 14)))
+            lasku (merge (select-keys hannes [:first-name :last-name :email])
+                         {:reference application-key2
+                          :origin "astu"
+                          :amount "1000"
+                          :extend-deadline true
+                          :due-days 31
+                          :index 2
+                          :metadata {:form-name {:fi "ASTU FI"
+                                                 :sv "ASTU SV"
+                                                 :en "ASTU EN"}
+                                     :order-id-prefix "AKR"}})
+            response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)]
+        (is (= old-date (:due_date response)))))
+
+    (testing "Change due-date of existing kk-application-payment invoice with extend-deadline successfully"
+      (let [new-date (date->iso (time/from-now (time/days 30)))
+            lasku (merge (select-keys hannes [:first-name :last-name :email])
+                         {:reference application-key3
+                          :origin "kkhakemusmaksu"
+                          :amount "100.00"
+                          :due-days 30
+                          :extend-deadline true
+                          :metadata {:haku-name {:fi "Haku FI"
+                                                 :sv "Haku SV"
+                                                 :en "Haku EN"}
+                                     :alkamiskausi "kausi_s"
+                                     :alkamisvuosi 2025}})
+            response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)]
+        (is (= new-date (:due_date response)))))
+
+    (testing "Attempt to change due-date of existing kk-application-payment invoice without extend-deadline unsuccessfully"
+      (let [existing-date (date->iso (time/from-now (time/days 30)))
+            lasku (merge (select-keys hannes [:first-name :last-name :email])
+                         {:reference application-key3
+                          :origin "kkhakemusmaksu"
+                          :amount "100.00"
+                          :due-days 45
+                          :metadata {:haku-name {:fi "Haku FI"
+                                                 :sv "Haku SV"
+                                                 :en "Haku EN"}
+                                     :alkamiskausi "kausi_s"
+                                     :alkamisvuosi 2025}})
+            response  (maksut-protocol/create service maksut-test-fixtures/fake-session lasku)]
+        (is (= existing-date (:due_date response)))))
 
     (testing "List created 2 active invoices"
              (let [input {:application-key application-key}]
