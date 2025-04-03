@@ -1,4 +1,4 @@
-(ns maksut.translations)
+(ns maksut.lokalisaatio.translations)
 
 (def maksut-ui-local-translations
   {:Header.title                       {:fi "Maksutapahtumat"

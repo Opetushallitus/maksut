@@ -1,9 +1,11 @@
-import { getTranslations } from 'next-intl/server';
+'use client';
+
 import ErrorPanel from '@/app/components/ErrorPanel';
 import { OphTypography } from '@opetushallitus/oph-design-system';
+import { useTranslations } from 'use-intl';
 
-export default async function NotFound() {
-  const t = await getTranslations('NotFound');
+export default function NotFound() {
+  const t = useTranslations('NotFound');
 
   return (
     <ErrorPanel>

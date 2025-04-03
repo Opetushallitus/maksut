@@ -4,10 +4,10 @@ import { CssBaseline } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { CSSProperties, ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getLocale, getMessages } from 'next-intl/server';
 import { TopBar } from '@/app/components/TopBar';
 import { Locale } from '@/app/lib/types';
-import { OphLanguage, ophColors } from '@opetushallitus/oph-design-system';
+import { OphLanguage } from '@opetushallitus/oph-design-system';
 
 export const metadata: Metadata = {
   title: 'Maksut',
@@ -16,19 +16,17 @@ export const metadata: Metadata = {
 
 export default async function LocaleLayout({
   children,
-  params,
 }: Readonly<{
   children: ReactNode;
-  params: Promise<{ locale: string }>;
 }>) {
   const messages = await getMessages();
-  const { locale } = await params;
+  const locale = await getLocale();
 
   const bodyStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: ophColors.grey50,
+    backgroundColor: '#F6F6F6',
     minWidth: '100%',
   };
 

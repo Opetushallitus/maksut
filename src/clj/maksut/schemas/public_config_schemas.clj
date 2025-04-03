@@ -1,4 +1,4 @@
-(ns maksut.public-config-schemas
+(ns maksut.schemas.public-config-schemas
   (:require [schema.core :as s]))
 
 (s/defschema PublicConfig
@@ -6,6 +6,4 @@
                     :production
                     :development
                     :it)
-   :default-panel (s/enum
-                   :panel/tutu-maksut)
    :caller-id     s/Str})
