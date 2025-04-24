@@ -102,7 +102,8 @@
      :reference s/Str
      (s/optional-key :index) (s/constrained s/Int #(<= 1 % 2) 'valid-tutu-maksu-index)
      (s/optional-key :metadata) MetadataCreate
-     (s/optional-key :vat) s/Str}
+     (s/optional-key :vat) s/Str
+     (s/optional-key :extend-deadline) s/Bool}
     (fn [{:keys [due-date due-days]}]
       (or due-date due-days))
     'must-have-either-due-date-or-due-days))
