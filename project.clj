@@ -14,7 +14,7 @@
                  [org.flywaydb/flyway-core "10.8.1"]
                  [org.flywaydb/flyway-database-postgresql "10.8.1"]
                  [fi.vm.sade/auditlogger "9.0.0-SNAPSHOT"]
-                 [fi.vm.sade.java-utils/java-cas "0.6.2-SNAPSHOT"]
+                 [opiskelijavalinnat-utils/java-cas "1.2.4-SNAPSHOT"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
                  [fi.vm.sade/scala-cas_2.12 "2.2.2.1-SNAPSHOT"]
                  [oph/clj-access-logging "1.0.0-SNAPSHOT"]
@@ -88,7 +88,10 @@
              :aot          [maksut.core]
              :uberjar-name "maksut.jar"}}
 
-  :repositories [["releases" {:url           "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
+  :repositories [["github" {:url "https://maven.pkg.github.com/Opetushallitus/packages"
+                            :username "private-token"
+                            :password :env/GITHUB_TOKEN}]
+                 ["releases" {:url           "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
                               :sign-releases false
                               :snapshots     false}]
                  ["snapshots" {:url      "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"

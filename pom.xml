@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>c8c815ee41568ee384964fa5342ea10d97f4fdb8</tag>
+    <tag>6c5d4541b75e1e0a3aab1f2d4c36418ec586b59f</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -28,28 +28,7 @@
     </testResources>
     <directory>target</directory>
     <outputDirectory>target/classes</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/cljs</source>
-                <source>src/cljc</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <plugins/>
   </build>
   <repositories>
     <repository>
@@ -65,6 +44,16 @@
     <repository>
       <id>clojars</id>
       <url>https://repo.clojars.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/Opetushallitus/packages</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -115,25 +104,6 @@
       <version>1.11.1</version>
     </dependency>
     <dependency>
-      <groupId>org.clojure</groupId>
-      <artifactId>clojurescript</artifactId>
-      <version>1.11.132</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>closure-compiler-unshaded</artifactId>
-          <groupId>com.google.javascript</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>google-closure-library</artifactId>
-          <groupId>org.clojure</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>google-closure-library-third-party</artifactId>
-          <groupId>org.clojure</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>camel-snake-kebab</groupId>
       <artifactId>camel-snake-kebab</artifactId>
       <version>0.4.3</version>
@@ -157,11 +127,6 @@
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-s3</artifactId>
       <version>1.12.663</version>
-    </dependency>
-    <dependency>
-      <groupId>com.andrewmcveigh</groupId>
-      <artifactId>cljs-time</artifactId>
-      <version>0.5.2</version>
     </dependency>
     <dependency>
       <groupId>com.taoensso</groupId>
@@ -204,9 +169,9 @@
       <version>9.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>fi.vm.sade.java-utils</groupId>
+      <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>java-cas</artifactId>
-      <version>0.6.2-SNAPSHOT</version>
+      <version>1.2.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fi.vm.sade.java-utils</groupId>
@@ -295,16 +260,6 @@
       <version>0.5.3</version>
     </dependency>
     <dependency>
-      <groupId>re-frame</groupId>
-      <artifactId>re-frame</artifactId>
-      <version>1.4.3</version>
-    </dependency>
-    <dependency>
-      <groupId>reagent</groupId>
-      <artifactId>reagent</artifactId>
-      <version>1.2.0</version>
-    </dependency>
-    <dependency>
       <groupId>markdown-clj</groupId>
       <artifactId>markdown-clj</artifactId>
       <version>1.11.9</version>
@@ -351,30 +306,9 @@
       <version>1.12.59</version>
     </dependency>
     <dependency>
-      <groupId>stylefy</groupId>
-      <artifactId>stylefy</artifactId>
-      <version>3.2.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>core.async</artifactId>
-          <groupId>org.clojure</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>stylefy</groupId>
-      <artifactId>reagent</artifactId>
-      <version>3.0.0</version>
-    </dependency>
-    <dependency>
       <groupId>prismatic</groupId>
       <artifactId>schema</artifactId>
       <version>1.4.1</version>
-    </dependency>
-    <dependency>
-      <groupId>thheller</groupId>
-      <artifactId>shadow-cljs</artifactId>
-      <version>2.27.4</version>
     </dependency>
     <dependency>
       <groupId>yogthos</groupId>
@@ -406,18 +340,6 @@
       <groupId>clj-kondo</groupId>
       <artifactId>clj-kondo</artifactId>
       <version>2024.02.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>day8.re-frame</groupId>
-      <artifactId>re-frame-10x</artifactId>
-      <version>1.9.8</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>day8.re-frame</groupId>
-      <artifactId>tracing</artifactId>
-      <version>0.6.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
