@@ -1,6 +1,13 @@
 (defproject maksut "0.1.0-SNAPSHOT"
   ;TODO Tässä on todennäköisesti paljon kopioitua depsejä mitä ei tarvita, käy läpi myöhemmin mitkä voi jättää pois
-  :dependencies [[org.clojure/clojure "1.11.1"]
+  :managed-dependencies [[clj-commons/clj-yaml "1.0.29"]
+                         [com.google.protobuf/protobuf-java "3.25.5"]
+                         [commons-fileupload "1.6.0"]
+                         [commons-io "2.14.0"]
+                         [org.apache.commons/commons-compress "1.21"]
+                         [org.eclipse.jetty/jetty-server "9.4.57.v20241219"]
+                         [org.jsoup/jsoup "1.14.2"]]
+  :dependencies [[org.clojure/clojure "1.11.4"]
                  [camel-snake-kebab "0.4.3"]
                  [cheshire "5.12.0"]
                  [clj-http "3.12.3"]
@@ -16,7 +23,6 @@
                  [fi.vm.sade/auditlogger "9.0.0-SNAPSHOT"]
                  [opiskelijavalinnat-utils/java-cas "1.2.4-SNAPSHOT"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
-                 [fi.vm.sade/scala-cas_2.12 "2.2.2.1-SNAPSHOT"]
                  [oph/clj-access-logging "1.0.0-SNAPSHOT"]
                  [oph/clj-stdout-access-logging "1.0.0-SNAPSHOT"]
                  [oph/clj-timbre-access-logging "1.1.0-SNAPSHOT"]
