@@ -1,33 +1,30 @@
 (ns maksut.files.s3-client
   (:require [com.stuartsierra.component :as component])
-  (:import [com.amazonaws.services.s3 AmazonS3Client]
-           [com.amazonaws.regions Regions]
-           [com.amazonaws.auth DefaultAWSCredentialsProviderChain]
-           [com.amazonaws.auth.profile ProfileCredentialsProvider]))
+  (:import (software.amazon.awssdk.auth.credentials AwsCredentialsProvider DefaultCredentialsProvider ProfileCredentialsProvider)
+           (software.amazon.awssdk.regions Region)
+           (software.amazon.awssdk.services.s3 S3Client)))
 
-(defn- credentials-provider [config]
+(defn- credentials-provider ^AwsCredentialsProvider [config]
   (if-let [profile-name (get-in config [:file-store :s3 :credentials-profile])]
-    (new ProfileCredentialsProvider profile-name)
-    (DefaultAWSCredentialsProviderChain/getInstance)))
+    (ProfileCredentialsProvider/create profile-name)
+    (.build (DefaultCredentialsProvider/builder))))
 
 (defn- region [config]
-  (Regions/fromName (get-in config [:file-store :s3 :region])))
+  (Region/of (get-in config [:file-store :s3 :region])))
 
-(defrecord S3Client [config]
+(defrecord AwsS3Client [config]
   component/Lifecycle
 
   (start [this]
     (if (nil? (:s3-client this))
-      (assoc this :s3-client (-> (AmazonS3Client/builder)
-                                 (.withRegion (region config))
-                                 (.withCredentials (credentials-provider config))
+      (assoc this :s3-client (-> (S3Client/builder)
+                                 (.region (region config))
+                                 (.credentialsProvider (credentials-provider config))
                                  (.build)))
       this))
 
   (stop [this]
-    (when-let [client (:s3-client this)]
-      (.shutdown client))
     (assoc this :s3-client nil)))
 
 (defn new-client []
-  (map->S3Client {}))
+  (map->AwsS3Client {}))
