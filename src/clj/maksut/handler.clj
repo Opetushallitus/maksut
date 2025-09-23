@@ -19,7 +19,7 @@
             [maksut.health-check :as health-check]
             [maksut.schemas.class-pred :as p]
             [maksut.util.cache-control :as cache-control]
-            [clj-access-logging]
+            [maksut.access-logging :as clj-access-logging]
             [clj-stdout-access-logging]
             [clj-timbre-access-logging]
             [ring.middleware.defaults :as defaults]

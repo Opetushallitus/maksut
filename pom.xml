@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>03303946fc2d51ba0d16ca272591097608aa548f</tag>
+    <tag>a7c529c5b068ac250a1029e3afb2db99d0b823ec</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -216,7 +216,7 @@
     </dependency>
     <dependency>
       <groupId>oph</groupId>
-      <artifactId>clj-access-logging</artifactId>
+      <artifactId>clj-stdout-access-logging</artifactId>
       <version>1.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
@@ -224,11 +224,6 @@
           <groupId>com.amazonaws</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>oph</groupId>
-      <artifactId>clj-stdout-access-logging</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>oph</groupId>
