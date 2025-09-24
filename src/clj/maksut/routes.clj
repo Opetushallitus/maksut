@@ -3,7 +3,7 @@
     [clj-ring-db-session.authentication.auth-middleware :as auth-middleware]
     [clj-ring-db-session.session.session-client :as session-client]
     [clj-ring-db-session.session.session-store :refer [create-session-store]]
-    [cuerdas.core :as str]
+    [clojure.string :as str]
     [reitit.swagger :as swagger]
     [maksut.schemas.api-schemas :as schema]
     [maksut.authentication.auth-routes :as auth-routes]

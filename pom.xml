@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>a7c529c5b068ac250a1029e3afb2db99d0b823ec</tag>
+    <tag>ed0b60a740a1c460e19064b4b7d6634c13171dba</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -122,6 +122,11 @@
         <version>1.21</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-fileupload2-core</artifactId>
+        <version>2.0.0-M4</version>
+      </dependency>
+      <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-server</artifactId>
         <version>9.4.57.v20241219</version>
@@ -200,11 +205,6 @@
       <version>10.8.1</version>
     </dependency>
     <dependency>
-      <groupId>fi.vm.sade</groupId>
-      <artifactId>auditlogger</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>java-cas</artifactId>
       <version>1.2.4-SNAPSHOT</version>
@@ -236,15 +236,9 @@
       <version>0.2.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>oph</groupId>
+      <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>clj-ring-db-cas-session</artifactId>
-      <version>0.3.0-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>mailapi</artifactId>
-          <groupId>javax.mail</groupId>
-        </exclusion>
-      </exclusions>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>hikari-cp</groupId>
@@ -263,13 +257,13 @@
     </dependency>
     <dependency>
       <groupId>metosin</groupId>
-      <artifactId>ring-swagger-ui</artifactId>
-      <version>5.9.0</version>
+      <artifactId>ring-http-response</artifactId>
+      <version>0.9.5</version>
     </dependency>
     <dependency>
-      <groupId>org.clojure</groupId>
-      <artifactId>core.async</artifactId>
-      <version>1.6.681</version>
+      <groupId>metosin</groupId>
+      <artifactId>ring-swagger-ui</artifactId>
+      <version>5.9.0</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -292,35 +286,14 @@
       <version>0.5.3</version>
     </dependency>
     <dependency>
-      <groupId>markdown-clj</groupId>
-      <artifactId>markdown-clj</artifactId>
-      <version>1.11.9</version>
-    </dependency>
-    <dependency>
-      <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-      <artifactId>owasp-java-html-sanitizer</artifactId>
-      <version>20220608.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>guava</artifactId>
-          <groupId>com.google.guava</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>2.15.2</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.15.2</version>
+      <groupId>ring</groupId>
+      <artifactId>ring</artifactId>
+      <version>1.9.1</version>
     </dependency>
     <dependency>
       <groupId>ring</groupId>
       <artifactId>ring-defaults</artifactId>
-      <version>0.4.0</version>
+      <version>0.6.0</version>
     </dependency>
     <dependency>
       <groupId>ring</groupId>
@@ -351,11 +324,6 @@
       <groupId>environ</groupId>
       <artifactId>environ</artifactId>
       <version>1.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>jakarta.mail</artifactId>
-      <version>2.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.simplejavamail</groupId>
