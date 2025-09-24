@@ -2,7 +2,7 @@
   (:require [clj-ring-db-session.authentication.login :as crdsa-login]
             [clj-ring-db-session.session.session-store :as oph-session]
             [com.stuartsierra.component :as component]
-            [maksut.audit-logger-protocol :as audit]
+            [maksut.logs.audit-logger-protocol :as audit]
             [maksut.cas.cas-ticket-client-protocol :as cas-ticket-client-protocol]
             [maksut.config :as c]
             [maksut.kayttooikeus.kayttooikeus-protocol :as kayttooikeus-protocol]

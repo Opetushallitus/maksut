@@ -17,7 +17,7 @@
     [maksut.schemas.class-pred :as p]
     [maksut.session-timeout :as session-timeout]
     [maksut.util.url-encoder :refer [encode]]
-    [maksut.access-logging :as clj-access-logging]
+    [maksut.logs.access-logging :as clj-access-logging]
     [ring.middleware.session :as ring-session]
     [ring.util.http-response :as response]
     [schema.core :as s]

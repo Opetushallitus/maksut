@@ -1,6 +1,6 @@
 (ns maksut.system
   (:require [com.stuartsierra.component :as component]
-            [maksut.audit-logger :as audit-logger]
+            [maksut.logs.audit-logger :as audit-logger]
             [maksut.authentication.auth-routes :as auth-routes]
             [maksut.cas.cas-authenticating-client :as authenticating-client]
             [maksut.cas.cas-ticket-client :as cas-ticket-validator]

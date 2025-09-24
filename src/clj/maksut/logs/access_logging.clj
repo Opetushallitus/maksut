@@ -1,4 +1,4 @@
-(ns maksut.access-logging
+(ns maksut.logs.access-logging
   (:require [clojure.string :as s])
   (:import [java.time
             ZoneId

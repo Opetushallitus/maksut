@@ -1,13 +1,13 @@
-(ns maksut.audit-logger
-  (:require [clj-timbre-auditlog.audit-log :as cta-audit-log]
+(ns maksut.logs.audit-logger
+  (:require [maksut.logs.timbre-auditlog :as timbre-audit-log]
             [com.stuartsierra.component :as component]
-            [maksut.audit-logger-protocol :as audit-logger-protocol]
+            [maksut.logs.audit-logger-protocol :as audit-logger-protocol]
             [maksut.config :as c]
             [schema.core :as s])
   (:import [fi.vm.sade.auditlog ApplicationType Audit]))
 
 (defn- create-audit-log ^Audit [base-path]
-  (cta-audit-log/create-audit-logger "maksut" base-path ApplicationType/OPPIJA))
+  (timbre-audit-log/create-audit-logger "maksut" base-path ApplicationType/OPPIJA))
 
 (defrecord AuditLogger [config]
   component/Lifecycle
