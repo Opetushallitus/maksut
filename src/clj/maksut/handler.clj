@@ -19,9 +19,9 @@
             [maksut.health-check :as health-check]
             [maksut.schemas.class-pred :as p]
             [maksut.util.cache-control :as cache-control]
-            [clj-access-logging]
-            [clj-stdout-access-logging]
-            [clj-timbre-access-logging]
+            [maksut.logs.access-logging :as clj-access-logging]
+            [maksut.logs.stdout-access-logging :as stdout-access-logging]
+            [maksut.logs.timbre-access-logging :as timbre-access-logging]
             [ring.middleware.defaults :as defaults]
             [ring.middleware.json :as wrap-json]
             [ring.middleware.reload :as reload]
@@ -100,8 +100,8 @@
   (-> (create-handler args)
       (clj-access-logging/wrap-access-logging)
       (wrapper-if (not (c/production-environment? config))
-        clj-stdout-access-logging/wrap-stdout-access-logging)
-      (clj-timbre-access-logging/wrap-timbre-access-logging
+        stdout-access-logging/wrap-stdout-access-logging)
+      (timbre-access-logging/wrap-timbre-access-logging
         {:path (str (-> args :config :log :base-path)
                     "/access_maksut"
                     (when (:hostname env) (str "_" (:hostname env))))})

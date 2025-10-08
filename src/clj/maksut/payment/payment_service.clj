@@ -8,7 +8,7 @@
             [maksut.email.email-service-protocol :as email-protocol]
             [maksut.files.file-store :as file-store]
             [maksut.config :as c]
-            [maksut.audit-logger-protocol :as audit]
+            [maksut.logs.audit-logger-protocol :as audit]
             [maksut.schemas.class-pred :as p]
             [maksut.util.url-encoder :refer [encode]]
             [maksut.util.translation :refer [get-translation]]

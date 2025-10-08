@@ -2,7 +2,7 @@
   (:require [clj-ring-db-session.authentication.login :as crdsa-login]
             [clj-ring-db-session.session.session-store :as oph-session]
             [com.stuartsierra.component :as component]
-            [maksut.audit-logger-protocol :as audit]
+            [maksut.logs.audit-logger-protocol :as audit]
             [maksut.cas.cas-ticket-client-protocol :as cas-ticket-client-protocol]
             [maksut.config :as c]
             [maksut.kayttooikeus.kayttooikeus-protocol :as kayttooikeus-protocol]
@@ -13,7 +13,7 @@
             [schema.core :as s]
             [taoensso.timbre :as log])
   (:import javax.sql.DataSource
-           (fi.vm.sade.utils.cas CasLogout)))
+           (fi.vm.sade.javautils.nio.cas CasLogout)))
 
 (defprotocol AuthRoutesSource
   (login [this ticket request])
@@ -21,6 +21,8 @@
   (logout [this session]))
 
 (def kirjautuminen (audit/->operation "kirjautuminen"))
+
+(def logout-client (new CasLogout))
 
 (defn- merged-session [request response _]
   (let [request-session (:session request)
@@ -43,7 +45,7 @@
 
 (defn- cas-initiated-logout [session-store logout-request]
   (log/info "cas-initiated logout")
-  (let [ticket (CasLogout/parseTicketFromLogoutRequest logout-request)]
+  (let [ticket (.parseTicketFromLogoutRequest logout-client logout-request)]
     (log/info "logging out ticket" ticket)
     (if (.isEmpty ticket)
       (log/error "Could not parse ticket from CAS request" logout-request)

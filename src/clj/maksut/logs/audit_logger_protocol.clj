@@ -1,4 +1,4 @@
-(ns maksut.audit-logger-protocol
+(ns maksut.logs.audit-logger-protocol
   (:require [maksut.authentication.schema :as auth-schema]
             [schema.core :as s])
   (:import [fi.vm.sade.auditlog
