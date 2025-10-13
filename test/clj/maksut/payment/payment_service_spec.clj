@@ -212,7 +212,7 @@
         (is (= subjects #{"Opetushallitus: Kuitti hakemusmaksusta"}))
         (println (:body receipt))
         (is (true? (s/includes? (:body receipt)
-                                "Opetushallitus<br />Haku FI<br />Hakemusmaksu")))
+                                "Opetushallitus<br />Haku FI<br />Syksy 2025<br />Hakemusmaksu")))
         (is (true? (s/includes? (:body receipt)
                                 "Haku FI: kuitti hakemusmaksusta")))
         (is (true? (s/includes? (:body receipt)
