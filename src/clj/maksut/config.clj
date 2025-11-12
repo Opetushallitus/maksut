@@ -32,10 +32,8 @@
                           :attachment-mime-types [s/Str]}
    :cas                  {:username s/Str
                           :password s/Str
-                          :services {:kayttooikeus          {:service-url-property s/Keyword
-                                                             :session-cookie-name  s/Str}
-                                     :email                 {:service-url-property s/Keyword
-                                                             :session-cookie-name  s/Str}}}
+                          :services {:email {:service-url-property s/Keyword
+                                             :session-cookie-name  s/Str}}}
    :urls                 {:virkailija-baseurl        s/Str
                           :maksut-url s/Str
                           :oppija-baseurl s/Str}

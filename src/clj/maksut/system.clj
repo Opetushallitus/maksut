@@ -14,7 +14,6 @@
             [maksut.lokalisaatio.lokalisaatio-service :as lokalisaatio-service]
             [maksut.email.email-service :as email-service]
             [maksut.health-check :as health-check]
-            [maksut.kayttooikeus.kayttooikeus-service :as kayttooikeus-service]
             [maksut.migrations :as migrations]
             [maksut.server :as http]))
 
@@ -51,7 +50,6 @@
                                                 (auth-routes/map->AuthRoutesMaker {:config config})
                                                 [:db
                                                   :cas-ticket-validator
-                                                  :kayttooikeus-service
                                                   :audit-logger])
 
                            :http-server (component/using
@@ -65,13 +63,7 @@
                                                    :lokalisaatio-service
                                                    :auth-routes-source])]
 
-        production-system [:kayttooikeus-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :kayttooikeus
-                                                                                                                     :config  config})
-
-                           :kayttooikeus-service (component/using (kayttooikeus-service/map->HttpKayttooikeusService {:config config})
-                                                    [:kayttooikeus-authenticating-client])
-
-                           :email-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :email
+        production-system [:email-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :email
                                                                                                              :config  config})
 
                            :email-service (component/using (email-service/map->EmailService {:config config})
@@ -81,8 +73,6 @@
 
                            :cas-ticket-validator (cas-ticket-validator/map->CasTicketClient {:config config})]
         mock-system       [:cas-ticket-validator (cas-ticket-validator/map->FakeCasTicketClient {})
-
-                           :kayttooikeus-service (kayttooikeus-service/->FakeKayttooikeusService)
 
                            :mock-email-service-list (atom '())
 
