@@ -31,6 +31,7 @@
                  [metosin/ring-swagger-ui "5.9.0"]
                  [org.clojure/java.jdbc "0.7.12"]
                  [org.clojure/core.match "1.1.0"]
+                 [org.clojure/data.xml "0.0.8"]
                  [org.postgresql/postgresql "42.7.2"]
                  [com.layerware/hugsql "0.5.3"]
                  [ring/ring "1.9.1"]
