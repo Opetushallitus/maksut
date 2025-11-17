@@ -32,6 +32,7 @@
                           :attachment-mime-types [s/Str]}
    :cas                  {:username s/Str
                           :password s/Str
+                          :url      s/Str
                           :services {:email {:service-url-property s/Keyword
                                              :session-cookie-name  s/Str}}}
    :urls                 {:virkailija-baseurl        s/Str

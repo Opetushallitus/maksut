@@ -26,6 +26,7 @@
                                                 "text/html"]}
  :cas                  {:username "{{ maksut_cas_username | default('maksut') }}"
                         :password "{{ maksut_cas_password }}"
+                        :url "{{ cas_url }}"
                         :services {:email {:service-url-property :cas.service.ryhmasahkoposti-service
                                            :session-cookie-name  "JSESSIONID"}}}
  :urls                 {:virkailija-baseurl "{{ maksut_virkailija_base_url }}"
