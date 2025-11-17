@@ -26,6 +26,7 @@
                                                 "text/html"]}
  :cas                  {:username "cas_username"
                         :password "cas_password"
+                        :url "https://foo/cas"
                         :services {:email {:service-url-property :cas.service.ryhmasahkoposti-service
                                            :session-cookie-name  "JSESSIONID"}}}
  :urls                 {:virkailija-baseurl        "http://localhost"

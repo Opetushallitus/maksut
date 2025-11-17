@@ -20,7 +20,7 @@
                  [clj-soup/clojure-soup "0.1.3"]
                  [org.flywaydb/flyway-core "10.8.1"]
                  [org.flywaydb/flyway-database-postgresql "10.8.1"]
-                 [opiskelijavalinnat-utils/java-cas "1.2.4-SNAPSHOT"]
+                 [opiskelijavalinnat-utils/java-cas "2.0.0-SNAPSHOT"]
                  [fi.vm.sade/auditlogger "9.2.0-SNAPSHOT"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
                  [opiskelijavalinnat-utils/clj-ring-db-cas-session "1.0.0-SNAPSHOT"]

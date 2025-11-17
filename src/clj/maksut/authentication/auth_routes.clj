@@ -78,11 +78,11 @@
 
   (login [this ticket request]
     (try
-      (if-let [username (cas-ticket-client-protocol/validate-service-ticket cas-ticket-validator ticket)]
+      (if-let [virkailija (cas-ticket-client-protocol/validate-service-ticket cas-ticket-validator ticket)]
         (let [redirect-url (or (get-in request [:session :original-url])
                                (:maksut-url this))
               response (crdsa-login/login
-                         {:username             username
+                         {:username             (:username virkailija)
                           :ticket               ticket
                           :success-redirect-url redirect-url
                           :datasource           (:datasource db)})]

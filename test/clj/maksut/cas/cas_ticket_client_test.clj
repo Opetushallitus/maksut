@@ -1,59 +1,59 @@
 (ns maksut.cas.cas-ticket-client-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [clojure.set :refer [union]]
+            [clojure.test :refer [deftest is testing]]
             [maksut.cas.cas-ticket-client :as client]
-            [maksut.oph-url-properties :as url]
-            [maksut.cas.cas-ticket-client-protocol :as cas-ticket-client-protocol]
-            [maksut.http :as http]))
+            [maksut.cas.cas-ticket-client-protocol :as cas-ticket-client-protocol])
+  (:import (fi.vm.sade.javautils.nio.cas UserDetails)))
 
-(def authorized-xml-response "
-<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-    <cas:authenticationSuccess>
-        <cas:user>virkahemmo</cas:user>
-        <cas:attributes>
-            <cas:oidHenkilo>1.2.246.562.24.12345678901</cas:oidHenkilo>
-            <cas:kayttajaTyyppi>VIRKAILIJA</cas:kayttajaTyyppi>
-            <cas:idpEntityId>usernamePassword</cas:idpEntityId>
-            <cas:roles>ROLE_APP_ATARU_EDITORI_CRUD</cas:roles>
-            <cas:roles>ROLE_APP_MAKSUT_CRUD</cas:roles>
-            <cas:roles>ROLE_APP_ATARU_EDITORI_CRUD_1.2.246.562.10.00000000001</cas:roles>
-        </cas:attributes>
-    </cas:authenticationSuccess>
-</cas:serviceResponse>")
+(def test-henkilo-oid "1.2.246.562.98.12345678901")
+(def test-org-oid "1.2.246.562.99.12345678901")
+(def other-org-oid "1.2.246.562.99.00045678902")
 
-(def unauthorized-xml-response "
-<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-  <cas:authenticationSuccess>
-    <cas:user>virkahemmo</cas:user>
-    <cas:attributes>
-      <cas:oidHenkilo>1.2.246.562.24.12345678901</cas:oidHenkilo>
-      <cas:kayttajaTyyppi>VIRKAILIJA</cas:kayttajaTyyppi>
-      <cas:idpEntityId>usernamePassword</cas:idpEntityId>
-      <cas:roles>ROLE_APP_ATARU_EDITORI</cas:roles>
-      <cas:roles>ROLE_APP_ATARU_EDITORI_CRUD</cas:roles>
-      <cas:roles>ROLE_APP_ATARU_EDITORI_CRUD_1.2.246.562.10.00000000001</cas:roles>
-    </cas:attributes>
-  </cas:authenticationSuccess>
-</cas:serviceResponse>")
+(defn roles-for-org [service org]
+  #{(str "ROLE_APP_" service "_CRUD")
+    (str "ROLE_APP_" service "_CRUD_" org)})
 
-(def failed-xml-response "
-<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-  <cas:authenticationFailure code=\"INVALID_REQUEST\">No ticket string provided</cas:authenticationFailure>
-</cas:serviceResponse>")
+(defn create-test-user-details [roles]
+  (new UserDetails
+       "virkahemmo"
+       test-henkilo-oid
+       "VIRKAILIJA"
+       "usernamePassword"
+       roles))
 
-(deftest parse-username-test
-  (testing "Palauttaa käyttäjänimen, kun CAS-vastaus sisältää oikeat oikeudet"
-    (is (= nil (client/parse-username failed-xml-response)))
-    (is (= nil (client/parse-username unauthorized-xml-response)))
-    (is (= "virkahemmo" (client/parse-username authorized-xml-response)))))
+(def authorized-user-details
+  (create-test-user-details
+    (union (roles-for-org "MAKSUT" test-org-oid)
+           (roles-for-org "ATARU" other-org-oid))))
+
+(def super-user-details
+  (create-test-user-details
+    (union (roles-for-org "MAKSUT" client/oph-organisaatio-oid)
+           (roles-for-org "MAKSUT" test-org-oid))))
+
+(def unauthorized-user-details
+  (create-test-user-details
+    (conj (roles-for-org "ATARU" test-org-oid)
+          "ROLE_APP_MAKSUT_CRUD")))
 
 (deftest validate-service-ticket-test
-  (testing "Palauttaa käyttäjänimen, kun CAS-vastaus on kelvollinen"
-    (with-redefs [http/do-request (fn [_ _ _] {:status 200 :body authorized-xml-response})
-                  url/resolve-url (fn [_ _ _] "url")]
+  (testing "Palauttaa käyttäjän, kun CAS-vastaus on kelvollinen"
+    (with-redefs [client/get-user-details (fn [_ _ _] authorized-user-details)]
+      (let [impl (client/map->CasTicketClient {})
+            expected {:oidHenkilo     test-henkilo-oid
+                      :username       "virkahemmo"
+                      :organisaatiot  #{test-org-oid}
+                      :superuser      false}]
+        (is (= expected (cas-ticket-client-protocol/validate-service-ticket impl "ticket"))))))
+  (testing "Palauttaa käyttäjän super-userina kun hänellä on OPH-oikeus"
+    (with-redefs [client/get-user-details (fn [_ _ _] super-user-details)]
+      (let [impl (client/map->CasTicketClient {})
+            expected {:oidHenkilo     test-henkilo-oid
+                      :username       "virkahemmo"
+                      :organisaatiot  #{client/oph-organisaatio-oid test-org-oid}
+                      :superuser      true}]
+        (is (= expected (cas-ticket-client-protocol/validate-service-ticket impl "ticket"))))))
+  (testing "Palauttaa nil, kun käyttäjältä puuttuu oikea rooli"
+    (with-redefs [client/get-user-details (fn [_ _ _] unauthorized-user-details)]
       (let [impl (client/map->CasTicketClient {})]
-        (is (= "virkahemmo" (cas-ticket-client-protocol/validate-service-ticket impl "ticket"))))))
-  (testing "Heittää poikkeuksen, kun CAS-vastaus on virheellinen"
-    (with-redefs [http/do-request (fn [_ _ _] {:status 500})
-                  url/resolve-url (fn [_ _ _] "url")]
-      (let [impl (client/map->CasTicketClient {})]
-        (is (thrown-with-msg? RuntimeException #"Saatiin ei-OK-vastaus CASilta: \{:status 500\}" (cas-ticket-client-protocol/validate-service-ticket impl "ticket")))))))
+        (is (= nil (cas-ticket-client-protocol/validate-service-ticket impl "ticket")))))))
