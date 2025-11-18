@@ -64,10 +64,15 @@
        " " haku-name " "
        (get-translation (keyword language-code) :kkmaksukuitti/selite)))
 
-(defn- create-kk-payment-receipt-description [language-code haku-name]
-  (str (get-translation (keyword language-code) :kkmaksukuitti/oph)
-       "\n" haku-name "\n"
-       (get-translation (keyword language-code) :kkmaksukuitti/selite)))
+(defn- create-kk-payment-receipt-description [language-code haku-name alkamiskausi alkamisvuosi]
+  (str (get-translation (keyword language-code) :kkmaksukuitti/oph) "\n"
+       (get-translation (keyword language-code) :kkmaksukuitti/selite) "\n"
+       haku-name "\n"
+       (when-let [kausi (case alkamiskausi
+                          "kausi_k" :kkmaksukuitti/kevat
+                          "kausi_s" :kkmaksukuitti/syksy)]
+         (str (get-translation (keyword language-code) :kkmaksukuitti/voimassa) ": "
+              (get-translation (keyword language-code) kausi) " " alkamisvuosi))))
 
 (defn- generate-json-data [{:keys [callback-uri]}
                            {:keys [language-code amount order-number secret first-name last-name
@@ -226,7 +231,7 @@
 ;TODO add robustness here, maybe background-job with retry?
 (defn- handle-confirmation-email
   [email-service locale checkout-amount-in-euro-cents timestamp storage-engine oppija-baseurl
-   {:keys [order-id email origin reference first-name last-name vat form-name amount-without-vat haku-name]}]
+   {:keys [order-id email origin reference first-name last-name vat form-name amount-without-vat haku-name alkamiskausi alkamisvuosi]}]
   (case origin
     "tutu" (do
              (handle-tutu-email-confirmation email-service email locale order-id
@@ -256,12 +261,16 @@
                                        :vat (or vat vat-zero)
                                        :vat-amount vat-amount}]
                                      storage-engine oppija-baseurl origin form-name-translated nil))
-    "kkhakemusmaksu" (let [haku-name-translated ((keyword locale) haku-name)]
+    "kkhakemusmaksu" (let [lang (keyword locale)
+                           haku-name-translated (or (get haku-name lang)
+                                                    (get haku-name :fi)
+                                                    (get haku-name :sv)
+                                                    (get haku-name :en))]
                        (handle-payment-receipt email-service email locale
                                                first-name last-name
                                                order-id (* 1000 timestamp)
                                                (/ checkout-amount-in-euro-cents 100)
-                                               [{:description (create-kk-payment-receipt-description locale haku-name-translated)
+                                               [{:description (create-kk-payment-receipt-description locale haku-name-translated alkamiskausi alkamisvuosi)
                                                  :units 1
                                                  :unit-price (/ checkout-amount-in-euro-cents 100)
                                                  :vat vat-zero
