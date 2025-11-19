@@ -26,10 +26,9 @@
                                                 "text/html"]}
  :cas                  {:username "cas_username"
                         :password "cas_password"
-                        :services {:kayttooikeus    {:service-url-property :cas.service.kayttooikeus-service
-                                                     :session-cookie-name  "JSESSIONID"}
-                                   :email           {:service-url-property :cas.service.ryhmasahkoposti-service
-                                                     :session-cookie-name  "JSESSIONID"}}}
+                        :url "https://foo/cas"
+                        :services {:email {:service-url-property :cas.service.ryhmasahkoposti-service
+                                           :session-cookie-name  "JSESSIONID"}}}
  :urls                 {:virkailija-baseurl        "http://localhost"
                         :maksut-url                "http://localhost:19033/maksut"
                         :oppija-baseurl            "http://localhost:3003/maksut-ui"}
