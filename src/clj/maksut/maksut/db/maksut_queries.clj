@@ -90,6 +90,8 @@
                         :last-name (:last_name lasku)
                         :form-name (get-in lasku [:metadata :form-name])
                         :haku-name (get-in lasku [:metadata :haku-name])
+                        :alkamiskausi (get-in lasku [:metadata :alkamiskausi])
+                        :alkamisvuosi (get-in lasku [:metadata :alkamisvuosi])
                         :vat (:vat lasku)
                         :amount-without-vat (:amount lasku)}]
        (if (some? old-payment)
