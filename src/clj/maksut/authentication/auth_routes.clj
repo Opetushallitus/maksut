@@ -5,7 +5,6 @@
             [maksut.logs.audit-logger-protocol :as audit]
             [maksut.cas.cas-ticket-client-protocol :as cas-ticket-client-protocol]
             [maksut.config :as c]
-            [maksut.kayttooikeus.kayttooikeus-protocol :as kayttooikeus-protocol]
             [maksut.oph-url-properties :as url]
             [maksut.schemas.class-pred :as p]
             [ring.util.http-response :refer [ok]]
@@ -24,14 +23,14 @@
 
 (def logout-client (new CasLogout))
 
-(defn- merged-session [request response _]
+(defn- merged-session [request response]
   (let [request-session (:session request)
         response-session (:session response)]
     (-> response-session
         (merge (select-keys request-session [:key :user-agent])))))
 
-(defn- login-success [audit-logger request response virkailija _ ticket]
-  (let [session (merged-session request response virkailija)]
+(defn- login-success [audit-logger request response ticket]
+  (let [session (merged-session request response)]
     (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
     (s/validate s/Str ticket)
     (assoc response :session session)))
@@ -55,14 +54,12 @@
 (defrecord AuthRoutesMaker [config
                             db
                             cas-ticket-validator
-                            kayttooikeus-service
                             audit-logger]
   component/Lifecycle
   (start [this]
     (s/validate (s/pred #(instance? DataSource %)) (:datasource db))
     (s/validate c/MaksutConfig config)
     (s/validate (p/extends-class-pred cas-ticket-client-protocol/CasTicketClientProtocol) cas-ticket-validator)
-    (s/validate (p/extends-class-pred kayttooikeus-protocol/KayttooikeusService) kayttooikeus-service)
     (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
     (s/validate s/Str (get-in config [:urls :maksut-url]))
     (s/validate s/Str (url/resolve-url :cas.failure config))
@@ -81,16 +78,15 @@
 
   (login [this ticket request]
     (try
-      (if-let [[username _] (cas-ticket-client-protocol/validate-service-ticket cas-ticket-validator ticket)]
+      (if-let [virkailija (cas-ticket-client-protocol/validate-service-ticket cas-ticket-validator ticket)]
         (let [redirect-url (or (get-in request [:session :original-url])
                                (:maksut-url this))
-              virkailija (kayttooikeus-protocol/virkailija-by-username kayttooikeus-service username)
               response (crdsa-login/login
-                         {:username             username
+                         {:username             (:username virkailija)
                           :ticket               ticket
                           :success-redirect-url redirect-url
                           :datasource           (:datasource db)})]
-          (login-success audit-logger request response virkailija username ticket))
+          (login-success audit-logger request response ticket))
         (login-failed (:login-failure-url this)))
       (catch Exception e
         (login-failed (:login-failure-url this) e))))
