@@ -24,10 +24,14 @@
 
 Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla:
 
-1. Varmista että ajossa on oikea Node-versio (Asenna nvm jos ei asennettu):
+1. Varmista että ajossa on oikea Node-versio (Asenna nvm jos ei asennettu) ja asenna pnpm (jos ei vielä asennettu):
 
     ```bash
        nvm use
+    ```
+
+    ```bash
+       npm install -g pnpm
     ```
 
 2. Lisää hosts-tiedostoon:
@@ -236,7 +240,7 @@ Swagger JSON löytyy polusta `/maksut/swagger.json`
 #### Clojure -tiedostojen lint
 
 ```sh
-npm run lint:clj
+pnpm run lint:clj
 ```
 
 ### Backend-testit
@@ -259,19 +263,19 @@ Käynnistä backend kuten backend-testejä varten, sekä käyttöliittymä
 
 ```bash
 cd src/maksut-ui
-npm run start-test
+pnpm run start-test
 ```
 
 Käynnistä testit (avaa käyttöliittymä lisäämällä --ui flag)
 
 ```bash
-npx playwright test
+pnpm exec playwright test
 ```
 
 Oikeaa Paytrailia vasten komennolla:
 
 ```bash
-WITH_PAYTRAIL=TRUE npx playwright test
+WITH_PAYTRAIL=TRUE pnpm exec playwright test
 ```
 
 ## REPL-yhteys palvelimeen ja selaimeen
