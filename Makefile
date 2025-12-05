@@ -1,4 +1,4 @@
-PM2 = PM2_HOME=.pm2 npx pm2
+PM2 = PM2_HOME=.pm2 pnpm exec pm2
 DOCKER_COMPOSE=COMPOSE_PARALLEL_LIMIT=8 $(if $(DOCKER_SUDO),sudo )docker compose
 
 start-docker:

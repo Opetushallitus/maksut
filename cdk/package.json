@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "bin": {},
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "cdk": "cdk"
+    "build": "pnpm exec tsc",
+    "watch": "pnpm exec tsc -w",
+    "cdk": "pnpm exec cdk"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
@@ -16,8 +16,15 @@
   },
   "dependencies": {
     "aws-cdk-lib": "^2.114.1",
+    "cdk-nextjs-standalone": "^4.0.0",
     "constructs": "^10.3.0",
-    "ts-node": "^10.9.2",
-    "cdk-nextjs-standalone": "^4.0.0"
-  }
+    "dev": "^0.1.3",
+    "ts-node": "^10.9.2"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm"
+    }
+  },
+  "packageManager": "pnpm@10.24.0"
 }

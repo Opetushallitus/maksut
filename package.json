@@ -9,7 +9,7 @@
   },
   "lint-staged": {
     "src/**/*.clj": [
-      "npm run lint:clj:lint-staged"
+      "pnpm run lint:clj:lint-staged"
     ]
   },
   "devDependencies": {
@@ -17,5 +17,14 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "pm2": "^5.4.3"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm"
+    }
+  },
+  "packageManager": "pnpm@10.24.0",
+  "dependencies": {
+    "dev": "^0.1.3"
   }
 }

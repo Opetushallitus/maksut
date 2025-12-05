@@ -6,7 +6,7 @@ if [[ "${LEIN}" == "" ]]; then
 fi
 
 lint() {
-  npm run lint:clj
+  pnpm run lint:clj
 }
 
 test-lein() {
@@ -16,7 +16,7 @@ test-lein() {
 
 test-e2e() {
   cd src/maksut-ui
-  npm run test-ci
+  pnpm run test-ci
   cd -
 }
 
