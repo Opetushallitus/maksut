@@ -8,16 +8,17 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
-    "aws-cdk": "^2.148.1",
-    "esbuild": "^0.19.12",
-    "tsx": "^4.7.2",
-    "typescript": "~5.3.3"
+    "@types/node": "^20.17.24",
+    "aws-cdk": "^2.1004.0",
+    "esbuild": "^0.25.1",
+    "tsx": "^4.19.3",
+    "typescript": "~5.8.2"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.114.1",
-    "constructs": "^10.3.0",
-    "ts-node": "^10.9.2",
-    "cdk-nextjs-standalone": "^4.0.0"
-  }
+    "aws-cdk-lib": "^2.184.1",
+    "cdk-nextjs-standalone": "^4.2.3",
+    "constructs": "^10.4.2",
+    "ts-node": "^10.9.2"
+  },
+  "packageManager": "pnpm@10.24.0"
 }

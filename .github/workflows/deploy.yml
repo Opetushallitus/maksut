@@ -34,11 +34,6 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Set up Next env
         uses: ./.github/actions/setup-next-env
-      - name: Install NPM dependencies
-        run: |
-          cd cdk
-          npm ci
-          npm install -g aws-cdk
       - name: Configure AWS credentials for DEV
         if: ${{ inputs.environment == 'hahtuva' || inputs.environment == 'untuva' || inputs.environment == 'pallero' }}
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
@@ -54,6 +49,9 @@ jobs:
           role-session-name: maksut-ui-deploy
           aws-region: eu-west-1
       - name: Deploy Next.js app
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd cdk
-          cdk deploy SovellusStack --require-approval never -c "environment=${{ inputs.environment }}"
+          pnpm install
+          pnpm exec cdk deploy SovellusStack --require-approval never -c "environment=${{ inputs.environment }}"

@@ -5,6 +5,7 @@ import { routing } from './routing';
 import { Locale } from '@/app/lib/types';
 
 const fetchLocalizations = async (locale = 'fi') => {
+  console.log(`Fetching localizations for locale ${locale} from ${backendUrl}`);
   const response = await fetch(`${backendUrl}/localisation/${locale}`, {
     cache: 'no-cache',
   });
