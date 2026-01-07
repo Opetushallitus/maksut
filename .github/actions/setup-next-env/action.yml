@@ -17,7 +17,7 @@ runs:
       id: node_modules-cache
       with:
         path: ${{ github.workspace }}/src/maksut-ui/node_modules
-        key: ${{ runner.os }}-modules-${{ hashFiles('./src/maksut-ui/pnpm-lock.yaml') }}
+        key: ${{ runner.os }}-modules-hoisted-${{ hashFiles('./src/maksut-ui/pnpm-lock.yaml') }}
     - name: Cache Next.js
       uses: actions/cache@v4
       with:
