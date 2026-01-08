@@ -244,9 +244,9 @@
                        :käsittely-päätös-otsikko       {:fi "Hakemuksen käsittely ja myöhemmin maksettava päätösmaksu"
                                                         :en "Processing of the application and the decision fee due later"
                                                         :sv "Behandling av ansökan och beslutsavgiften som skall betalas senare"}
-                       :käsittely-päätös-selitys       {:fi "Hakemuksesi siirtyy seuraavaksi käsittelyyn. Olemme sinuun tarvittaessa yhteydessä sähköpostitse. Hakemusten keskimääräinen käsittelyaika on 2–3 kuukautta."
-                                                        :en "Your application will now be taken into processing. If necessary, we will contact you by email. The average processing time for applications is between 2 and 3 months."
-                                                        :sv "Din ansökan tas nu till behandling. Vi kontaktar dig vid behov per epost. Den genomsnittliga behandlingstiden för ansökningarna är 2–3 månader."}
+                       :käsittely-päätös-selitys       {:fi "Hakemuksesi siirtyy seuraavaksi käsittelyyn. Olemme sinuun tarvittaessa yhteydessä sähköpostitse. Hakemusten keskimääräinen käsittelyaika on 3–4 kuukautta."
+                                                        :en "Your application will now be taken into processing. If necessary, we will contact you by email. The average processing time for applications is between 3 and 4 months."
+                                                        :sv "Din ansökan tas nu till behandling. Vi kontaktar dig vid behov per epost. Den genomsnittliga behandlingstiden för ansökningarna är 3–4 månader."}
                        :käsittely-ehdollinen-selitys-1 {:fi "Hakemuksesi siirtyy seuraavaksi käsittelyyn. Olemme sinuun tarvittaessa yhteydessä sähköpostitse."
                                                         :en "Your application will now be taken into processing. If necessary, we will contact you by email."
                                                         :sv "Din ansökan tas nu till behandling. Vi kontaktar dig vid behov per epost."}
