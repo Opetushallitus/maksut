@@ -10,12 +10,14 @@
 (s/defn load-config
   [config :- c/MaksutConfig]
   (let [{:keys [virkailija-baseurl
-                maksut-url]} (-> config :urls)
+                maksut-url
+                viestinvalitys-url]} (-> config :urls)
         [virkailija-protocol
          virkailija-host] (string/split virkailija-baseurl #":\/\/")
         oph-properties (doto (OphProperties. (into-array String ["/maksut-oph.properties"]))
                          (.addDefault "virkailija.protocol" virkailija-protocol)
                          (.addDefault "host.virkailija" virkailija-host)
+                         (.addDefault "viestinvalitys.url" viestinvalitys-url)
                          (.addDefault "url-maksut" maksut-url))]
     (reset! url-properties oph-properties)))
 

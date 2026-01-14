@@ -2,7 +2,6 @@
   (:require [com.stuartsierra.component :as component]
             [maksut.logs.audit-logger :as audit-logger]
             [maksut.authentication.auth-routes :as auth-routes]
-            [maksut.cas.cas-authenticating-client :as authenticating-client]
             [maksut.cas.cas-ticket-client :as cas-ticket-validator]
             [maksut.config :as c]
             [maksut.db :as db]
@@ -63,13 +62,9 @@
                                                    :lokalisaatio-service
                                                    :auth-routes-source])]
 
-        production-system [:email-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :email
-                                                                                                             :config  config})
-
-                           :email-service (component/using (email-service/map->EmailService {:config config})
+        production-system [:email-service (component/using (email-service/map->EmailService {:config config})
                                            [:audit-logger
-                                            :db
-                                            :email-authenticating-client])
+                                            :db])
 
                            :cas-ticket-validator (cas-ticket-validator/map->CasTicketClient {:config config})]
         mock-system       [:cas-ticket-validator (cas-ticket-validator/map->FakeCasTicketClient {})
