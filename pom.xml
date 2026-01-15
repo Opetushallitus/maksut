@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>358fba989ff361a687ef74bfdfbcba68c6ad24b4</tag>
+    <tag>2bdb95377ebfcd56e268eeed3689dbc84cbf56fe</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -115,26 +115,6 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.14.0</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-jdk8</artifactId>
-        <version>2.20.1</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>2.20.1</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.20.1</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.module</groupId>
-        <artifactId>jackson-module-scala_3</artifactId>
-        <version>2.20.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -242,7 +222,7 @@
     <dependency>
       <groupId>opiskelijavalinnat-utils.viestinvalitys</groupId>
       <artifactId>kirjasto</artifactId>
-      <version>1.2.4-SNAPSHOT</version>
+      <version>1.2.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>opiskelijavalinnat-utils</groupId>
