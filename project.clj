@@ -28,7 +28,6 @@
                  [fi.vm.sade/auditlogger "9.2.0-SNAPSHOT"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
                  [opiskelijavalinnat-utils.viestinvalitys/kirjasto "1.2.4-SNAPSHOT"]
-                 [com.thoughtworks.paranamer/paranamer "2.8.3"] ; viestinvalitys-kirjaston Jackson Scala Module tarvii tätä, mutta sitä ei tule riippuvuutena
                  [opiskelijavalinnat-utils/clj-ring-db-cas-session "1.0.0-SNAPSHOT"]
                  [hikari-cp "3.0.1"]
                  [metosin/reitit "0.6.0"]

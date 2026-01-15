@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>d43b94c4533024075c2bb140e3fb46925367bbb6</tag>
+    <tag>358fba989ff361a687ef74bfdfbcba68c6ad24b4</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -242,7 +242,7 @@
     <dependency>
       <groupId>opiskelijavalinnat-utils.viestinvalitys</groupId>
       <artifactId>kirjasto</artifactId>
-      <version>1.2.3-SNAPSHOT</version>
+      <version>1.2.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>opiskelijavalinnat-utils</groupId>
