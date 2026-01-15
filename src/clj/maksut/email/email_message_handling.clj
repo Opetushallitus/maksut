@@ -5,13 +5,29 @@
             [clj-time.format :as f]
             [clj-time.coerce :as c]
             [clj-time.core :as t])
-  (:import (fi.oph.viestinvalitys.vastaanotto.model Vastaanottajat$VastaanottajatBuilder Viesti ViestinvalitysBuilder)
+  (:import (fi.oph.viestinvalitys.vastaanotto.model
+             Vastaanottajat$VastaanottajatBuilder
+             Viesti
+             ViestinvalitysBuilder)
            (java.util Optional)))
 
 (def from-address "no-reply@opintopolku.fi")
 
 (def finnish-datetime-formatter (f/with-zone (f/formatter "d.M.YYYY HH:mm")
                                              (t/time-zone-for-id "Europe/Helsinki")))
+
+(def viestinvalitys-paakayttaja "APP_VIESTINVALITYS_OPH_PAAKAYTTAJA")
+
+(def oph-organisaatio "1.2.246.562.10.00000000001")
+
+(def lahettava-palvelu "maksut")
+
+(def sailytysaika-5-vuotta (int 2000))
+
+(def kayttorajoitukset
+  (-> (ViestinvalitysBuilder/kayttooikeusrajoituksetBuilder)
+      (.withKayttooikeus viestinvalitys-paakayttaja oph-organisaatio)
+      (.build)))
 
 (defn format-datetime-to-finnish-format [datetime]
   (f/unparse finnish-datetime-formatter datetime))
@@ -24,8 +40,9 @@
                        (finnish-datetime-from-long timestamp-long)))
 
 (defn ->vastaanottajat [recipients]
-  (let [builder ^Vastaanottajat$VastaanottajatBuilder (ViestinvalitysBuilder/vastaanottajatBuilder)]
-    (.build (reduce (fn ([builder recipient] (.withVastaanottaja builder (Optional/empty) recipient))) builder recipients))))
+  (let [builder ^Vastaanottajat$VastaanottajatBuilder (ViestinvalitysBuilder/vastaanottajatBuilder)
+        with-recipient (fn ([builder recipient] (.withVastaanottaja builder (Optional/empty) recipient)))]
+    (.build (reduce with-recipient builder recipients))))
 
 (defn ->viesti ^Viesti [email-data body]
   (-> (ViestinvalitysBuilder/viestiBuilder)
@@ -33,11 +50,11 @@
       (.withHtmlSisalto body)
       (.withKielet (into-array ^String [(name (:lang email-data))]))
       (.withVastaanottajat (->vastaanottajat (:recipients email-data)))
-      (.withKayttooikeusRajoitukset (-> (ViestinvalitysBuilder/kayttooikeusrajoituksetBuilder) (.withKayttooikeus "APP_VIESTINVALITYS_OPH_PAAKAYTTAJA" "1.2.246.562.10.00000000001") (.build)))
-      (.withLahettavaPalvelu "maksut")
+      (.withKayttooikeusRajoitukset kayttorajoitukset)
+      (.withLahettavaPalvelu lahettava-palvelu)
       (.withNormaaliPrioriteetti)
       (.withLahettaja (Optional/empty) (:from email-data))
-      (.withSailytysAika (int 2000)) ; About 5 and a half years
+      (.withSailytysAika sailytysaika-5-vuotta) ; About 5 and a half years
       (.build)))
 
 (defn- make-email ^Viesti [email-data render-file-fn]

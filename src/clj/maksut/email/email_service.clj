@@ -14,13 +14,11 @@
            (org.simplejavamail.mailer MailerBuilder)
            (org.simplejavamail.email EmailBuilder)))
 
-(defn- send-email [this viesti]
+(defn send-email [this viesti]
   (try
-    (let [url (get this :email-service-url)
-          viestinvalitys-client ^ViestinvalitysClient (get this :viestinvalitys-client)
+    (let [viestinvalitys-client ^ViestinvalitysClient (get this :viestinvalitys-client)
           response ^LuoViestiSuccessResponse (.luoViesti viestinvalitys-client viesti)]
-      (log/info "email url " url)
-      (log/info "email response " response))
+      (log/info "Email successfully sent with tunniste" (-> response .getViestiTunniste .toString)))
     (catch ViestinvalitysClientException e
       (log/error (str "Creating a viesti failed with status" (.getStatus e) " and validation errors: " (.getVirheet e)))
       (log/error "Sending email failed:" e)
@@ -28,58 +26,48 @@
     (catch Exception e (log/error "Sending email failed:" e)
                        (throw e))))
 
+(defn create-viestinvalitys-client [config]
+  (s/validate c/MaksutConfig config)
+  (let [url (url/resolve-url :viestinvalitys.endpoint config)
+        cas-url (url/resolve-url :cas.url config)
+        caller-id (-> config :oph-organisaatio-oid caller-id/make-caller-id)]
+    (log/info "Using viestinvalitys-client url" url)
+    (-> ^ViestinvalitysClient$EndpointBuilder (ClientBuilder/viestinvalitysClientBuilder)
+        (.withEndpoint url)
+        (.withUsername (-> config :cas :username))
+        (.withPassword (-> config :cas :password))
+        (.withCasEndpoint cas-url)
+        (.withCallerId caller-id)
+        (.build))))
 
 (defrecord EmailService [config]
   component/Lifecycle
   (start [this]
-    (s/validate c/MaksutConfig config)
-    (let [url (url/resolve-url :viestinvalitys.endpoint config)
-          cas-url (url/resolve-url :cas.url config)
-          caller-id (-> config :oph-organisaatio-oid caller-id/make-caller-id)
-          viestinvalitys-client (-> ^ViestinvalitysClient$EndpointBuilder (ClientBuilder/viestinvalitysClientBuilder)
-                                   (.withEndpoint url)
-                                   (.withUsername (-> config :cas :username))
-                                   (.withPassword (-> config :cas :password))
-                                   (.withCasEndpoint cas-url)
-                                   (.withCallerId caller-id)
-                                   (.build))]
-      (assoc this :email-service-url url
-                  :viestinvalitys-client viestinvalitys-client)))
+    (assoc this :viestinvalitys-client (create-viestinvalitys-client config)))
   (stop [this]
-    (assoc this
-           :config nil
-           :viestinvalitys-client nil
-           ))
+    (assoc this :viestinvalitys-client nil))
 
   EmailServiceProtocol
   (send-email [this viesti]
-    (send-email this viesti)
-  ))
+    (send-email this viesti)))
 
-(defn email-service [config]
-  (map->EmailService config))
-
-(defrecord MockEmailService [config mock-email-service-list]
+; Palvelun ajamiseen paikallisesa ympäristössä.
+; Lähettää sähköpostit SMTP:llä MailCatcherille, josta kehittäjä voi ne lukea.
+(defrecord DevSmtpEmailService [config]
   EmailServiceProtocol
   (send-email [_ viesti]
-    (let [from ^String (-> viesti .getLahettaja .get .getSahkopostiOsoite .get)
-          recipients (->> viesti .getVastaanottajat .get (map #(-> % .getSahkopostiOsoite .get)))
-          subject ^String (-> viesti .getOtsikko .get)
-          body ^String (-> viesti .getSisalto .get)
+    (let [^String from (-> viesti .getLahettaja .get .getSahkopostiOsoite .get)
+          ^String recipient (-> viesti .getVastaanottajat .get first .getSahkopostiOsoite .get)
+          ^String subject (-> viesti .getOtsikko .get)
+          ^String body (-> viesti .getSisalto .get)
           mailer (-> (MailerBuilder/withSMTPServerHost "localhost")
                      (.withSMTPServerPort (int 1025))
                      (.withTransportStrategy TransportStrategy/SMTP)
                      (.buildMailer))
           mail (-> (EmailBuilder/startingBlank)
                    (.from from)
-                   (.to (first recipients))
+                   (.to recipient)
                    (.withSubject subject)
                    (.withHTMLText body)
                    (.buildEmail))]
-      (.sendMail mailer mail)
-      (reset! mock-email-service-list
-              (conj @mock-email-service-list
-                    {:from       from
-                     :recipients recipients
-                     :subject    subject
-                     :body       body})))))
+      (.sendMail mailer mail))))
