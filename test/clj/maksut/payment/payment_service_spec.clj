@@ -2,24 +2,20 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [maksut.payment.payment-service-protocol :as payment-protocol]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
-            [clj-time.core :as time]
-            [clj-time.format :as format]
-            [clj-time.coerce :refer [to-sql-date]]
             [clojure.java.jdbc :as jdbc]
             [clojure.string :as s]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
+            [maksut.util.date :refer [plus-days-from-now helsinki-zone]]
             [maksut.test-fixtures :as test-fixtures :refer [test-system
                                                             get-emails
                                                             is-email-count
                                                             reset-emails!]])
+  (:import (java.time LocalDate ZonedDateTime))
   (:use clj-http.fake))
 
 
 (use-fixtures :once test-fixtures/with-mock-system)
 (use-fixtures :each test-fixtures/with-empty-database)
-
-(defn date->iso [date]
-  (format/unparse (format/formatters :date) date))
 
 (defmacro catch-thrown-info [f]
   `(try
@@ -36,7 +32,7 @@
    :amount (bigdec "123.00")
    :origin "tutu"
    :reference "1.2.246.562.11.00000000000000123456"
-   :due_date (to-sql-date date)})
+   :due_date date})
 
 (defn db-invoice-2 [date]
   {:order_id "TTU123456-2"
@@ -46,7 +42,7 @@
    :amount (bigdec "5000.12")
    :origin "tutu"
    :reference "1.2.246.562.11.00000000000000123456"
-   :due_date (to-sql-date date)})
+   :due_date date})
 
 (defn db-invoice-hakemusmaksu [date]
   {:order_id "KKHA123456"
@@ -61,7 +57,7 @@
                           :en "Haku EN"}
               :alkamiskausi "kausi_s"
               :alkamisvuosi 2025}
-   :due_date (to-sql-date date)})
+   :due_date date})
 
 (def params {
   :checkout-reference "TTU123456-1"
@@ -94,8 +90,8 @@
 (deftest tutu-maksut-complete-happy-flow
   (let [service (:payment-service @test-system)
         db      (:db @test-system)
-        due-date (time/from-now (time/days 14))
-        date    (date->iso due-date)
+        due-date (plus-days-from-now 14)
+        date    (str due-date)
         db-data (db-invoice due-date)
         locale  "fi"
         secret  "foobar"
@@ -119,6 +115,8 @@
           (is (= subjects #{"Opetushallitus: Käsittelymaksusi on vastaanotettu" "Opetushallitus: Kuitti tutkintojen tunnustamisen maksusta"}))
           (is (true? (s/includes? (:body receipt)
                                   "/OPH-logo.png")))
+          (is (true? (s/includes? (:body receipt)
+                                  "Maksupäivä: 16.1.2022 18:01")))
           (reset-emails!)))
 
     (testing "Try to pay invoice after it has been paid"
@@ -188,7 +186,7 @@
 (deftest kkhakemusmaksu-complete-happy-flow
   (let [service (:payment-service @test-system)
         db      (:db @test-system)
-        due-date (time/from-now (time/days 7))
+        due-date (plus-days-from-now 7)
         db-data (db-invoice-hakemusmaksu due-date)
         locale  "fi"
         secret  "foobar"
@@ -269,8 +267,7 @@
   (let [service (:payment-service @test-system)
         db      (:db @test-system)
 
-        due-date (time/from-now (time/days 14))
-        date (date->iso due-date)
+        due-date (plus-days-from-now 14)
         locale  "fi"]
 
     (testing "First payment is ok"
@@ -301,8 +298,8 @@
   (let [service (:payment-service @test-system)
        db      (:db @test-system)
 
-       due-date (time/from-now (time/days 14))
-       date (date->iso due-date)
+       due-date (plus-days-from-now 14)
+       date (str due-date)
        db-data (db-invoice due-date)
        locale  "en"]
 
@@ -343,8 +340,7 @@
         maksut-service (:maksut-service @test-system)
         db      (:db @test-system)
 
-        due-date (time/from-now (time/days -30))
-        date (date->iso due-date)
+        due-date (plus-days-from-now -30)
         db-data (db-invoice due-date)
         secret  "foobar"
         invoice-insert (test-fixtures/add-invoice! db db-data)
@@ -381,11 +377,13 @@
         maksut-service (:maksut-service @test-system)
         db      (:db @test-system)
 
-        due-date (time/from-now (time/days +7))
+        due-date (plus-days-from-now 7)
         db-data (db-invoice-hakemusmaksu due-date)
         secret  "foobar"
         invoice-insert (test-fixtures/add-invoice! db
-                                                   (merge db-data {:invalidated_at (to-sql-date "2024-12-09 10:23:54")}))
+                                                   (merge db-data {:invalidated_at (-> (ZonedDateTime/parse "2024-12-09T10:23:54+02:00")
+                                                                                       (.toInstant)
+                                                                                       (java.sql.Timestamp/from))}))
         invoice-id (-> invoice-insert first :id)]
 
     (jdbc/insert! db :secrets {:fk_invoice invoice-id
@@ -419,8 +417,7 @@
   (let [service (:payment-service @test-system)
         db      (:db @test-system)
 
-        due-date (time/from-now (time/days 0))
-        date (date->iso due-date)
+        due-date (LocalDate/now)
         db-data (db-invoice due-date)
         secret  "foobar"
         invoice-insert (test-fixtures/add-invoice! db db-data)
@@ -447,8 +444,8 @@
          (let [service (:payment-service @test-system)
                maksut-service (:maksut-service @test-system)
                db      (:db @test-system)
-               due-date (time/from-now (time/days 14))
-               date    (date->iso due-date)
+               due-date (plus-days-from-now 14)
+               date    (str due-date)
                db-data (db-invoice due-date)
                locale  "fi"
                secret  "foobar"
