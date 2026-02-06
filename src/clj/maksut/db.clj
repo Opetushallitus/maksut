@@ -1,15 +1,14 @@
 (ns maksut.db
   (:require [cheshire.core :as json]
-            [clj-time.coerce :as clj-time-coerce]
             [clojure.java.jdbc :as jdbc]
             [clojure.set :as cs]
             [com.stuartsierra.component :as component]
             [maksut.config :as c]
             [hikari-cp.core :as hikari]
             [schema.core :as s])
-  (:import [java.sql PreparedStatement]
-           [java.time LocalDate]
-           [org.postgresql.util PGobject]))
+  (:import (java.sql Date PreparedStatement)
+           (java.time LocalDate)
+           (org.postgresql.util PGobject)))
 
 (defn sql-date->LocalDate [v]
   (let [java-time-localdate (.toLocalDate v)]
@@ -51,10 +50,10 @@
   (result-set-read-column [v _ _]
     (vec (.getArray v))))
 
-(extend-type org.joda.time.LocalDate
+(extend-type LocalDate
   jdbc/ISQLParameter
   (set-parameter [v ^PreparedStatement stmt idx]
-    (.setDate stmt idx (clj-time-coerce/to-sql-date v))))
+    (.setDate stmt idx (Date/valueOf v))))
 
 (defrecord DbPool [config]
   component/Lifecycle

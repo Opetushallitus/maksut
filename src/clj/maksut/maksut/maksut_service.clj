@@ -3,17 +3,16 @@
             [maksut.maksut.maksut-service-protocol :refer [MaksutServiceProtocol]]
             [maksut.maksut.db.maksut-queries :as maksut-queries]
             [maksut.schemas.api-schemas :as api-schemas]
-            [maksut.util.date :refer [iso-date-str->date]]
+            [maksut.util.date :refer [plus-days-from-now]]
             [clojure.string :as str]
             [com.stuartsierra.component :as component]
-            [clj-time.core :as time]
             [schema.core :as s]
             [ring.util.http-response :as response]
             [taoensso.timbre :as log]
             [camel-snake-kebab.core :as csk]
             [camel-snake-kebab.extras :as cske])
   (:import (java.math RoundingMode)
-           [java.time LocalDate]))
+           (java.time LocalDate)))
 
 ;Näin koska CLJS ei tue BigDecimal/LocalDate tyyppejä
 (defn Lasku->json [lasku]
@@ -46,8 +45,9 @@
   (assoc
    (select-keys lasku [:order-id :first-name :last-name :email :due-days :origin :reference :metadata])
     :due-date (or
-               (iso-date-str->date (:due-date lasku))
-               (time/plus (time/today) (time/days (:due-days lasku))))
+               (some-> (:due-date lasku)
+                       (LocalDate/parse))
+               (plus-days-from-now (:due-days lasku)))
     :amount (.setScale (bigdec (:amount lasku)) 2 RoundingMode/HALF_UP)
     :vat (when (not-empty (:vat lasku)) (.setScale (bigdec (:vat lasku)) 1 RoundingMode/HALF_UP))))
 
@@ -83,7 +83,7 @@
     (log/info "Lasku" lasku "extend-deadline" extend-deadline)
     (log/info "Current" (maksut-queries/get-lasku db order-id))
 
-    (when-not (time/before? (time/today) due-date)
+    (when-not (.isBefore (LocalDate/now) due-date)
       (maksut-error :invoice-createerror-duedateinpast (str "Due-date needs to be in future: " lasku) :status-code 422))
 
     (maksut-queries/create-or-update-lasku db lasku extend-deadline)
