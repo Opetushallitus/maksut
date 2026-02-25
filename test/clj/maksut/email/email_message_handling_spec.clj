@@ -28,7 +28,7 @@
         result (->viesti email-data "Body")]
     (testing "Uses the data from email-data"
       (is (= (-> result .getLahettaja .get .getSahkopostiOsoite .get) (:from email-data)))
-      (is (= (-> result .getLahettaja .get .getNimi) (Optional/empty)))
+      (is (= (-> result .getLahettaja .get .getNimi) (Optional/of "Opetushallitus")))
       (is (= (->> result .getVastaanottajat .get (map #(-> % .getSahkopostiOsoite .get))) (:recipients email-data)))
       (is (= (->> result .getVastaanottajat .get (map #(-> % .getNimi))) [(Optional/empty) (Optional/empty)]))
       (is (= (-> result .getOtsikko .get) (:subject email-data)))

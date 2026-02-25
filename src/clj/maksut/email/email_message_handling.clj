@@ -53,7 +53,7 @@
       (.withKayttooikeusRajoitukset kayttorajoitukset)
       (.withLahettavaPalvelu lahettava-palvelu)
       (.withNormaaliPrioriteetti)
-      (.withLahettaja (Optional/empty) (:from email-data))
+      (.withLahettaja (Optional/of "Opetushallitus") (:from email-data))
       (.withSailytysAika sailytysaika-5-vuotta) ; About 5 and a half years
       (.build)))
 
