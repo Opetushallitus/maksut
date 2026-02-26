@@ -1,7 +1,7 @@
 (ns maksut.test-fixtures
   (:require [maksut.config :as c]
             [com.stuartsierra.component :as component]
-            [maksut.system :as system]
+            [maksut.test-system :as system]
             [clojure.test :refer [is]]
             [clojure.java.jdbc :as jdbc]))
 
@@ -47,4 +47,3 @@
   (truncate-database (:db @test-system))
   (f)
   (truncate-database (:db @test-system)))
-

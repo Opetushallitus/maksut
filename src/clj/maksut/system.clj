@@ -2,7 +2,6 @@
   (:require [com.stuartsierra.component :as component]
             [maksut.logs.audit-logger :as audit-logger]
             [maksut.authentication.auth-routes :as auth-routes]
-            [maksut.cas.cas-authenticating-client :as authenticating-client]
             [maksut.cas.cas-ticket-client :as cas-ticket-validator]
             [maksut.config :as c]
             [maksut.db :as db]
@@ -17,83 +16,78 @@
             [maksut.migrations :as migrations]
             [maksut.server :as http]))
 
+(defn base-system [config]
+  [:audit-logger (audit-logger/map->AuditLogger {:config config})
+
+   :db (db/map->DbPool {:config config})
+
+   :migrations (component/using
+                 (migrations/map->Migrations {})
+                 [:db])
+
+   :maksut-service (component/using
+                     (maksut-service/map->MaksutService {:config config})
+                     [:audit-logger
+                      :db])
+
+   :payment-service (component/using
+                      (payment-service/map->PaymentService {:config config})
+                      [:audit-logger
+                       :email-service
+                       :db
+                       :storage-engine])
+
+   :lokalisaatio-service (component/using
+                           (lokalisaatio-service/map->LokalisaatioService {:config config})
+                           [])
+
+   :health-checker (component/using
+                     (health-check/map->DbHealthChecker {})
+                     [:db])
+
+   :auth-routes-source (component/using
+                         (auth-routes/map->AuthRoutesMaker {:config config})
+                         [:db
+                          :cas-ticket-validator
+                          :audit-logger])
+
+   :http-server (component/using
+                  (http/map->HttpServer {:config config})
+                  [:db
+                   :migrations
+                   :health-checker
+                   :maksut-service
+                   :payment-service
+                   :email-service
+                   :lokalisaatio-service
+                   :auth-routes-source])])
+
+(defn files [config]
+  (case (get-in config [:file-store :engine])
+    :filesystem [:config config
+                 :storage-engine (component/using
+                                   (filesystem-store/new-store)
+                                   [:config])]
+    :s3 [:config config
+         :s3-client (component/using
+                      (s3-client/new-client)
+                      [:config])
+         :storage-engine (component/using
+                           (s3-store/new-store)
+                           [:s3-client :config])]))
+
 (defn maksut-system [config]
-  (let [base-system       [:audit-logger (audit-logger/map->AuditLogger {:config config})
-
-                           :db (db/map->DbPool {:config config})
-
-                           :migrations (component/using
-                                         (migrations/map->Migrations {})
-                                         [:db])
-
-                           :maksut-service (component/using
-                                            (maksut-service/map->MaksutService {:config config})
-                                            [:audit-logger
-                                             :db])
-
-                           :payment-service (component/using
-                                             (payment-service/map->PaymentService {:config config})
-                                             [:audit-logger
-                                              :email-service
-                                              :db
-                                              :storage-engine])
-
-                           :lokalisaatio-service (component/using
-                                                   (lokalisaatio-service/map->LokalisaatioService {:config config})
-                                                   [])
-
-                           :health-checker (component/using
-                                             (health-check/map->DbHealthChecker {})
-                                             [:db])
-
-                           :auth-routes-source (component/using
-                                                (auth-routes/map->AuthRoutesMaker {:config config})
-                                                [:db
-                                                  :cas-ticket-validator
-                                                  :audit-logger])
-
-                           :http-server (component/using
-                                          (http/map->HttpServer {:config config})
-                                                  [:db
-                                                   :migrations
-                                                   :health-checker
-                                                   :maksut-service
-                                                   :payment-service
-                                                   :email-service
-                                                   :lokalisaatio-service
-                                                   :auth-routes-source])]
-
-        production-system [:email-authenticating-client (authenticating-client/map->CasAuthenticatingClient {:service :email
-                                                                                                             :config  config})
-
-                           :email-service (component/using (email-service/map->EmailService {:config config})
-                                           [:audit-logger
-                                            :db
-                                            :email-authenticating-client])
-
+  (let [production-system [:email-service (component/using (email-service/map->EmailService {:config config}) [])
                            :cas-ticket-validator (cas-ticket-validator/map->CasTicketClient {:config config})]
+
         mock-system       [:cas-ticket-validator (cas-ticket-validator/map->FakeCasTicketClient {})
+                           :email-service (component/using (email-service/map->DevSmtpEmailService {:config config}) [])]
 
-                           :mock-email-service-list (atom '())
+        active-system (if (c/development-environment? config)
+                        mock-system
+                        production-system)
 
-                           :email-service (component/using (email-service/map->MockEmailService {:config config})
-                                                           [:mock-email-service-list])]
-
-        files             (case (get-in config [:file-store :engine])
-                            :filesystem [:config config
-                                         :storage-engine (component/using
-                                                           (filesystem-store/new-store)
-                                                           [:config])]
-                            :s3 [:config config
-                                 :s3-client (component/using
-                                              (s3-client/new-client)
-                                              [:config])
-                                 :storage-engine (component/using
-                                                   (s3-store/new-store)
-                                                   [:s3-client :config])])
-        system            (into
-                            (into base-system
-                                  (if (or (c/development-environment? config) (c/integration-environment? config))
-                                    mock-system
-                                    production-system)) files)]
+        system (-> (base-system config)
+                   (into active-system)
+                   (into (files config)))]
     (apply component/system-map system)))

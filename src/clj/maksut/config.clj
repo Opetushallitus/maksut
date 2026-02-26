@@ -32,11 +32,10 @@
                           :attachment-mime-types [s/Str]}
    :cas                  {:username s/Str
                           :password s/Str
-                          :url      s/Str
-                          :services {:email {:service-url-property s/Keyword
-                                             :session-cookie-name  s/Str}}}
+                          :url      s/Str}
    :urls                 {:virkailija-baseurl        s/Str
                           :maksut-url s/Str
+                          :viestinvalitys-url s/Str
                           :oppija-baseurl s/Str}
    :oph-organisaatio-oid s/Str
    :public-config        public/PublicConfig})

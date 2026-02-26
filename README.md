@@ -167,7 +167,7 @@ Kloonaa ja valmistele omien ohjeiden mukaan käyttökuntoon [local-environment](
 
 Maksuputkea voi testata seuraavasti QA:lla
 
-* Täytä TuTun lomake: https://testiopintopolku.fi/hakemus/74825f61-e561-447e-bef4-1bb5be4ea44a
+* Täytä TuTun lomake: https://testiopintopolku.fi/hakemus/aaa89601-78dd-48c7-91fa-7da419f680bb
     * Jos lomake on vaihtunut niin lomakkeen tunnisteen löytää myös atarun QA:n konfiguraatioista
 * Ohjautuu ekaan maksuun, valitse Osuuspankki maksutavaksi
 * Maksun jälkeen fakemaileriin (https://fakemailer.testiopintopolku.fi/) ilmestyy hakemuksen muokkauslinkki ja erillinen maili jossa kuitti
