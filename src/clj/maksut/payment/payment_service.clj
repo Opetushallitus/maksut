@@ -20,7 +20,8 @@
             [clojure.data.json :as json]
             [clj-http.client :as client]
             [buddy.core.mac :as mac])
-  (:import [java.util UUID]
+  (:import (fi.oph.viestinvalitys.vastaanotto.model Viesti)
+           [java.util UUID]
            (java.time ZoneOffset ZonedDateTime)
            (java.time.format DateTimeFormatter)))
 
@@ -196,9 +197,8 @@
       (-> response :body))))
 
 (defn- handle-send-email [msg email-service email]
-  (let [{:keys [subject from body]} msg]
-    (info "Sending email to " subject " to " email)
-    (email-protocol/send-email email-service from [email] subject body)))
+    (info "Sending email to " (-> msg .getOtsikko .get) " to " email)
+    (email-protocol/send-email email-service msg))
 
 (defn- handle-tutu-email-confirmation
   [email-service email locale order-id reference]
@@ -214,16 +214,17 @@
 (defn- handle-payment-receipt
   [email-service email locale first-name last-name reference timestamp-millis
    total-amount items storage-engine oppija-baseurl origin form-name haku-name]
-  (let [msg (email-message-handling/create-payment-receipt
+  (let [^Viesti msg (email-message-handling/create-payment-receipt
               email locale first-name last-name reference timestamp-millis
-              total-amount items oppija-baseurl origin form-name haku-name)]
+              total-amount items oppija-baseurl origin form-name haku-name)
+        body (-> msg .getSisalto .get)]
     (future
       (try
-        (save-receipt storage-engine (:body msg) reference)
+        (save-receipt storage-engine body reference)
         (catch Exception e
           (warn "Could not save receipt to S3 - retrying:" reference e)
           (try
-            (save-receipt storage-engine (:body msg) reference)
+            (save-receipt storage-engine body reference)
             (catch Exception ex
               (error "Could not save receipt to S3:" reference ex))))))
     (handle-send-email msg email-service email)))
