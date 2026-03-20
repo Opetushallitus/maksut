@@ -1,7 +1,7 @@
 'use client';
 
 import ErrorPanel from '@/app/components/ErrorPanel';
-import { useTranslations } from 'use-intl';
+import { useTranslations } from 'next-intl';
 import { OphTypography } from '@opetushallitus/oph-design-system';
 
 export default function Error() {

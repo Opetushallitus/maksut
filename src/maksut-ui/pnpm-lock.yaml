@@ -61,9 +61,6 @@ importers:
       use-debounce:
         specifier: ^10.0.4
         version: 10.0.6(react@19.2.1)
-      use-intl:
-        specifier: ^4.5.8
-        version: 4.5.8(react@19.2.1)
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -1893,6 +1890,9 @@ packages:
       '@mui/material': ^6
       next: ^14 || ^15
       react: ^18 || ^19
+    peerDependenciesMeta:
+      next:
+        optional: true
 
   '@playwright/test@1.57.0':
     resolution:
@@ -1918,12 +1918,6 @@ packages:
     resolution:
       {
         integrity: sha512-ojSshQPKwVvSMR8yT2L/QtUkV5SXi/IfDiJ4/8d6UbTPjiHVmxZzUAzGD8Tzks1b9+qQkZa0isUOvYObedITaw==,
-      }
-
-  '@schummar/icu-type-parser@1.21.5':
-    resolution:
-      {
-        integrity: sha512-bXHSaW5jRTmke9Vd0h5P7BtWZG9Znqb8gSDxZnxaGSJnGwPLDPfS+3g0BKzeWqzgZPsIVZkM7m2tbo18cm5HBw==,
       }
 
   '@smithy/abort-controller@2.2.0':
@@ -5910,14 +5904,6 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
-  use-intl@4.5.8:
-    resolution:
-      {
-        integrity: sha512-rWPV2Sirw55BQbA/7ndUBtsikh8WXwBrUkZJ1mD35+emj/ogPPqgCZdv1DdrEFK42AjF1g5w8d3x8govhqPH6Q==,
-      }
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
-
   use-sync-external-store@1.6.0:
     resolution:
       {
@@ -7711,8 +7697,9 @@ snapshots:
   '@opetushallitus/oph-design-system@0.2.0(@mui/material@6.5.0(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.1))(@types/react@19.2.7)(react@19.2.1))(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(next@15.5.7(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@mui/material': 6.5.0(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.1))(@types/react@19.2.7)(react@19.2.1))(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      next: 15.5.7(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       react: 19.2.1
+    optionalDependencies:
+      next: 15.5.7(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
 
   '@playwright/test@1.57.0':
     dependencies:
@@ -7723,8 +7710,6 @@ snapshots:
   '@rtsao/scc@1.1.0': {}
 
   '@rushstack/eslint-patch@1.15.0': {}
-
-  '@schummar/icu-type-parser@1.21.5': {}
 
   '@smithy/abort-controller@2.2.0':
     dependencies:
@@ -10539,13 +10524,6 @@ snapshots:
   use-intl@3.26.5(react@19.2.1):
     dependencies:
       '@formatjs/fast-memoize': 2.2.7
-      intl-messageformat: 10.7.18
-      react: 19.2.1
-
-  use-intl@4.5.8(react@19.2.1):
-    dependencies:
-      '@formatjs/fast-memoize': 2.2.7
-      '@schummar/icu-type-parser': 1.21.5
       intl-messageformat: 10.7.18
       react: 19.2.1
 

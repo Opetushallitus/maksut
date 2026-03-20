@@ -3,7 +3,7 @@
 import { Box } from '@mui/material';
 import { Lasku } from '@/app/lib/types';
 import { OphTypography } from '@opetushallitus/oph-design-system';
-import { useTranslations } from 'use-intl';
+import { useTranslations } from 'next-intl';
 
 const Header = ({ lasku }: { lasku: Lasku }) => {
   const t = useTranslations('Header');

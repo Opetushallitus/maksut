@@ -2,7 +2,7 @@
 
 import { Box, useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
-import { useTranslations } from 'use-intl';
+import { useTranslations } from 'next-intl';
 import { CSSProperties, ReactNode } from 'react';
 import { ophColors, OphTypography } from '@opetushallitus/oph-design-system';
 
