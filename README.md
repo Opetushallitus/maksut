@@ -24,14 +24,14 @@
 
 Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla:
 
-1. Varmista että ajossa on oikea Node-versio (Asenna nvm jos ei asennettu) ja asenna pnpm (jos ei vielä asennettu):
+1. Varmista että ajossa on oikea Node-versio (Asenna nvm jos ei asennettu) ja ota corepack käyttöön (jos ei vielä otettu):
 
     ```bash
        nvm use
     ```
 
     ```bash
-       npm install -g pnpm
+       corepack enable
     ```
 
 2. Lisää hosts-tiedostoon:
