@@ -38,6 +38,7 @@ const nextConfig = {
     DEVELOPMENT: isStandalone ? 'true' : 'false',
   },
   output: isStandalone ? 'standalone' : undefined,
+  outputFileTracingRoot: '.',
 };
 
 import createNextIntlPlugin from 'next-intl/plugin';

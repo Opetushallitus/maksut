@@ -3,7 +3,7 @@
 import { backendUrl } from '@/app/lib/configurations';
 import { OphButton } from '@opetushallitus/oph-design-system';
 import { Lasku } from '@/app/lib/types';
-import { useLocale, useTranslations } from 'use-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 const MaksaButton = ({ lasku }: { lasku: Lasku }) => {
   const locale = useLocale();

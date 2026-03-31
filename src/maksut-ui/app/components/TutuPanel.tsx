@@ -3,7 +3,7 @@
 import { Lasku, PaymentState } from '@/app/lib/types';
 import Maksu from '@/app/components/Maksu';
 import { Box, useTheme } from '@mui/material';
-import { useTranslations } from 'use-intl';
+import { useTranslations } from 'next-intl';
 import Panel from '@/app/components/Panel';
 import MaksaButton from '@/app/components/MaksaButton';
 import TutuStateTracker from '@/app/components/TutuStateTracker';

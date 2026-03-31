@@ -5,12 +5,14 @@ import { routing } from './routing';
 import { Locale } from '@/app/lib/types';
 
 const fetchLocalizations = async (locale = 'fi') => {
-  const response = await fetch(`${backendUrl}/localisation/${locale}`, {
-    cache: 'no-cache',
-  });
+  const url = `${backendUrl}/localisation/${locale}`;
+  const response = await fetch(url, { cache: 'no-cache' });
   if (response.ok) {
     return await response.json();
   }
+  console.error(
+    `fetchLocalizations: ${response.status} ${response.statusText} from ${url}`,
+  );
   notFound();
 };
 

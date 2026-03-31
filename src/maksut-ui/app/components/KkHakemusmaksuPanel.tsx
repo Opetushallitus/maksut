@@ -2,7 +2,7 @@
 
 import { Lasku, Locale } from '@/app/lib/types';
 import Maksu from '@/app/components/Maksu';
-import { useLocale, useTranslations } from 'use-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Panel from '@/app/components/Panel';
 import MaksaButton from '@/app/components/MaksaButton';
 import { translateLocalizedString } from '@/app/lib/utils';

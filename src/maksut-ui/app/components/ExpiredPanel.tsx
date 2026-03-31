@@ -1,7 +1,7 @@
 'use client';
 
 import ErrorPanel from '@/app/components/ErrorPanel';
-import { useTranslations } from 'use-intl';
+import { useTranslations } from 'next-intl';
 import { OphLink, OphTypography } from '@opetushallitus/oph-design-system';
 
 const ExpiredPanel = ({ contact }: { contact: string | undefined }) => {

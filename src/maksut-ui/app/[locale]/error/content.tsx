@@ -6,7 +6,7 @@ import {
   OphLink,
   OphTypography,
 } from '@opetushallitus/oph-design-system';
-import { useLocale, useTranslations } from 'use-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function ErrorPageContent({
   contact,

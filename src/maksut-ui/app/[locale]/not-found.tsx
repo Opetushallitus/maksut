@@ -2,7 +2,7 @@
 
 import ErrorPanel from '@/app/components/ErrorPanel';
 import { OphTypography } from '@opetushallitus/oph-design-system';
-import { useTranslations } from 'use-intl';
+import { useTranslations } from 'next-intl';
 
 export default function NotFound() {
   const t = useTranslations('NotFound');

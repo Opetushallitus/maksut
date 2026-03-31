@@ -1,7 +1,7 @@
 'use client';
 
 import { Lasku, PaymentStatus } from '@/app/lib/types';
-import { useTranslations } from 'use-intl';
+import { useTranslations } from 'next-intl';
 import { Box, useTheme } from '@mui/material';
 import { ophColors, OphTypography } from '@opetushallitus/oph-design-system';
 import { ReactNode } from 'react';
