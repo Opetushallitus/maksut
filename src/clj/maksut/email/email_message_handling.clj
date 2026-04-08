@@ -1,20 +1,20 @@
 (ns maksut.email.email-message-handling
   (:require [maksut.util.translation :refer [get-translation get-translation-ns]]
+            [maksut.util.date :refer [helsinki-zone]]
             [selmer.parser :as selmer]
-            [selmer.filters :as filters]
-            [clj-time.format :as f]
-            [clj-time.coerce :as c]
-            [clj-time.core :as t])
+            [selmer.filters :as filters])
   (:import (fi.oph.viestinvalitys.vastaanotto.model
              Vastaanottajat$VastaanottajatBuilder
              Viesti
              ViestinvalitysBuilder)
+           (java.time Instant)
+           (java.time.format DateTimeFormatter)
            (java.util Optional)))
 
 (def from-address "no-reply@opintopolku.fi")
 
-(def finnish-datetime-formatter (f/with-zone (f/formatter "d.M.YYYY HH:mm")
-                                             (t/time-zone-for-id "Europe/Helsinki")))
+(def finnish-datetime-formatter
+  (.withZone (DateTimeFormatter/ofPattern "d.M.YYYY HH:mm") helsinki-zone))
 
 (def viestinvalitys-paakayttaja "APP_VIESTINVALITYS_OPH_PAAKAYTTAJA")
 
@@ -29,11 +29,9 @@
       (.withKayttooikeus viestinvalitys-paakayttaja oph-organisaatio)
       (.build)))
 
-(defn format-datetime-to-finnish-format [datetime]
-  (f/unparse finnish-datetime-formatter datetime))
-
 (defn finnish-datetime-from-long [timestamp-long]
-  (format-datetime-to-finnish-format (c/from-long timestamp-long)))
+  (->> (Instant/ofEpochMilli timestamp-long)
+       (.format finnish-datetime-formatter)))
 
 (filters/add-filter! :datetime-format-with-dots-from-long
                      (fn [timestamp-long]
