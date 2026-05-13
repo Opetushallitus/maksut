@@ -4,6 +4,7 @@ import { Nextjs } from 'cdk-nextjs-standalone';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as shield from 'aws-cdk-lib/aws-shield';
 
 interface MaksutUiStackProps extends cdk.StackProps {
@@ -60,6 +61,11 @@ export class SovellusStack extends cdk.Stack {
         hostedZone: zone
       },
       overrides: {
+        nextjs: {
+          nextjsDistributionProps: {
+            functionUrlAuthType: lambda.FunctionUrlAuthType.AWS_IAM,
+          },
+        },
         nextjsDistribution: {
           distributionProps: {
             priceClass: PriceClass.PRICE_CLASS_100
