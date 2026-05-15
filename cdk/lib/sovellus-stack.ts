@@ -63,7 +63,10 @@ export class SovellusStack extends cdk.Stack {
         nextjsDistribution: {
           distributionProps: {
             priceClass: PriceClass.PRICE_CLASS_100
-          }
+          },
+          edgeFunctionProps: {
+            stackId: `${props.env?.region}-${props.environmentName}-ovara-ui-edge-lambda`,
+          },
         }
       }
     });
