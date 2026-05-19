@@ -54,4 +54,4 @@ jobs:
         run: |
           cd cdk
           pnpm install
-          pnpm exec cdk deploy ${{ inputs.environment }}-SovellusStack --require-approval never -c "environment=${{ inputs.environment }}"
+          pnpm exec cdk deploy ${{ inputs.environment }}-MaksutUiSovellusStack --require-approval never -c "environment=${{ inputs.environment }}"
