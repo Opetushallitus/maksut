@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import { Nextjs } from 'cdk-nextjs-standalone';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
 import * as shield from 'aws-cdk-lib/aws-shield';
 
@@ -60,12 +61,17 @@ export class SovellusStack extends cdk.Stack {
         hostedZone: zone
       },
       overrides: {
+        nextjs: {
+          nextjsDistributionProps: {
+            functionUrlAuthType: lambda.FunctionUrlAuthType.AWS_IAM,
+          },
+        },
         nextjsDistribution: {
           distributionProps: {
             priceClass: PriceClass.PRICE_CLASS_100
           },
           edgeFunctionProps: {
-            stackId: `${props.env?.region}-${props.environmentName}-ovara-ui-edge-lambda`,
+            stackId: `${props.env?.region}-${props.environmentName}-maksut-ui-edge-lambda`,
           },
         }
       }
