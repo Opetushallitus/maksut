@@ -6,7 +6,7 @@ import { SovellusStack } from '../lib/sovellus-stack';
 const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment');
 
-new SovellusStack(app, 'SovellusStack', {
+new SovellusStack(app, `${environmentName}-MaksutUiSovellusStack`, {
   stackName: `${environmentName}-maksut-ui`,
   environmentName: environmentName,
   env: {
