@@ -17,7 +17,7 @@ const MERCHANT_KEY =
 const ACCOUNT_ID = process.env.WITH_PAYTRAIL == 'TRUE' ? '375917' : '12345';
 
 const BACKEND_URL = 'http://localhost:19033';
-const APP_URL = 'http://localhost:3003';
+const APP_URL = 'http://localhost:19033';
 
 let userPage: Page;
 let apiContext: APIRequestContext;
@@ -75,7 +75,7 @@ const expectPageAccessibilityOk = async (page: Page) => {
 };
 
 const assertInvoiceMarkedPaid = async (secret: string) => {
-  await expect(userPage).toHaveURL(`${APP_URL}/maksut-ui/fi?secret=${secret}`, {
+  await expect(userPage).toHaveURL(`${APP_URL}/maksut/fi/?secret=${secret}`, {
     timeout: 20000,
   });
   await expect(userPage.getByText('Maksettu', { exact: true })).toBeVisible();
@@ -119,7 +119,7 @@ test('Accessibility', async () => {
   const invoice = await createInvoice(apiContext);
 
   // mennään käyttäjänä maksusivulle
-  await goTo(userPage, `/maksut-ui/fi?secret=${invoice.secret}`);
+  await goTo(userPage, `/maksut/fi?secret=${invoice.secret}`);
 
   // saavutettavuuden pitäisi olla ok
   await expectPageAccessibilityOk(userPage);
@@ -133,7 +133,7 @@ test.describe('Real Paytrail', () => {
     const invoice = await createInvoice(apiContext);
 
     // mennään käyttäjänä maksusivulle
-    await goTo(userPage, `/maksut-ui/fi?secret=${invoice.secret}`);
+    await goTo(userPage, `/maksut/fi?secret=${invoice.secret}`);
 
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole('link', { name: 'Siirry maksamaan' }).click();
@@ -199,7 +199,7 @@ test.describe('Mocked Paytrail', () => {
     expect(newStub.ok()).toBeTruthy();
 
     // mennään käyttäjänä maksusivulle
-    await goTo(userPage, `/maksut-ui/fi?secret=${invoice.secret}`);
+    await goTo(userPage, `/maksut/fi?secret=${invoice.secret}`);
 
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole('link', { name: 'Siirry maksamaan' }).click();

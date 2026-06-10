@@ -27,8 +27,8 @@ jobs:
       - name: Prepare clojure env
         uses: ./.github/actions/prepare-clojure-env
 
-      - name: Set up Next env
-        uses: ./.github/actions/setup-next-env
+      - name: Set up UI env
+        uses: ./.github/actions/setup-ui-env
 
       - name: Lint maksut-ui
         run: |
@@ -46,9 +46,8 @@ jobs:
           git clone https://github.com/Opetushallitus/ci-tools.git
           source ci-tools/common/setup-tools.sh
           pnpm install
-          pnpx playwright install --with-deps chromium
+          cd src/maksut-ui && pnpm exec playwright install --with-deps chromium && cd -
           ./bin/cibuild.sh run-all-tests-and-create-uberjar
-          bin/lein with-profile prod uberjar
 
       - uses: actions/cache@v4
         id: restore-build

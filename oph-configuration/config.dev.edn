@@ -34,7 +34,7 @@
  :urls                 {:virkailija-baseurl        "https://localhost"
                         :maksut-url                "https://localhost:9000/maksut"
                         :viestinvalitys-url        "ei-kaytossa"
-                        :oppija-baseurl            "http://localhost:3000/maksut-ui"}
+                        :oppija-baseurl            "https://localhost:9000/maksut"}
  :oph-organisaatio-oid "1.2.246.562.10.00000000001"
  :public-config        {:environment   :development
                         :caller-id     "1.2.246.562.10.00000000001.maksut.frontend"}}
