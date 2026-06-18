@@ -1,10 +1,10 @@
 'use client';
 
-import ErrorPanel from '@/app/components/ErrorPanel';
+import { useTranslations } from 'use-intl';
 import { OphTypography } from '@opetushallitus/oph-design-system';
-import { useTranslations } from 'next-intl';
+import ErrorPanel from '@/app/components/ErrorPanel';
 
-export default function NotFound() {
+export default function NotFoundPage() {
   const t = useTranslations('NotFound');
 
   return (

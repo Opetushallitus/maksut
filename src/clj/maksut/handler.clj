@@ -1,5 +1,6 @@
 (ns maksut.handler
-  (:require [reitit.swagger :as swagger]
+  (:require [clojure.java.io :as jio]
+            [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]
             [reitit.coercion.schema]
             [reitit.dev.pretty :as pretty]
@@ -73,6 +74,17 @@
                               coercion/coerce-response-middleware
                               coercion/coerce-request-middleware]}}))
 
+(defn- spa-fallback
+  "Serve index.html for any /maksut/* path not matched by the router or static files.
+   This enables client-side routing in the React SPA."
+  [{:keys [uri]}]
+  (when (.startsWith uri "/maksut")
+    (when-let [resource (jio/resource "public/maksut/index.html")]
+      {:status  200
+       :headers {"Content-Type"  "text/html; charset=utf-8"
+                 "Cache-Control" "no-cache, no-store, must-revalidate"}
+       :body    (jio/input-stream resource)})))
+
 (s/defn create-handler [args :- MakeHandlerArgs]
   (ring/ring-handler
     (router args)
@@ -83,6 +95,7 @@
          :path   "/maksut/swagger"
          :url    "/maksut/swagger.json"})
       (ring/create-resource-handler {:path "/maksut" :root "public/maksut"})
+      spa-fallback
       (ring/create-default-handler {:not-found (constantly {:status 404, :body "<h1>Not found</h1>"})}))))
 
 (def reloader #'reload/reloader)

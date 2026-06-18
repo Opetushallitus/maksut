@@ -1,7 +1,6 @@
 'use client';
 
 import { AppBar, Box, useTheme } from '@mui/material';
-import Image from 'next/image';
 import { Locale } from '@/app/lib/types';
 import { styled } from '@mui/system';
 
@@ -24,12 +23,11 @@ export const TopBar = ({ lang }: { lang: Locale }) => {
   return (
     <AppBar position="static" style={{ padding: theme.spacing(3, 0) }}>
       <StyledBox>
-        <Image
-          src={`/maksut-ui/opintopolku_logo_header_${lang || 'fi'}.svg`}
+        <img
+          src={`/maksut/opintopolku_logo_header_${lang || 'fi'}.svg`}
           alt="Opintopolku"
           height={26}
           width={155}
-          priority
         />
       </StyledBox>
     </AppBar>
