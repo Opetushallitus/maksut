@@ -2,7 +2,7 @@ import { Lasku } from '@/app/lib/types';
 import TutuPanel from '@/app/components/TutuPanel';
 import AstuPanel from '@/app/components/AstuPanel';
 import KkHakemusmaksuPanel from '@/app/components/KkHakemusmaksuPanel';
-import { notFound } from 'next/navigation';
+import NotFoundPage from '@/app/components/NotFoundPage';
 
 export default function MaksutPanel({
   laskut,
@@ -21,6 +21,6 @@ export default function MaksutPanel({
     case 'kkhakemusmaksu':
       return <KkHakemusmaksuPanel lasku={activeLasku} />;
     default:
-      notFound();
+      return <NotFoundPage />;
   }
 }

@@ -15,7 +15,6 @@ const compat = new FlatCompat({
 
 export default [
   ...compat.extends(
-    'next/core-web-vitals',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/strict',
@@ -25,7 +24,6 @@ export default [
     plugins: {
       '@typescript-eslint': typescriptEslint,
     },
-
     languageOptions: {
       parser: tsParser,
     },

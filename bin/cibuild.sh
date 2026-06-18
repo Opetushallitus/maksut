@@ -27,8 +27,15 @@ run-all-tests() {
     && test-e2e
 }
 
+build-ui() {
+  cd src/maksut-ui
+  pnpm run build
+  cd -
+}
+
 create-uberjar() {
-  lein with-profile +prod uberjar
+  build-ui \
+  && lein with-profile +prod uberjar
 }
 
 run-mocked-maksut() {

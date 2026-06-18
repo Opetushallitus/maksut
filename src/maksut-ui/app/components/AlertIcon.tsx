@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Box } from '@mui/material';
 import { ophColors } from '@opetushallitus/oph-design-system';
 
@@ -14,8 +13,8 @@ const AlertIcon = () => {
         alignItems: 'center',
       }}
     >
-      <Image
-        src={'/maksut-ui/alert.svg'}
+      <img
+        src={'/maksut/alert.svg'}
         alt={'Alert icon'}
         width={40}
         height={40}
@@ -23,7 +22,7 @@ const AlertIcon = () => {
           filter: 'invert(1)',
           margin: 'auto',
         }}
-      ></Image>
+      />
     </Box>
   );
 };

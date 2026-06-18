@@ -80,7 +80,7 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
     }
     ```
 
-6. Mene osoitteeseen: https://localhost:9000/maksut/?secret=<SECRET>&locale=fi (secret-parametrin arvo otetaan edellisen kutsun
+6. Mene osoitteeseen: https://localhost:9000/maksut/fi?secret=<SECRET> (secret-parametrin arvo otetaan edellisen kutsun
    vastauksesta). Tästä voit nakutella flown läpi painamalla "Siirry maksamaan" ja valitsemalla Paytrailin puolella maksutavaksi OP:n.
 
 
@@ -259,23 +259,28 @@ CONFIG=oph-configuration/config.test.local-environment.edn lein test
 
 ### Playwright käyttöliittymätestit
 
-Käynnistä backend kuten backend-testejä varten, sekä käyttöliittymä
+Käynnistä backend kuten backend-testejä varten. Buildaa sen jälkeen frontend ja käynnistä preview-palvelin:
 
 ```bash
 cd src/maksut-ui
-pnpm run start-test
+pnpm run build
+pnpm run preview
 ```
 
-Käynnistä testit (avaa käyttöliittymä lisäämällä --ui flag)
+Käyttöliittymä on nyt käytettävissä osoitteessa http://localhost:4173/maksut/.
+
+Käynnistä testit toisessa terminaalissa (lisää `--ui` flag interaktiiviseen ajoon):
 
 ```bash
+cd src/maksut-ui
 pnpx playwright test
 ```
 
-Oikeaa Paytrailia vasten komennolla:
+Tai aja testit suoraan (edellyttää, että preview-palvelin on käynnissä):
 
 ```bash
-WITH_PAYTRAIL=TRUE pnpx playwright test
+cd src/maksut-ui
+pnpm run test-ci
 ```
 
 ## REPL-yhteys palvelimeen ja selaimeen
@@ -294,7 +299,13 @@ lein repl :connect localhost:9034
 
 ### Palvelun uberjar -tiedoston luonti tuotantokäyttöä varten
 
-Seuraava komento luo tämän repositoryn `target` -hakemistoon tiedoston `maksut.jar`.
+Buildaa ensin frontend, joka kopioi staattiset tiedostot `resources/public/maksut/`-hakemistoon:
+
+```sh
+cd src/maksut-ui && pnpm run build && cd -
+```
+
+Luo sen jälkeen uberjar, joka sisältää myös frontend-tiedostot:
 
 ```sh
 lein with-profile prod uberjar
