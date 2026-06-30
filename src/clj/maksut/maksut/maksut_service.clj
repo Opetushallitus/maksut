@@ -173,8 +173,29 @@
 
   ; Marks the payments invalid on our side so that it can't be accidentally paid anymore.
   (invalidate-laskut [_ _ input]
-    (log/info (str "Invalidating invoices with references:" keys))
     (let [{:keys [keys]} input
+          _ (log/info (str "Invalidating invoices with references: " keys))
           _ (maksut-queries/invalidate-laskut-by-reference db keys)
           statuses (maksut-queries/check-laskut-statuses-by-reference db keys)]
-      (map LaskuStatus->json statuses))))
+      (map LaskuStatus->json statuses)))
+
+  ; Force-invalidates invoices regardless of due date (for overdue correction: ok-by-proxy).
+  (force-invalidate-laskut [_ _ input]
+    (let [{:keys [keys]} input]
+      (log/info "Force-invalidating invoices for" (count keys) "references")
+      (maksut-queries/force-invalidate-laskut-by-reference db keys)
+      (map LaskuStatus->json (maksut-queries/check-laskut-statuses-by-reference db keys))))
+
+  ; Deletes invoices and their secrets (for overdue correction: not-required).
+  (delete-laskut [_ _ input]
+    (let [{:keys [keys]} input
+          deleted (maksut-queries/delete-laskut-by-reference db keys)]
+      (log/info "Deleted" deleted "invoices and their secrets for" (count keys) "references")
+      {:deleted deleted}))
+
+  ; Updates due date on invoices (for overdue correction: awaiting with new due date).
+  (update-laskut-due-date [_ _ input]
+    (let [{:keys [keys due-date]} input]
+      (log/info "Updating due date to" due-date "for" (count keys) "references")
+      (maksut-queries/update-laskut-due-date-by-reference db keys due-date)
+      (map LaskuStatus->json (maksut-queries/check-laskut-statuses-by-reference db keys)))))

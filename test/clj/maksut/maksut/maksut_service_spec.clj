@@ -4,7 +4,8 @@
             [clj-time.core :as time]
             [clj-time.format :as format]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
-            [maksut.test-fixtures :as test-fixtures :refer [test-system]]))
+            [maksut.test-fixtures :as test-fixtures :refer [test-system]])
+  (:import (java.sql Date)))
 
 
 (use-fixtures :once test-fixtures/with-mock-system)
@@ -242,3 +243,68 @@
 
   )
 )
+
+(deftest maksut-eraaantynyt-korjaus-test
+  (let [service     (:maksut-service @test-system)
+        db          (:db @test-system)
+        hannes      {:first-name "Hannes" :last-name "Snellmann" :email "hannes@gmail.com"}
+        ak-active   "1.2.246.562.11.00000000000000200001"
+        ak-overdue  "1.2.246.562.11.00000000000000200002"
+        ak-delete   "1.2.246.562.11.00000000000000200003"
+        ak-due-date "1.2.246.562.11.00000000000000200004"
+        future-date (date->iso (time/from-now (time/days 7)))
+        new-date    (date->iso (time/from-now (time/days 30)))]
+
+    (testing "force-invalidate-laskut invalidoi aktiivisen laskun"
+      (maksut-protocol/create service maksut-test-fixtures/fake-session
+        (merge hannes {:reference ak-active
+                       :origin    "kkhakemusmaksu"
+                       :amount    "100.00"
+                       :due-days  7}))
+      (let [result (maksut-protocol/force-invalidate-laskut service maksut-test-fixtures/fake-session
+                     {:keys [ak-active]})]
+        (is (= 1 (count result)))
+        (is (= :invalidated (:status (first result))))))
+
+    (testing "force-invalidate-laskut invalidoi erääntyneen laskun (ohittaa päivämääräehdon)"
+      (test-fixtures/add-invoice! db
+        {:order_id   "KKHA200002"
+         :first_name "Hannes"
+         :last_name  "Snellmann"
+         :email      "hannes@gmail.com"
+         :amount     100.00M
+         :origin     "kkhakemusmaksu"
+         :reference  ak-overdue
+         :due_date   (Date/valueOf "2020-01-01")})
+      (let [result (maksut-protocol/force-invalidate-laskut service maksut-test-fixtures/fake-session
+                     {:keys [ak-overdue]})]
+        (is (= 1 (count result)))
+        (is (= :invalidated (:status (first result))))))
+
+    (testing "delete-laskut poistaa laskun ja sen salaisuuden"
+      (maksut-protocol/create service maksut-test-fixtures/fake-session
+        (merge hannes {:reference ak-delete
+                       :origin    "kkhakemusmaksu"
+                       :amount    "100.00"
+                       :due-days  7}))
+      (is (= 1 (count (maksut-protocol/list-laskut service maksut-test-fixtures/fake-session
+                        {:application-key ak-delete}))))
+      (let [result (maksut-protocol/delete-laskut service maksut-test-fixtures/fake-session
+                     {:keys [ak-delete]})]
+        (is (= {:deleted 1} result)))
+      (is (= 0 (count (maksut-protocol/list-laskut service maksut-test-fixtures/fake-session
+                        {:application-key ak-delete})))))
+
+    (testing "update-laskut-due-date päivittää eräpäivän ja lasku pysyy aktiivisena"
+      (maksut-protocol/create service maksut-test-fixtures/fake-session
+        (merge hannes {:reference ak-due-date
+                       :origin    "kkhakemusmaksu"
+                       :amount    "100.00"
+                       :due-days  7}))
+      (let [statuses (maksut-protocol/update-laskut-due-date service maksut-test-fixtures/fake-session
+                       {:keys [ak-due-date] :due-date new-date})]
+        (is (= 1 (count statuses)))
+        (is (= :active (:status (first statuses)))))
+      (let [lasku (first (maksut-protocol/list-laskut service maksut-test-fixtures/fake-session
+                           {:application-key ak-due-date}))]
+        (is (= new-date (:due_date lasku)))))))

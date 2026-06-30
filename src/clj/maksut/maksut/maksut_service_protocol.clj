@@ -8,4 +8,7 @@
   (get-lasku [this session order-id])
   (get-lasku-contact [this session secret])
   (get-laskut-by-secret [this session secret])
-  (invalidate-laskut [this session input]))
+  (invalidate-laskut [this session input])
+  (force-invalidate-laskut [this session input])
+  (delete-laskut [this session input])
+  (update-laskut-due-date [this session input]))
