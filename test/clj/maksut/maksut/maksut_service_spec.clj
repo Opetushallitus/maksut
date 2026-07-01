@@ -244,8 +244,7 @@
         ak-overdue  "1.2.246.562.11.00000000000000200002"
         ak-delete   "1.2.246.562.11.00000000000000200003"
         ak-due-date "1.2.246.562.11.00000000000000200004"
-        future-date (date->iso (time/from-now (time/days 7)))
-        new-date    (date->iso (time/from-now (time/days 30)))]
+        new-date    (str (plus-days-from-now 30))]
 
     (testing "force-invalidate-laskut invalidoi aktiivisen laskun"
       (maksut-protocol/create service maksut-test-fixtures/fake-session
