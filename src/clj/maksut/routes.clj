@@ -156,6 +156,39 @@
                                (let [resp (maksut-protocol/invalidate-laskut maksut-service session input)]
                                  (response/ok resp)))}}]]
 
+       ["/lasku-force-invalidate"
+        [""
+         {:post {:middleware auth
+                 :tags       ["Lasku"]
+                 :summary    "Mitätöi laskut viitenumeron perusteella (myös erääntyneet)"
+                 :responses  {200 {:body schema/LaskuStatusList}}
+                 :parameters {:body schema/LaskuRefList}
+                 :handler    (fn [{session :session {input :body} :parameters}]
+                               (log/info "Force-invalidate invoices for" (count (:keys input)) "keys")
+                               (response/ok (maksut-protocol/force-invalidate-laskut maksut-service session input)))}}]]
+
+       ["/lasku-delete"
+        [""
+         {:post {:middleware auth
+                 :tags       ["Lasku"]
+                 :summary    "Poistaa laskut ja niiden salaisuudet viitenumeron perusteella"
+                 :responses  {200 {:body {:deleted s/Int}}}
+                 :parameters {:body schema/LaskuRefList}
+                 :handler    (fn [{session :session {input :body} :parameters}]
+                               (log/info "Delete invoices for" (count (:keys input)) "keys")
+                               (response/ok (maksut-protocol/delete-laskut maksut-service session input)))}}]]
+
+       ["/lasku-update-due-date"
+        [""
+         {:post {:middleware auth
+                 :tags       ["Lasku"]
+                 :summary    "Päivittää laskujen eräpäivän viitenumeroiden perusteella"
+                 :responses  {200 {:body schema/LaskuStatusList}}
+                 :parameters {:body schema/LaskuDueDateUpdate}
+                 :handler    (fn [{session :session {input :body} :parameters}]
+                               (log/info "Update due date for" (count (:keys input)) "keys to" (:due-date input))
+                               (response/ok (maksut-protocol/update-laskut-due-date maksut-service session input)))}}]]
+
        ["/lasku/:application-key"
         [""
          {:get {:middleware auth
