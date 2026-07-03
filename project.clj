@@ -11,7 +11,6 @@
                  [camel-snake-kebab "0.4.3"]
                  [cheshire "6.1.0"]
                  [clj-http "3.12.3"]
-                 [clj-time "0.15.2"]
                  [software.amazon.awssdk/s3 "2.33.0"]
                  [com.taoensso/timbre "6.3.1"]
                  [com.fzakaria/slf4j-timbre "0.4.1"]

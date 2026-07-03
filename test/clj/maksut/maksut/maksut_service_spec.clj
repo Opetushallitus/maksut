@@ -1,17 +1,12 @@
 (ns maksut.maksut.maksut-service-spec
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [maksut.maksut.maksut-service-protocol :as maksut-protocol]
-            [clj-time.core :as time]
-            [clj-time.format :as format]
             [maksut.maksut.fixtures :as maksut-test-fixtures]
+            [maksut.util.date :refer [plus-days-from-now]]
             [maksut.test-fixtures :as test-fixtures :refer [test-system]]))
-
 
 (use-fixtures :once test-fixtures/with-mock-system)
 (use-fixtures :each test-fixtures/with-empty-database)
-
-(defn date->iso [date]
-  (format/unparse (format/formatters :date) date))
 
 (def hannes {:first-name "Hannes"
              :last-name "Snellmann"
@@ -29,8 +24,8 @@
         first-secret (atom nil)
         amount "123"
         index 1
-        due-date (time/from-now (time/days 7))
-        date (date->iso due-date)]
+        due-date (plus-days-from-now 7)
+        date (str due-date)]
 
     (testing "Create invoice"
       (let [lasku (merge (select-keys hannes [:first-name :last-name :email])
@@ -66,7 +61,7 @@
                              :first_name (:first-name hannes)
                              :last_name (:last-name hannes)
                              :amount "1000.00"
-                             :due_date (date->iso (time/from-now (time/days 14)))
+                             :due_date (str (plus-days-from-now 14))
                              :status :active
                              :paid_at ""
                              :reference application-key
@@ -93,7 +88,7 @@
                       :first_name (:first-name hannes)
                       :last_name (:last-name hannes)
                       :amount "1000.00"
-                      :due_date (date->iso (time/from-now (time/days 14)))
+                      :due_date (str (plus-days-from-now 14))
                       :status :active
                       :paid_at ""
                       :reference application-key2
@@ -124,7 +119,7 @@
                       :first_name (:first-name hannes)
                       :last_name (:last-name hannes)
                       :amount "100.00"
-                      :due_date (date->iso (time/from-now (time/days 7)))
+                      :due_date (str (plus-days-from-now 7))
                       :status :active
                       :paid_at ""
                       :reference application-key3
@@ -165,7 +160,7 @@
                (is (= wo-secret expected)))))
 
     (testing "Try to change due-date of existing TUTU invoice unsuccessfully"
-             (let [new-date (date->iso (time/plus due-date (time/days 30)))
+             (let [new-date (str (.plusDays due-date 30))
                    lasku (merge (select-keys hannes [:first-name :email])
                                 {:application-key application-key
                                  :last-name "Atria"
@@ -176,7 +171,7 @@
                (is (= date (:due_date response)))))
 
     (testing "Try to change due-date of existing ASTU invoice with extend-deadline unsuccessfully"
-      (let [old-date (date->iso (time/from-now (time/days 14)))
+      (let [old-date (str (plus-days-from-now 14))
             lasku (merge (select-keys hannes [:first-name :last-name :email])
                          {:reference application-key2
                           :origin "astu"
@@ -192,7 +187,7 @@
         (is (= old-date (:due_date response)))))
 
     (testing "Change due-date of existing kk-application-payment invoice with extend-deadline successfully"
-      (let [new-date (date->iso (time/from-now (time/days 30)))
+      (let [new-date (str (plus-days-from-now 30))
             lasku (merge (select-keys hannes [:first-name :last-name :email])
                          {:reference application-key3
                           :origin "kkhakemusmaksu"
@@ -208,7 +203,7 @@
         (is (= new-date (:due_date response)))))
 
     (testing "Attempt to change due-date of existing kk-application-payment invoice without extend-deadline unsuccessfully"
-      (let [existing-date (date->iso (time/from-now (time/days 30)))
+      (let [existing-date (str (plus-days-from-now 30))
             lasku (merge (select-keys hannes [:first-name :last-name :email])
                          {:reference application-key3
                           :origin "kkhakemusmaksu"
@@ -238,7 +233,4 @@
     (testing "Get laskut by secret"
              (let [secret @first-secret]
                (let [list (maksut-protocol/get-laskut-by-secret service maksut-test-fixtures/fake-session secret)]
-                 (is (->> list (map :order_id) sort) '(order-id order-id-2)))))
-
-  )
-)
+                 (is (->> list (map :order_id) sort) '(order-id order-id-2)))))))
