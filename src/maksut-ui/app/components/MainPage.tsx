@@ -8,6 +8,7 @@ import Header from '@/app/components/Header';
 import MaksutPanel from '@/app/components/MaksutPanel';
 import ExpiredPanel from '@/app/components/ExpiredPanel';
 import NotFoundPage from '@/app/components/NotFoundPage';
+import ProviderTerms from '@/app/components/ProviderTerms';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -45,6 +46,7 @@ export default function MainPage() {
     <>
       <Header lasku={activeLasku} />
       <MaksutPanel laskut={laskut} secret={secret} />
+      <ProviderTerms lasku={activeLasku} />
     </>
   );
 }
