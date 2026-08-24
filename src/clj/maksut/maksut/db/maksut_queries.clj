@@ -23,9 +23,24 @@
 (declare insert-payment!)
 (declare insert-secret-for-invoice!)
 (declare invalidate-laskut-by-reference!)
+(declare force-invalidate-laskut-by-reference!)
+(declare delete-secrets-by-reference!)
+(declare delete-laskut-by-reference!)
+(declare update-laskut-due-date-by-reference!)
 
 (defn invalidate-laskut-by-reference [db refs]
   (invalidate-laskut-by-reference! db {:refs refs}))
+
+(defn force-invalidate-laskut-by-reference [db refs]
+  (force-invalidate-laskut-by-reference! db {:refs refs}))
+
+(defn delete-laskut-by-reference [db refs]
+  (with-db-transaction [tx db]
+    (delete-secrets-by-reference! tx {:refs refs})
+    (delete-laskut-by-reference! tx {:refs refs})))
+
+(defn update-laskut-due-date-by-reference [db refs due-date]
+  (update-laskut-due-date-by-reference! db {:refs refs :due-date due-date}))
 
 (defn- insert-new-secret [db invoice-id order-id]
   ;prefix secrets with order-id to force them unique even if random would generate two identical

@@ -133,3 +133,7 @@
 
 (s/defschema LaskuStatusList
   [LaskuStatus])
+
+(s/defschema LaskuDueDateUpdate
+  {:keys  [s/Str]
+   :due-date s/Str})
