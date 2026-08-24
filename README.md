@@ -49,7 +49,6 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
 4. Kirjaudu sovellukseen menemällä osoitteeseen: https://localhost:9000/maksut/auth/cas?ticket=abc (tikettiparametrin 
    arvolla ei ole väliä).
 
-
 5. Mene swagger-ui:hin osoitteessa: https://localhost:9000/maksut/swagger, ja tee Maksut -> /maksut/api/lasku-tutu POST-kutsu
    (esimerkiksi) seuraavalla payloadilla:
 
@@ -79,12 +78,19 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
       "paid_at": ""
     }
     ```
+                    
+6. Käynnistä UI:
 
-6. Mene osoitteeseen: https://localhost:9000/maksut/fi?secret=<SECRET> (secret-parametrin arvo otetaan edellisen kutsun
+   ```bash
+      cd src/maksut-ui
+      pnpm run dev
+   ```
+
+7. Mene osoitteeseen: http://localhost:5174/maksut/fi?secret=<SECRET> (secret-parametrin arvo otetaan edellisen kutsun
    vastauksesta). Tästä voit nakutella flown läpi painamalla "Siirry maksamaan" ja valitsemalla Paytrailin puolella maksutavaksi OP:n.
 
 
-7. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
+8. Tapahtuman tuloksena lähetetyt mailit voi katsoa Mailcatcherista osoitteesta: http://localhost:1080/.
 
 
 ## Palvelun ajaminen paikallisesti testiympäristöä vasten
@@ -273,7 +279,7 @@ Käynnistä testit toisessa terminaalissa (lisää `--ui` flag interaktiiviseen 
 
 ```bash
 cd src/maksut-ui
-pnpx playwright test
+pnpm exec playwright test
 ```
 
 Tai aja testit suoraan (edellyttää, että preview-palvelin on käynnissä):
