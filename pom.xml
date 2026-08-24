@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>c56256dea8e3ce4b58f6c9c564ae17fe4a97bfe7</tag>
+    <tag>839af47f04242e6857dd97739091df8a1f503e4f</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -207,7 +207,7 @@
     <dependency>
       <groupId>fi.vm.sade</groupId>
       <artifactId>auditlogger</artifactId>
-      <version>9.2.0-SNAPSHOT</version>
+      <version>9.2.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fi.vm.sade.java-utils</groupId>
