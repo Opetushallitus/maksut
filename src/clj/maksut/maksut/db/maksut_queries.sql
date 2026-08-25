@@ -104,3 +104,25 @@ SELECT * FROM all_invoices WHERE reference = :reference;
 
 -- :name get-linked-lasku-statuses-by-reference :? :*
 SELECT order_id, reference, status, origin FROM all_invoices WHERE reference IN (:v*:refs) ORDER BY order_id;
+
+-- :name force-invalidate-laskut-by-reference! :! :n
+UPDATE invoices
+SET invalidated_at = now()
+WHERE reference IN (:v*:refs)
+  AND id NOT IN (SELECT fk_invoice FROM payments);
+
+-- :name delete-secrets-by-reference! :! :n
+DELETE FROM secrets
+WHERE fk_invoice IN (SELECT id FROM invoices WHERE reference IN (:v*:refs)
+                       AND id NOT IN (SELECT fk_invoice FROM payments));
+
+-- :name delete-laskut-by-reference! :! :n
+DELETE FROM invoices
+WHERE reference IN (:v*:refs)
+  AND id NOT IN (SELECT fk_invoice FROM payments);
+
+-- :name update-laskut-due-date-by-reference! :! :n
+UPDATE invoices
+SET due_date = :due-date::date
+WHERE reference IN (:v*:refs)
+  AND id NOT IN (SELECT fk_invoice FROM payments);
