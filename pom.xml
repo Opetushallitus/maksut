@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/maksut</url>
     <connection>scm:git:git://github.com/Opetushallitus/maksut.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/maksut.git</developerConnection>
-    <tag>c56256dea8e3ce4b58f6c9c564ae17fe4a97bfe7</tag>
+    <tag>e287f7eab8d3c8bd9cb7027ace057dcf4277a602</tag>
   </scm>
   <build>
     <sourceDirectory>src/clj</sourceDirectory>
@@ -59,38 +59,6 @@
       </snapshots>
       <releases>
         <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>releases</id>
-      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>snapshots</id>
-      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <repository>
-      <id>ext-snapshots</id>
-      <url>https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
   </repositories>
@@ -207,7 +175,7 @@
     <dependency>
       <groupId>fi.vm.sade</groupId>
       <artifactId>auditlogger</artifactId>
-      <version>9.2.0-SNAPSHOT</version>
+      <version>9.2.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fi.vm.sade.java-utils</groupId>

@@ -20,7 +20,7 @@
                  [org.flywaydb/flyway-core "11.20.1"]
                  [org.flywaydb/flyway-database-postgresql "11.20.1"]
                  [opiskelijavalinnat-utils/java-cas "2.0.0-SNAPSHOT"]
-                 [fi.vm.sade/auditlogger "9.2.0-SNAPSHOT"]
+                 [fi.vm.sade/auditlogger "9.2.7-SNAPSHOT"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
                  [opiskelijavalinnat-utils.viestinvalitys/kirjasto "1.2.5-SNAPSHOT"]
                  [opiskelijavalinnat-utils/clj-ring-db-cas-session "1.0.0-SNAPSHOT"]
@@ -88,11 +88,4 @@
 
   :repositories [["github" {:url "https://maven.pkg.github.com/Opetushallitus/packages"
                             :username "private-token"
-                            :password :env/GITHUB_TOKEN}]
-                 ["releases" {:url           "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
-                              :sign-releases false
-                              :snapshots     false}]
-                 ["snapshots" {:url      "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"
-                               :releases {:update :never}}]
-                 ["ext-snapshots" {:url      "https://artifactory.opintopolku.fi/artifactory/ext-snapshot-local"
-                                   :releases {:update :never}}]])
+                            :password :env/GITHUB_TOKEN}]])
