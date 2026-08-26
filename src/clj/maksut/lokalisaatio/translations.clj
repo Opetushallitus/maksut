@@ -13,6 +13,9 @@
    :ProviderTerms.address              {:fi "Paytrail Oyj, y-tunnus: 2122839-7<br></br>Innova 2<br></br>Lutakonaukio 7<br></br>40100 Jyväskylä<br></br><a>https://www.paytrail.com/kuluttaja/tietoa-maksamisesta</a>"
                                         :en "Paytrail Oyj<br></br>Innova 2<br></br>Lutakonaukio 7<br></br>40100 Jyväskylä<br></br>Phone: +358 207 181 830<br></br>Business ID 2122839-7<br></br><a>https://www.paytrail.com/en/consumer/information-about-paying</a>"
                                         :sv "Paytrail Oyj, FO-nummer: 2122839-7<br></br>Innova 2<br></br>Lutakonaukio 7<br></br>40100 Jyväskylä<br></br><a>https://www.paytrail.com/kuluttaja/information-om-betalning</a>"}
+   :ProviderTerms.uusiIkkuna           {:fi "Linkki aukeaa uuteen ikkunaan"
+                                        :en "The link opens in a new tab"
+                                        :sv "Länken öppnas i nytt fönster"}
    :TutuPanel.title                    {:fi "Tutkinnon tunnustaminen"
                                         :en "Recognition of qualifications"
                                         :sv "Erkännande av examina"}

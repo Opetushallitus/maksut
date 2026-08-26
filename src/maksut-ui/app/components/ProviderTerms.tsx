@@ -4,6 +4,7 @@ import { OphLink, OphTypography } from '@opetushallitus/oph-design-system';
 import { styled } from '@mui/system';
 import { ophColors } from '@opetushallitus/oph-design-system';
 import { Lasku } from '@/app/lib/types';
+import { visuallyHidden } from '@mui/utils';
 
 const TermsBox = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(2),
@@ -46,8 +47,14 @@ export default function ProviderTerms({ lasku }: { lasku: Lasku }) {
           {t.rich('address', {
             br: () => <br />,
             a: (chunks) => (
-              <OphLink href={chunks as string} variant={'inherit'}>
+              <OphLink
+                rel="noreferrer noopener"
+                target="_blank"
+                href={chunks as string}
+                variant={'inherit'}
+              >
                 {chunks}
+                <span style={visuallyHidden}>{t('uusiIkkuna')}</span>
               </OphLink>
             ),
           })}
