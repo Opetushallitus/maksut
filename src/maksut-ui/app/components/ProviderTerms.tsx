@@ -1,6 +1,6 @@
 import { useTranslations } from 'use-intl';
 import { Box } from '@mui/material';
-import { OphTypography } from '@opetushallitus/oph-design-system';
+import { OphLink, OphTypography } from '@opetushallitus/oph-design-system';
 import { styled } from '@mui/system';
 import { ophColors } from '@opetushallitus/oph-design-system';
 import { Lasku } from '@/app/lib/types';
@@ -43,7 +43,14 @@ export default function ProviderTerms({ lasku }: { lasku: Lasku }) {
           variant={'body2'}
           style={{ fontWeight: 'regular', color: ophColors.grey600 }}
         >
-          {t.rich('address', { br: () => <br /> })}
+          {t.rich('address', {
+            br: () => <br />,
+            a: (chunks) => (
+              <OphLink href={chunks as string} variant={'inherit'}>
+                {chunks}
+              </OphLink>
+            ),
+          })}
         </OphTypography>
       </TermsBox>
     );
