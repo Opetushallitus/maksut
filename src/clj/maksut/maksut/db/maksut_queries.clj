@@ -1,9 +1,12 @@
 (ns maksut.maksut.db.maksut-queries
   (:require [maksut.error :refer [maksut-error]]
             [maksut.util.random :as random]
+            [maksut.util.date :as date]
             [hugsql.core :as hugsql]
             [clojure.java.jdbc :refer [with-db-transaction]]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log])
+  (:import (java.time Instant)
+           (java.time.temporal ChronoUnit)))
 
 
 (hugsql/def-db-fns "maksut/maksut/db/maksut_queries.sql")
@@ -95,6 +98,15 @@
 (defn check-laskut-statuses-by-reference [db refs]
   (get-linked-lasku-statuses-by-reference db {:refs refs}))
 
+(defn- warn-if-paid-late [order-number due-date timestamp]
+  (when due-date
+    (let [paid-date (-> (Instant/ofEpochSecond timestamp)
+                        (.atZone date/helsinki-zone)
+                        (.toLocalDate))
+          days-late (.until due-date paid-date ChronoUnit/DAYS)]
+      (when (pos? days-late)
+        (log/warn "Lasku" order-number "maksettu" days-late "päivää eräpäivän jälkeen")))))
+
 (defn create-payment [db order-number payment-id amount timestamp]
   (with-db-transaction
    [tx db]
@@ -124,6 +136,7 @@
                              :payment-id payment-id
                              :amount     (bigdec amount)
                              :timestamp  timestamp}) ;epoch seconds
+           (warn-if-paid-late order-number (:due_date lasku) timestamp)
            (assoc response :action :created))))
      (do
        (log/error "Payment cannot be processed as invoice not found for order_number " order-number)
