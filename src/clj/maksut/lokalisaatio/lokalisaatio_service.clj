@@ -35,4 +35,13 @@
         (reduce-kv
           #(assoc %1 %2 (get %3 (keyword lang)))
           {}
-          maksut-ui-local-translations)))))
+          maksut-ui-local-translations))))
+
+  (get-localisation [_ lang key]
+    (if (production-environment? config)
+      (let [url (url/resolve-url :lokalisointi-service.get-localisation-by-key config lang key)
+            response (http/get url {:as :json
+                                    :headers {"Caller-Id" "1.2.246.562.10.00000000001.maksut.backend"}})
+            body (:body response)]
+        (-> body first :value))
+      ((maksut-ui-local-translations (keyword key)) (keyword lang)))))

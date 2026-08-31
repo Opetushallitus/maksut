@@ -17,9 +17,7 @@
             [maksut.server :as http]))
 
 (defn base-system [config]
-  [:audit-logger (audit-logger/map->AuditLogger {:config config})
-
-   :db (db/map->DbPool {:config config})
+  [:db (db/map->DbPool {:config config})
 
    :migrations (component/using
                  (migrations/map->Migrations {})
@@ -30,16 +28,17 @@
                      [:audit-logger
                       :db])
 
-   :payment-service (component/using
-                      (payment-service/map->PaymentService {:config config})
-                      [:audit-logger
-                       :email-service
-                       :db
-                       :storage-engine])
-
    :lokalisaatio-service (component/using
                            (lokalisaatio-service/map->LokalisaatioService {:config config})
                            [])
+
+   :payment-service (component/using
+                      (payment-service/map->PaymentService {:config config})
+                      [:audit-logger
+                       :lokalisaatio-service
+                       :email-service
+                       :db
+                       :storage-engine])
 
    :health-checker (component/using
                      (health-check/map->DbHealthChecker {})
@@ -78,10 +77,12 @@
 
 (defn maksut-system [config]
   (let [production-system [:email-service (component/using (email-service/map->EmailService {:config config}) [])
-                           :cas-ticket-validator (cas-ticket-validator/map->CasTicketClient {:config config})]
+                           :cas-ticket-validator (cas-ticket-validator/map->CasTicketClient {:config config})
+                           :audit-logger (audit-logger/map->AuditLogger {:config config})]
 
         mock-system       [:cas-ticket-validator (cas-ticket-validator/map->FakeCasTicketClient {})
-                           :email-service (component/using (email-service/map->DevSmtpEmailService {:config config}) [])]
+                           :email-service (component/using (email-service/map->DevSmtpEmailService {:config config}) [])
+                           :audit-logger (audit-logger/map->AuditLogger {:config config})]
 
         active-system (if (c/development-environment? config)
                         mock-system

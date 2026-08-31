@@ -245,16 +245,18 @@
                  :summary    "Palauttaa form-kentät joilla aloitetaan Paytrail -maksuprosessi"
                  ;:responses  {200 {:body nil}}
                  :parameters {:path {:order-id s/Str}
-                              :query {:secret s/Str
-                                      (s/optional-key :locale) (s/maybe schema/Locale)}}
-                 :handler    (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale]} :query} :parameters}]
+                              :query {:secret                        s/Str
+                                      (s/optional-key :locale)       (s/maybe schema/Locale)
+                                      (s/optional-key :terms-agreed) (s/maybe s/Bool)}}
+                :handler     (fn [{session :session {{:keys [order-id]} :path {:keys [secret locale terms-agreed]} :query} :parameters}]
                                (log/info "Generate Paytrail form fields for " order-id locale secret)
                                (try
                                  (let [paytrail-response (payment-protocol/payment payment-service
                                                                                    session
-                                                                                   {:order-id order-id
-                                                                                    :locale   locale
-                                                                                    :secret   secret})]
+                                                                                   {:order-id     order-id
+                                                                                    :locale       locale
+                                                                                    :secret       secret
+                                                                                    :terms-agreed terms-agreed})]
                                    (response/found (:href paytrail-response)))
                                  (catch Exception e
                                    (log/error "Maksun" order-id "maksaminen epäonnistui:" e)

@@ -126,3 +126,8 @@ UPDATE invoices
 SET due_date = :due-date::date
 WHERE reference IN (:v*:refs)
   AND id NOT IN (SELECT fk_invoice FROM payments);
+
+-- :name update-lasku-terms-agreed-at-by-id! :! :n
+UPDATE invoices
+SET terms_agreed_at = now()
+WHERE id = :id;

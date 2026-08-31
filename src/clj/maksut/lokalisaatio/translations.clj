@@ -1,4 +1,5 @@
-(ns maksut.lokalisaatio.translations)
+(ns maksut.lokalisaatio.translations
+  (:require [clojure.java.io :as io]))
 
 (def maksut-ui-local-translations
   {:Header.title                       {:fi "Maksutapahtumat"
@@ -106,7 +107,25 @@
    :KkHakemusmaksuPanel.kausi_k        {:fi "kevät"
                                         :en "spring"
                                         :sv "vår"}
-   :MaksutPanel.yhteiskäytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
+   :KkHakemusmaksuPanel.hyvaksynta     {:fi "Olen lukenut ja hyväksyn <link>hakemusmaksun ehdot</link>"
+                                        :en "I have read and accept the <link>terms and conditions of the application fee</link>"
+                                        :sv "Jag har läst och godkänner <link>villkoren för ansökningsavgiften</link>"}
+   :KkHakemusmaksuTerms.title          {:fi "Hakemusmaksun maksu- ja toimitusehdot"
+                                        :en "Payment and Delivery Terms for the Application Fee"
+                                        :sv "Betalnings- och leveransvillkor för ansökningsavgiften"}
+   :KkHakemusmaksuTerms.body           {:fi (slurp (io/resource "provider-terms/terms-fi.html"))
+                                        :en (slurp (io/resource "provider-terms/terms-en.html"))
+                                        :sv (slurp (io/resource "provider-terms/terms-sv.html"))}
+   :KkHakemusmaksuTerms.hyvaksynta     {:fi "Olen lukenut ja hyväksyn hakemusmaksun ehdot."
+                                        :en "I have read and accept the terms and conditions of the application fee."
+                                        :sv "Jag har läst och godkänner villkoren för ansökningsavgiften."}
+   :KkHakemusmaksuTerms.sulje          {:fi "Sulje"
+                                        :en "Close"
+                                        :sv "Stäng"}
+   :KkHakemusmaksuTerms.nappi          {:fi "Hyväksyn ehdot"
+                                        :en "I accept the terms and conditions"
+                                        :sv "Jag godkänner villkoren"}
+   :MaksutPanel.yhteiskaytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
                                         :en "If you are using a computer that is in common use, remember to empty the cache and log out from the computer. You can now close this window."
                                         :sv "Om du använder en dator som är i gemensamt bruk, kom ihåg att tomma cacheminnen och logga ut ur datorn. Du kan nu stänga det här fönstret."}
    :MaksutPanel.maksa                  {:fi "Siirry maksamaan"

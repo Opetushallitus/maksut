@@ -52,6 +52,7 @@ export default function ProviderTerms({ lasku }: { lasku: Lasku }) {
                 target="_blank"
                 href={chunks as string}
                 variant={'inherit'}
+                sx={{ color: '#2f7302' }} // Oletusvärillä liian pieni kontrasti taustan kanssa
               >
                 {chunks}
                 <span style={visuallyHidden}>{t('uusiIkkuna')}</span>
