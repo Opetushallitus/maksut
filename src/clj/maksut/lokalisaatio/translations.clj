@@ -4,6 +4,18 @@
   {:Header.title                       {:fi "Maksutapahtumat"
                                         :en "Payments"
                                         :sv "Betalningar"}
+   :ProviderTerms.title                {:fi "Maksupalvelutarjoaja"
+                                        :en "Payment Service Provider"
+                                        :sv "Betaltjänstleverantör"}
+   :ProviderTerms.provider             {:fi "Maksunvälityspalvelun toteuttajana ja maksupalveluntarjoajana toimii Paytrail Oyj (2122839-7) yhteistyössä suomalaisten pankkien ja luottolaitosten kanssa. Paytrail Oyj näkyy maksun saajana tiliotteella tai korttilaskulla ja välittää maksun kauppiaalle. Paytrail Oyj:llä on maksulaitoksen toimilupa. Reklamaatiotapauksissa pyydämme ottamaan ensisijaisesti yhteyttä tuotteen toimittajaan."
+                                        :en "Paytrail Oyj is a collecting payment service provider and an authorized Payment Institution working in cooperation with Finnish banks and credit institutions. Paytrail Oyj will be shown as the recipient on your bank or credit card statement. Paytrail Oyj will forward the payment to the merchant. For complaints, please contact the website the payment was made to."
+                                        :sv "Som betalningsförmedlingstjänst och betaltjänstleverantör fungerar Paytrail Oyj (2122839-7) i samarbete med finska banker och kreditinstitut. Paytrail Oyj visas som mottagare av betalningen på kontoutdraget eller kortfakturan och vidarebefordrar betalningen till handlaren. Paytrail Oyj har ett verksamhetstillstånd för betalningsinstitut. Vid reklamationer ber vi dig först kontakta produktens leverantör."}
+   :ProviderTerms.address              {:fi "Paytrail Oyj, y-tunnus: 2122839-7<br></br>Innova 2<br></br>Lutakonaukio 7<br></br>40100 Jyväskylä<br></br><a>https://www.paytrail.com/kuluttaja/tietoa-maksamisesta</a>"
+                                        :en "Paytrail Oyj<br></br>Innova 2<br></br>Lutakonaukio 7<br></br>40100 Jyväskylä<br></br>Phone: +358 207 181 830<br></br>Business ID 2122839-7<br></br><a>https://www.paytrail.com/en/consumer/information-about-paying</a>"
+                                        :sv "Paytrail Oyj, FO-nummer: 2122839-7<br></br>Innova 2<br></br>Lutakonaukio 7<br></br>40100 Jyväskylä<br></br><a>https://www.paytrail.com/kuluttaja/information-om-betalning</a>"}
+   :ProviderTerms.uusiIkkuna           {:fi "Linkki aukeaa uuteen ikkunaan"
+                                        :en "The link opens in a new tab"
+                                        :sv "Länken öppnas i nytt fönster"}
    :TutuPanel.title                    {:fi "Tutkinnon tunnustaminen"
                                         :en "Recognition of qualifications"
                                         :sv "Erkännande av examina"}

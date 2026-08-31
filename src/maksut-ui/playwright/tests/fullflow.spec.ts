@@ -96,6 +96,34 @@ const assertEmailsSent = async (payerEmail: string) => {
     .toHaveLength(2);
 };
 
+const assertProviderTermsVisible = async () => {
+  await expect(userPage.getByText('Maksupalvelutarjoaja')).toBeVisible();
+  await expect(
+    userPage.getByText(
+      'Maksunvälityspalvelun toteuttajana ja maksupalveluntarjoajana',
+    ),
+  ).toBeVisible();
+  await expect(
+    userPage.getByText('Paytrail Oyj, y-tunnus: 2122839-7'),
+  ).toBeVisible();
+};
+
+const assertProviderTermsNotVisible = async (secret: string) => {
+  await expect(userPage).toHaveURL(`${APP_URL}/maksut/fi/?secret=${secret}`, {
+    timeout: 20000,
+  });
+
+  await expect(userPage.getByText('Maksupalvelutarjoaja')).not.toBeVisible();
+  await expect(
+    userPage.getByText(
+      'Maksunvälityspalvelun toteuttajana ja maksupalveluntarjoajana',
+    ),
+  ).not.toBeVisible();
+  await expect(
+    userPage.getByText('Paytrail Oyj, y-tunnus: 2122839-7'),
+  ).not.toBeVisible();
+};
+
 test.beforeAll(async ({ playwright }) => {
   const browser = await chromium.launch({
     headless: true,
@@ -135,6 +163,8 @@ test.describe('Real Paytrail', () => {
     // mennään käyttäjänä maksusivulle
     await goTo(userPage, `/maksut/fi?secret=${invoice.secret}`);
 
+    await assertProviderTermsVisible();
+
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole('link', { name: 'Siirry maksamaan' }).click();
 
@@ -144,6 +174,9 @@ test.describe('Real Paytrail', () => {
 
     // varmistetaan että ollaan käyttäjänä palattu maksuihin tehdyn maksun sivulle ja maksu merkitty maksetuksi
     await assertInvoiceMarkedPaid(invoice.secret);
+
+    // Varmistetaan, että maksupalveluntarjoajan käyttöehdot eivät näy, kun maksu on jo maksettu
+    await assertProviderTermsNotVisible(invoice.secret);
 
     // varmistetaan että kuitit on lähetetty käyttäjälle sähköpostissa
     await assertEmailsSent(invoice.payerEmail);
@@ -201,6 +234,8 @@ test.describe('Mocked Paytrail', () => {
     // mennään käyttäjänä maksusivulle
     await goTo(userPage, `/maksut/fi?secret=${invoice.secret}`);
 
+    await assertProviderTermsVisible();
+
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole('link', { name: 'Siirry maksamaan' }).click();
 
@@ -208,6 +243,9 @@ test.describe('Mocked Paytrail', () => {
 
     // varmistetaan että ollaan käyttäjänä palattu maksuihin tehdyn maksun sivulle ja maksu merkitty maksetuksi
     await assertInvoiceMarkedPaid(invoice.secret);
+
+    // Varmistetaan, että maksupalveluntarjoajan käyttöehdot eivät näy, kun maksu on jo maksettu
+    await assertProviderTermsNotVisible(invoice.secret);
 
     // varmistetaan että kuitit on lähetetty
     await assertEmailsSent(invoice.payerEmail);
