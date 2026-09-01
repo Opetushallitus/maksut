@@ -7,12 +7,21 @@
             [maksut.schemas.class-pred :as p]
             [ring.adapter.jetty :as jetty]
             [schema.core :as s])
-  (:import org.eclipse.jetty.server.handler.ErrorHandler))
+  (:import [org.eclipse.jetty.ee9.nested ContextHandler ErrorHandler]))
 
+;; ring 1.15 ajaa Jetty 12:n ee9-yhteensopivuuskerroksella. ee9.nested.ErrorHandler
+;; säilyttää handleErrorPage-metodin (poistettu Jetty 12:n core-ErrorHandlerista).
+;; showStacks=false varmistaa ettei stacktracea/Jetty-versiota vuoda muillakaan poluilla.
 (defonce jetty-error-handler
-  (proxy [ErrorHandler] []
-    (handleErrorPage [_ writer _ _]
-      (.write writer "Internal server error\n"))))
+  (doto (proxy [ErrorHandler] []
+          (handleErrorPage [_ writer _ _]
+            (.write writer "Internal server error\n")))
+    (.setShowStacks false)))
+
+(defn- attach-error-handler! [^org.eclipse.jetty.server.Server server]
+  ;; ee9-kontekstia ei saa suoraan configuratorin Server-oliosta -> haetaan beaneista
+  (doseq [ctx (.getContainedBeans server ContextHandler)]
+    (.setErrorHandler ^ContextHandler ctx jetty-error-handler)))
 
 (defrecord HttpServer [config
                        db
@@ -37,8 +46,7 @@
                                              :email-service          email-service
                                              :lokalisaatio-service   lokalisaatio-service
                                              :auth-routes-source     auth-routes-source})
-                                  (assoc (:server config) :configurator (fn [server]
-                                                                (.setErrorHandler server jetty-error-handler))))]
+                                  (assoc (:server config) :configurator attach-error-handler!))]
       (assoc this :server server)))
 
   (stop [this]
