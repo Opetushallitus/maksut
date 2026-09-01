@@ -13,20 +13,9 @@ import {
   OphLink,
   OphTypography,
 } from '@opetushallitus/oph-design-system';
-import { useMessages, useTranslations } from 'use-intl';
+import { useTranslations } from 'use-intl';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid2';
-
-const dialogStyle = {
-  opacity: '1',
-  padding: '24px',
-  borderRadius: '4px',
-  bordered: 'false',
-  bgcolor: 'background.paper',
-  boxShadow: '3px 3px 12px 0px #00000040',
-  gap: '8px',
-  p: 4,
-};
 
 export default function KkHakemusmaksuTerms({
   linkChildren,
@@ -47,12 +36,6 @@ export default function KkHakemusmaksuTerms({
 
   const t = useTranslations('KkHakemusmaksuTerms');
 
-  const messages = useMessages();
-  const listItems = messages.KkHakemusmaksuTerms;
-  if (typeof listItems === 'string') {
-    return;
-  }
-
   return (
     <>
       <OphLink
@@ -71,7 +54,6 @@ export default function KkHakemusmaksuTerms({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         maxWidth="md"
-        style={dialogStyle}
       >
         <DialogTitle variant={'h1'} id="modal-modal-title">
           {t('title')}
@@ -121,20 +103,12 @@ export default function KkHakemusmaksuTerms({
             alignItems="flex-end"
           >
             <Grid size={'auto'}>
-              <OphButton
-                onClick={handleClose}
-                variant={'outlined'}
-                sx={{ py: '8px', px: '16px' }}
-              >
+              <OphButton onClick={handleClose} variant={'outlined'}>
                 {t('sulje')}
               </OphButton>
             </Grid>
             <Grid size={'auto'}>
-              <OphButton
-                onClick={handleAgreeAndClose}
-                variant={'contained'}
-                sx={{ py: '8px', px: '16px' }}
-              >
+              <OphButton onClick={handleAgreeAndClose} variant={'contained'}>
                 {t('nappi')}
               </OphButton>
             </Grid>

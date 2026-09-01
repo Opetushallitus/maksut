@@ -442,7 +442,52 @@
                )))
     ))
 
-(deftest pay-with-terms-agreed
+(deftest kkhakemusmaksu-pay-without-terms-agreed
+  (let [service (:payment-service @test-system)
+        db (:db @test-system)
+        due-date (plus-days-from-now 7)
+        db-data (db-invoice-hakemusmaksu due-date)
+        secret "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret     secret})
+
+    (testing "Throws an exception"
+      (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                             {:order-id (:order_id db-data)
+                                                              :locale "fi"
+                                                              :secret secret}))
+            data (:data exc)]
+        (is (= (:type data) :maksut.error))
+        (is (= (:code data) :invoice-invalidstate-termsunaccepted))))
+
+    (testing "Does not save to database"
+      (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                   {:order-id (:order_id db-data)
+                                                    :locale "fi"
+                                                    :secret secret}))
+      (let [{:keys [terms_agreed_at]}
+            (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+        (is (= terms_agreed_at nil)))
+
+      )
+    (testing "Does not write to audit log"
+      (reset-audit-logs!)
+      (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                   {:order-id (:order_id db-data)
+                                                    :locale "fi"
+                                                    :secret secret}))
+      (let [{:keys [terms_agreed_at]}
+            (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+        (is (= terms_agreed_at nil)))
+      (let [terms-logs (filter
+                         #(= (:operation %) payment-service/op-terms-agreement)
+                         (get-audit-logs))   ]
+        (is (empty? terms-logs))))))
+
+(deftest kkhakemusmaksu-pay-with-terms-agreed
   (let [service (:payment-service @test-system)
         db (:db @test-system)
         due-date (plus-days-from-now 7)

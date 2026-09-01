@@ -4,7 +4,8 @@
             [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
             [clj-http.client :as http]
             [maksut.config :refer [production-environment?]]
-            [maksut.lokalisaatio.translations :refer [maksut-ui-local-translations]]))
+            [maksut.lokalisaatio.translations :refer [maksut-ui-local-translations]]
+            [taoensso.timbre :as log]))
 
 ; Supports only 2 level hierarchy, e.g. "Maksu.active" not "Maksu.status.active"
 (defn- parse-messages [messages]
@@ -16,6 +17,26 @@
         (assoc acc ns (merge (ns acc) {k val}))))
     {}
     messages))
+
+(defn- http-get [url timeout-ms]
+   (let [response (http/get url {:as :json
+                                 :headers {"Caller-Id" "1.2.246.562.10.00000000001.maksut.backend"}
+                                 :socket-timeout timeout-ms
+                                 :connection-timeout timeout-ms})]
+     (:body response)))
+
+(defn- get-with-retries [url timeout remaining-retries]
+  (try
+       (http-get url timeout)
+       (catch Exception e
+         (if (> remaining-retries 0)
+           (do
+             (log/warn e "Retrying calling lokalisaatio with url:" url "")
+             (Thread/sleep 1000)
+             (get-with-retries url timeout (- remaining-retries 1)))
+           (do
+             (log/warn e "Giving up on calling lokalisaatio with url:" url)
+             (throw e))))))
 
 (defrecord LokalisaatioService
   [config]
@@ -40,8 +61,6 @@
   (get-localisation [_ lang key]
     (if (production-environment? config)
       (let [url (url/resolve-url :lokalisointi-service.get-localisation-by-key config lang key)
-            response (http/get url {:as :json
-                                    :headers {"Caller-Id" "1.2.246.562.10.00000000001.maksut.backend"}})
-            body (:body response)]
+            body (get-with-retries url 5000 2)]
         (-> body first :value))
       ((maksut-ui-local-translations (keyword key)) (keyword lang)))))

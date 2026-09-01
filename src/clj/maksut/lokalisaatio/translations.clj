@@ -125,7 +125,7 @@
    :KkHakemusmaksuTerms.nappi          {:fi "Hyväksyn ehdot"
                                         :en "I accept the terms and conditions"
                                         :sv "Jag godkänner villkoren"}
-   :MaksutPanel.yhteiskaytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
+   :MaksutPanel.yhteiskäytto           {:fi "Jos käytät yhteiskäyttöistä tietokonetta, muista tyhjentää selaimen välimuisti ja kirjautua ulos koneelta. Voit nyt sulkea tämän ikkunan."
                                         :en "If you are using a computer that is in common use, remember to empty the cache and log out from the computer. You can now close this window."
                                         :sv "Om du använder en dator som är i gemensamt bruk, kom ihåg att tomma cacheminnen och logga ut ur datorn. Du kan nu stänga det här fönstret."}
    :MaksutPanel.maksa                  {:fi "Siirry maksamaan"

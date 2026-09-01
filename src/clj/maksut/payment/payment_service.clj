@@ -42,7 +42,7 @@
 
 (def vat-zero 0)
 
-(defonce kk-hakemusmaksu-ehdot-key "KkHakemusmaksuTerms.body")
+(defonce terms-keys {"kkhakemusmaksu" "KkHakemusmaksuTerms.body"})
 
 (defn Lasku->AuditJson [lasku]
   (assoc
@@ -175,8 +175,10 @@
     (when (not= (:status lasku) "active")
           (maksut-error :invoice-not-active (str "Maksua ei voi enää maksaa: " secret)))
 
-    (when terms-agreed
-      (let [terms (lokalisaatio-protocol/get-localisation lokalisaatio-service locale kk-hakemusmaksu-ehdot-key)]
+    (when (= "kkhakemusmaksu" (:origin lasku))
+      (when-not terms-agreed
+        (maksut-error :invoice-invalidstate-termsunaccepted (str "Ehtoja ei ole hyväksytty: " secret)))
+      (let [terms (lokalisaatio-protocol/get-localisation lokalisaatio-service locale (get terms-keys (:origin lasku)))]
         (maksut-queries/update-terms-agreed-at-by-id db (:id lasku))
         (audit/log audit-logger
                    (audit/->user session)
