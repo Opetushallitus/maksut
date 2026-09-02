@@ -9,7 +9,8 @@
             [maksut.test-fixtures :as test-fixtures :refer [test-system
                                                             get-emails
                                                             is-email-count
-                                                            reset-emails!]])
+                                                            reset-emails!]]
+            [taoensso.timbre :as timbre])
   (:import (java.time LocalDate ZonedDateTime))
   (:use clj-http.fake))
 
@@ -474,3 +475,39 @@
                         (is (= (:code data) :invoice-invalidstate-paid)))))
 
            ))
+
+(deftest paid-after-due-date-logs-warning
+  (let [service  (:payment-service @test-system)
+        db       (:db @test-system)
+        due-date (LocalDate/parse "2020-01-01")
+        db-data  (db-invoice due-date)
+        locale   "fi"
+        logged   (atom [])]
+
+    (test-fixtures/add-invoice! db db-data)
+
+    (testing "Payment success callback logs a warning when paid long after due-date"
+      (timbre/with-merged-config
+        {:appenders {:test-capture {:enabled? true
+                                    :fn       (fn [data] (swap! logged conj (:vargs data)))}}}
+        (let [response (payment-protocol/process-success-callback service params locale false)]
+          (is (= (:action response) :created))))
+      (is (some #(s/includes? (apply str %) "eräpäivän jälkeen") @logged)))))
+
+(deftest paid-on-time-does-not-log-warning
+  (let [service  (:payment-service @test-system)
+        db       (:db @test-system)
+        due-date (plus-days-from-now 14)
+        db-data  (db-invoice due-date)
+        locale   "fi"
+        logged   (atom [])]
+
+    (test-fixtures/add-invoice! db db-data)
+
+    (testing "Payment success callback does not log a warning when paid before due-date"
+      (timbre/with-merged-config
+        {:appenders {:test-capture {:enabled? true
+                                    :fn       (fn [data] (swap! logged conj (:vargs data)))}}}
+        (let [response (payment-protocol/process-success-callback service params locale false)]
+          (is (= (:action response) :created))))
+      (is (not (some #(s/includes? (apply str %) "eräpäivän jälkeen") @logged))))))
