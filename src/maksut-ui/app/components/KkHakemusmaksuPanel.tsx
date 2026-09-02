@@ -4,9 +4,9 @@ import { Lasku, Locale } from '@/app/lib/types';
 import Maksu from '@/app/components/Maksu';
 import { useLocale, useTranslations } from 'use-intl';
 import Panel from '@/app/components/Panel';
-import MaksaButton from '@/app/components/MaksaButton';
 import { translateLocalizedString } from '@/app/lib/utils';
 import { OphTypography } from '@opetushallitus/oph-design-system';
+import KkHakemusmaksuTermsAgreementForm from '@/app/components/KkHakemusmaksuTermsAgreementForm';
 
 const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
   const t = useTranslations('KkHakemusmaksuPanel');
@@ -93,7 +93,7 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
       )}
       {stateText()}
       <Maksu lasku={lasku} />
-      <MaksaButton lasku={lasku}></MaksaButton>
+      <KkHakemusmaksuTermsAgreementForm lasku={lasku} />
     </Panel>
   );
 };

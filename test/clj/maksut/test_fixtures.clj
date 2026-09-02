@@ -31,6 +31,12 @@
 (defn reset-emails! []
   (reset! (:mock-email-service-list @test-system) '()))
 
+(defn get-audit-logs []
+  @(:mock-audit-log-list @test-system))
+
+(defn reset-audit-logs! []
+  (reset! (:mock-audit-log-list @test-system) '()))
+
 (defn with-mock-system [f]
   (start-system)
   (f)

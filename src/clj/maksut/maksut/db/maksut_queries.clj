@@ -30,6 +30,7 @@
 (declare delete-secrets-by-reference!)
 (declare delete-laskut-by-reference!)
 (declare update-laskut-due-date-by-reference!)
+(declare update-lasku-terms-agreed-at-by-id!)
 
 (defn invalidate-laskut-by-reference [db refs]
   (invalidate-laskut-by-reference! db {:refs refs}))
@@ -44,6 +45,9 @@
 
 (defn update-laskut-due-date-by-reference [db refs due-date]
   (update-laskut-due-date-by-reference! db {:refs refs :due-date due-date}))
+
+(defn update-terms-agreed-at-by-id [db id]
+  (update-lasku-terms-agreed-at-by-id! db {:id id}))
 
 (defn- insert-new-secret [db invoice-id order-id]
   ;prefix secrets with order-id to force them unique even if random would generate two identical
@@ -163,6 +167,3 @@
       (get-lasku-by-order-id tx {:order-id (:order-id lasku)})
       ;or CREATE new
       (insert-lasku-create-secret db lasku))))
-
-
-
