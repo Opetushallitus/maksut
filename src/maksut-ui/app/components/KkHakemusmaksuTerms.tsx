@@ -55,21 +55,27 @@ export default function KkHakemusmaksuTerms({
         aria-describedby="modal-modal-description"
         maxWidth="md"
       >
-        <DialogTitle variant={'h1'} id="modal-modal-title">
-          {t('title')}
-        </DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={handleClose}
+        <DialogTitle
+          variant={'h1'}
+          id="modal-modal-title"
           sx={{
-            position: 'absolute',
-            right: 16,
-            top: 16,
-            color: ophColors.grey900,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          <CloseIcon />
-        </IconButton>
+          {t('title')}
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              color: ophColors.grey900,
+              alignSelf: 'flex-start',
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent id="modal-modal-description" sx={{ pt: 0, pr: 6 }}>
           {t.rich('body', {
             p: (chunks) => (
