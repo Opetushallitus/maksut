@@ -101,6 +101,7 @@ export default function KkHakemusmaksuTerms({
             spacing={2}
             justifyContent="flex-end"
             alignItems="flex-end"
+            direction={{ xs: 'column-reverse', sm: 'row' }}
           >
             <Grid size={'auto'}>
               <OphButton onClick={handleClose} variant={'outlined'}>
