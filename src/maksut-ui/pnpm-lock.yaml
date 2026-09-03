@@ -22,6 +22,9 @@ importers:
       '@mui/system':
         specifier: ^6.4.3
         version: 6.5.0(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.1))(@types/react@19.2.7)(react@19.2.1))(@types/react@19.2.7)(react@19.2.1)
+      '@mui/utils':
+        specifier: ^6.4.9
+        version: 6.4.9(@types/react@19.2.7)(react@19.2.1)
       '@noble/hashes':
         specifier: ^1.7.1
         version: 1.8.0

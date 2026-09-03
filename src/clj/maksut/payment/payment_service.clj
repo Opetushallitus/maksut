@@ -9,6 +9,7 @@
             [maksut.files.file-store :as file-store]
             [maksut.config :as c]
             [maksut.logs.audit-logger-protocol :as audit]
+            [maksut.lokalisaatio.lokalisaatio-service-protocol :as lokalisaatio-protocol]
             [maksut.schemas.class-pred :as p]
             [maksut.util.url-encoder :refer [encode]]
             [maksut.util.translation :refer [get-translation]]
@@ -35,9 +36,13 @@
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
 
+(def op-terms-agreement (audit/->operation "HakumaksunEhtojenHyvaksyminen"))
+
 (def op-get-kuitti (audit/->operation "KuitinHakeminen"))
 
 (def vat-zero 0)
+
+(defonce terms-keys {"kkhakemusmaksu" "KkHakemusmaksuTerms.body"})
 
 (defn Lasku->AuditJson [lasku]
   (assoc
@@ -158,7 +163,7 @@
     (json/write-str (generate-json-data paytrail-config p))))
 
 ;Instead of directly searching by order-id, use secret to prevent order-id brute-forcing
-(defn- payment [this db audit-logger session {:keys [order-id locale secret]}]
+(defn- payment [this db audit-logger lokalisaatio-service session {:keys [order-id locale secret terms-agreed]}]
   (let [laskut (maksut-queries/get-laskut-by-secret db secret)
         lasku (first (filter (fn [x] (= (:order_id x) order-id)) laskut))]
     (cond
@@ -170,6 +175,17 @@
     (when (not= (:status lasku) "active")
           (maksut-error :invoice-not-active (str "Maksua ei voi enää maksaa: " secret)))
 
+    (when (= "kkhakemusmaksu" (:origin lasku))
+      (when-not terms-agreed
+        (maksut-error :invoice-invalidstate-termsunaccepted (str "Ehtoja ei ole hyväksytty: " secret)))
+      (let [terms (lokalisaatio-protocol/get-localisation lokalisaatio-service locale (get terms-keys (:origin lasku)))]
+        (maksut-queries/update-terms-agreed-at-by-id db (:id lasku))
+        (audit/log audit-logger
+                   (audit/->user session)
+                   op-terms-agreement
+                   (audit/->target {:id (str (:id lasku)) :reference (:reference lasku) :email (:email lasku)})
+                   (audit/->changes {} {:agreed-terms terms}))))
+        
     (let [merchant-key (merchant-key-from-order-id this order-id)
           paytrail-config (get-paytrail-config this merchant-key)
           paytrail-host (:paytrail-host paytrail-config)
@@ -309,11 +325,12 @@
 (defn- kuitti-get [_ _ storage-engine {:keys [file-key]}]
   (file-store/get-file storage-engine file-key))
 
-(defrecord PaymentService [config audit-logger email-service db storage-engine]
+(defrecord PaymentService [config audit-logger lokalisaatio-service email-service db storage-engine]
   component/Lifecycle
   (start [this]
     (s/validate c/MaksutConfig config)
     (s/validate (p/extends-class-pred email-protocol/EmailServiceProtocol) email-service)
+    (s/validate (p/extends-class-pred lokalisaatio-protocol/LokalisaatioServiceProtocol) lokalisaatio-service)
     (s/validate (p/extends-class-pred audit/AuditLoggerProtocol) audit-logger)
 
     (s/validate s/Str (get-in config [:payment :paytrail-config :default :host]))
@@ -331,7 +348,7 @@
 
   payment-service-protocol/PaymentServiceProtocol
   (payment [this session params]
-    (payment this db audit-logger session params))
+    (payment this db audit-logger lokalisaatio-service session params))
   (process-success-callback [this params locale notify?]
     (process-success-callback this db email-service params locale storage-engine notify?))
   (get-kuitti [this session params]
