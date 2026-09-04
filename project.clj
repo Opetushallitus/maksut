@@ -9,15 +9,28 @@
 (defproject maksut "0.1.0-SNAPSHOT"
   :managed-dependencies [[clj-commons/clj-yaml "1.0.29"]
                          [com.google.protobuf/protobuf-java "3.25.5"]
-                         [commons-fileupload "1.6.0"]
-                         [commons-io "2.14.0"]
+                         ;; ring-core 1.15.5 vaatii commons-io 2.21.0; aiempi 2.14.0 rikkoi multipartin
+                         ;; (IllegalAccessError AbstractStreamBuilder.getBufferSize). 2.21.0 sisältää CVE-2024-47554-korjauksen.
+                         [commons-io "2.21.0"]
                          [org.apache.commons/commons-compress "1.21"]
-                         [org.apache.commons/commons-fileupload2-core "2.0.0-M4"]
+                         ;; ring-core 1.15.5 vaatii commons-fileupload2-core 2.0.0-M5; aiempi M4 rikkoi multipartin
+                         ;; ("No matching method setMaxFileSize"). M5 sisältää CVE-2025-48976-korjauksen kuten M4.
+                         [org.apache.commons/commons-fileupload2-core "2.0.0-M5"]
                          [org.jsoup/jsoup "1.23.2"]
                          ;; Tietoturvapäivitykset 2026-09 (transitiiviset pinnit)
+                         ;; jackson: OY-5116 poisti nämä managed-depeistä, mutta CVE-2026-54512/54513 (databind, CRITICAL)
+                         ;; pakottaa 2.21.6:een. Jackson ei tue sekoitettuja minoreita -> pidetään myös cheshiren
+                         ;; (cbor/smile) ja jsonistan (jsr310) tuomat moduulit samassa versiossa.
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-annotations "2.21"] ; annotations-linja ei käytä patch-numeroa
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
+                         [com.fasterxml.jackson.datatype/jackson-datatype-jsr310 ~jackson-version]
+                         ;; buddy-core pinnaa bc-jdk18on 1.78.1 -> pakota 1.85 (CVE-2026-8763 ym.)
+                         [org.bouncycastle/bcprov-jdk18on "1.85"]
+                         [org.bouncycastle/bcpkix-jdk18on "1.85"]
+                         [org.bouncycastle/bcutil-jdk18on "1.85"]
                          [io.netty/netty-buffer ~netty-version]
                          [io.netty/netty-common ~netty-version]
                          [io.netty/netty-codec ~netty-version]
@@ -72,12 +85,10 @@
                  [org.flywaydb/flyway-core "11.20.1"]
                  [org.flywaydb/flyway-database-postgresql "11.20.1"]
                  [opiskelijavalinnat-utils/java-cas "2.3.0-SNAPSHOT"]
-                 ;; buddy-core 1.12 -> pudottaa haavoittuvan bouncycastle *-jdk15on 1.70 -ketjun;
-                 ;; buddy-core pinnaa jdk18on 1.78.1 -> pakotetaan 1.85 (CVE-2026-8763 ym.)
+                 ;; buddy-core 1.12 pudottaa haavoittuvan bouncycastle *-jdk15on 1.70 -ketjun.
+                 ;; Käytetään suoraan (payment_service.clj: buddy.core.codecs/mac). bc-jdk18on-pinni
+                 ;; on :managed-dependencies:ssä (buddy-core pinnaa 1.78.1 -> pakotetaan 1.85, CVE-2026-8763 ym.).
                  [buddy/buddy-core "1.12.0-430"]
-                 [org.bouncycastle/bcprov-jdk18on "1.85"]
-                 [org.bouncycastle/bcpkix-jdk18on "1.85"]
-                 [org.bouncycastle/bcutil-jdk18on "1.85"]
                  [fi.vm.sade/auditlogger "9.2.7-SNAPSHOT"]
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
                  [opiskelijavalinnat-utils.viestinvalitys/kirjasto "1.2.5-SNAPSHOT"]
