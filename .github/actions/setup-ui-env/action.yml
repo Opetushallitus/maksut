@@ -3,17 +3,17 @@ description: 'Setup UI environment'
 runs:
   using: 'composite'
   steps:
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
       with:
-        version: 10.24.0
-    - uses: actions/setup-node@v4
+        version: 11.24.0
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
       with:
         node-version-file: '.nvmrc'
         cache: 'pnpm'
         cache-dependency-path: src/maksut-ui/pnpm-lock.yaml
         registry-url: 'https://npm.pkg.github.com'
         scope: '@opetushallitus'
-    - uses: actions/cache@v4
+    - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
       id: node_modules-cache
       with:
         path: ${{ github.workspace }}/src/maksut-ui/node_modules
