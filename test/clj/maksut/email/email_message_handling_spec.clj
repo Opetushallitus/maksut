@@ -25,7 +25,7 @@
                     :recipients ["first-sender" "second-sender"]
                     :subject    "Subject line"
                     :lang       "en"}
-        result (->viesti email-data "Body")]
+        result (->viesti email-data "Body" "astu")]
     (testing "Uses the data from email-data"
       (is (= (-> result .getLahettaja .get .getSahkopostiOsoite .get) (:from email-data)))
       (is (= (-> result .getLahettaja .get .getNimi) (Optional/of "Opetushallitus")))
@@ -41,3 +41,14 @@
       (is (= (-> result .getLahettavaPalvelu .get) "maksut"))
       (is (= (-> result .getPrioriteetti .get) (LahetysImpl/LAHETYS_PRIORITEETTI_NORMAALI)))
       (is (= (-> result .getSailytysaika .get) 2000)))))
+
+(deftest tutu-viesti-test
+  (let [email-data {:from       "lahettaja"
+                    :recipients ["first-sender" "second-sender"]
+                    :subject    "Subject line"
+                    :lang       "en"}
+        result (->viesti email-data "Body" "tutu")]
+    (testing "Sets the correct access permissions"
+      (let [kayttooikeudet (->> result .getKayttooikeusRajoitukset .get)]
+        (is (= (map #(-> % .getOikeus .get) kayttooikeudet) ["APP_VIESTINVALITYS_OPH_PAAKAYTTAJA" "APP_TUTU_CRUD" "APP_TUTU_ESITTELIJA"]))
+        (is (= (map #(-> % .getOrganisaatio .get) kayttooikeudet) ["1.2.246.562.10.00000000001" "1.2.246.562.10.60399351786" "1.2.246.562.10.60399351786"]))))))
