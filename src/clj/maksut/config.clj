@@ -22,7 +22,9 @@
                           :order-id-prefix    {:tutu s/Str
                                                :astu s/Str
                                                :kkhakemusmaksu s/Str}
-                          :currency           s/Str}
+                          :currency           s/Str
+                          :attempt-limits [{:max-attempts s/Int
+                                            :in-minutes s/Int}]}
    :tutu                 {:lasku-origin       s/Str
                           :order-id-prefix    s/Str}
    :file-store           {:engine s/Keyword

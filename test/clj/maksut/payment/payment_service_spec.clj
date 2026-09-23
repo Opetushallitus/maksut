@@ -472,9 +472,8 @@
                                                     :secret secret}))
       (let [{:keys [terms_agreed_at]}
             (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
-        (is (= terms_agreed_at nil)))
+        (is (= terms_agreed_at nil))))
 
-      )
     (testing "Does not write to audit log"
       (reset-audit-logs!)
       (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
@@ -548,6 +547,58 @@
           (is (s/includes?
                 (-> change (.get "newValue") .getAsString)
                 "<p>Hyväksymällä nämä ehdot vahvistan ymmärtäväni ja hyväksyväni seuraavat hakemusmaksua koskevat maksu- ja toimitusehdot.</p>")))))))
+
+(deftest repeated-payment-attempts
+  (let [service (:payment-service @test-system)
+        db (:db @test-system)
+        due-date (plus-days-from-now 7)
+        db-data (db-invoice-hakemusmaksu due-date)
+        secret "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)
+        params {:order-id     (:order_id db-data)
+                :locale       "fi"
+                :secret       secret
+                :terms-agreed true}]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret     secret})
+
+    (testing "Refuses payments after x attempts"
+      (with-global-fake-routes
+        {"http://localhost:9040/payments" {:post (fn [_]
+                                                   {:status  200
+                                                    :headers {}
+                                                    :body    "{\"href\":\"http://esimerkkilinkki\"}"})}}
+        (dotimes [_ 5] (payment-protocol/payment service maksut-test-fixtures/fake-session params))
+        (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session params))
+              data (:data exc)]
+          (is (= (:type data) :maksut.error))
+          (is (= (:code data) :too-many-payment-attempts))
+          (is (= (:http-status data) 429)))))
+
+    (testing "still refuses payments after n-1 minutes have passed"
+      (jdbc/execute! db ["UPDATE payment_attempts SET created_at = created_at - make_interval(mins => ?::int)" 14])
+      (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session params))
+            data (:data exc)]
+        (is (= (:type data) :maksut.error))
+        (is (= (:code data) :too-many-payment-attempts))
+        (is (= (:http-status data) 429))))
+
+    (testing "allows payments again after n minutes have passed"
+      (with-global-fake-routes
+        {"http://localhost:9040/payments" {:post (fn [_]
+                                                   {:status  200
+                                                    :headers {}
+                                                    :body    "{\"href\":\"http://esimerkkilinkki\"}"})}}
+        (jdbc/execute! db ["UPDATE payment_attempts SET created_at = created_at - make_interval(mins => ?::int)" 1])
+        (let [{:keys [href]} (payment-protocol/payment service maksut-test-fixtures/fake-session params)]
+          (is (not-empty href)))))
+
+    (testing "old attempts have been deleted"
+      (let [{:keys [count]}
+            (jdbc/query db ["SELECT count(*) as count FROM payment_attempts"])]
+        (is (= count 1))))))
 
 (deftest try-to-change-invoice-after-paying
          (let [service (:payment-service @test-system)

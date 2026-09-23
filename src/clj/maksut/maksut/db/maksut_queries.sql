@@ -131,3 +131,17 @@ WHERE reference IN (:v*:refs)
 UPDATE invoices
 SET terms_agreed_at = now()
 WHERE id = :id;
+
+-- :name add-payment-attempt! :! :n
+INSERT INTO payment_attempts (fk_invoice)
+VALUES (:invoice-id);
+
+-- :name too-many-attempts :? :1
+SELECT count(*) >= :max-attempts AS result FROM payment_attempts
+WHERE fk_invoice = :invoice-id
+AND created_at >= now() - make_interval(mins => :since-minutes::int);
+
+-- :name delete-old-payment-attempts! :! :n
+DELETE FROM payment_attempts
+WHERE fk_invoice = :invoice-id
+  AND created_at < now() - make_interval(mins => :since-minutes::int);
