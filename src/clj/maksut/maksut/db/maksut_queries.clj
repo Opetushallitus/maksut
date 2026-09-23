@@ -28,6 +28,10 @@
 (declare delete-laskut-by-reference!)
 (declare update-laskut-due-date-by-reference!)
 (declare update-lasku-terms-agreed-at-by-id!)
+(declare get-number-of-payment-attempts-since)
+(declare too-many-attempts)
+(declare add-payment-attempt!)
+(declare delete-old-payment-attempts!)
 
 (defn invalidate-laskut-by-reference [db refs]
   (invalidate-laskut-by-reference! db {:refs refs}))
@@ -45,6 +49,21 @@
 
 (defn update-terms-agreed-at-by-id [db id]
   (update-lasku-terms-agreed-at-by-id! db {:id id}))
+
+(defn insert-payment-attempt [db invoice-id]
+  (add-payment-attempt! db {:invoice-id invoice-id}))
+
+(defn- has-too-many-attempts? [tx invoice-id attempt-limit]
+  (let [since-minutes (:in-minutes attempt-limit)
+        max-attempts (:max-attempts attempt-limit)
+        params {:invoice-id invoice-id :since-minutes since-minutes :max-attempts max-attempts}]
+    (:result (too-many-attempts tx params))))
+
+(defn too-many-payment-attempts? [db invoice-id attempt-limits]
+  (let [max-minutes (apply max (map #(:in-minutes %) attempt-limits))]
+    (with-db-transaction [tx db]
+      (delete-old-payment-attempts! tx {:invoice-id invoice-id :since-minutes max-minutes})
+      (some #(has-too-many-attempts? tx invoice-id %) attempt-limits))))
 
 (defn- insert-new-secret [db invoice-id order-id]
   ;prefix secrets with order-id to force them unique even if random would generate two identical

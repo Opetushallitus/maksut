@@ -42,6 +42,9 @@
 
 (def vat-zero 0)
 
+(def max-payment-attempts 5)
+(def payment-attempts-since-minutes 15)
+
 (defonce terms-keys {"kkhakemusmaksu" "KkHakemusmaksuTerms.body"})
 
 (defn Lasku->AuditJson [lasku]
@@ -175,6 +178,10 @@
     (when (not= (:status lasku) "active")
           (maksut-error :invoice-not-active (str "Maksua ei voi enää maksaa: " secret)))
 
+    (when (maksut-queries/too-many-payment-attempts? db (:id lasku) (-> this :config :attempt-limits))
+      (warn "Liian monta maksuyritystä: " secret)
+      (maksut-error :too-many-payment-attempts (str "Liian monta maksuyritystä: " secret) {:status-code 429}))
+
     (when (= "kkhakemusmaksu" (:origin lasku))
       (when-not terms-agreed
         (maksut-error :invoice-invalidstate-termsunaccepted (str "Ehtoja ei ole hyväksytty: " secret)))
@@ -203,6 +210,8 @@
                         :body             body}
                        client/request)
           audit-data (Lasku->AuditJson lasku)]
+
+      (maksut-queries/insert-payment-attempt db (:id lasku))
 
       (audit/log audit-logger
                  (audit/->user session)
