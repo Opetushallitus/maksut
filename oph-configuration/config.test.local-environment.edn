@@ -15,7 +15,9 @@
                         :order-id-prefix    {:tutu "TTU"
                                              :astu "ASTU"
                                              :kkhakemusmaksu "KKHA"}
-                        :currency           "EUR"}
+                        :currency           "EUR"
+                        :attempt-limits [{:max-attempts 5
+                                          :in-minutes   15}]}
  :tutu                 {:lasku-origin       "tutu"
                         :order-id-prefix    "TTU"}
  :file-store           {:engine :filesystem
