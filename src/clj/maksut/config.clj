@@ -4,6 +4,13 @@
             [maksut.schemas.public-config-schemas :as public]
             [schema.core :as s]))
 
+(s/defschema AttemptLimits
+  (s/constrained
+    [{:max-attempts s/Int
+      :in-minutes s/Int}]
+    (fn [list] (not-empty list))
+    "Not empty"))
+
 (s/defschema MaksutConfig
   {:server               s/Any                              ; this goes straight to jetty where keys have defaults
    :log                  {:base-path s/Str}
@@ -23,8 +30,7 @@
                                                :astu s/Str
                                                :kkhakemusmaksu s/Str}
                           :currency           s/Str
-                          :attempt-limits [{:max-attempts s/Int
-                                            :in-minutes s/Int}]}
+                          :attempt-limits AttemptLimits}
    :tutu                 {:lasku-origin       s/Str
                           :order-id-prefix    s/Str}
    :file-store           {:engine s/Keyword
