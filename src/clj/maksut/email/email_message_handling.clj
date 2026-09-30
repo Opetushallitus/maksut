@@ -20,6 +20,13 @@
 
 (def oph-organisaatio "1.2.246.562.10.00000000001")
 
+(def tutu-crud "APP_TUTU_CRUD")
+
+(def tutu-esittelija "APP_TUTU_ESITTELIJA")
+
+(def tutu-organisaatio "1.2.246.562.10.60399351786")
+
+
 (def lahettava-palvelu "maksut")
 
 (def sailytysaika-5-vuotta (int 2000))
@@ -27,6 +34,13 @@
 (def kayttorajoitukset
   (-> (ViestinvalitysBuilder/kayttooikeusrajoituksetBuilder)
       (.withKayttooikeus viestinvalitys-paakayttaja oph-organisaatio)
+      (.build)))
+
+(def kayttorajoitukset-tutu
+  (-> (ViestinvalitysBuilder/kayttooikeusrajoituksetBuilder)
+      (.withKayttooikeus viestinvalitys-paakayttaja oph-organisaatio)
+      (.withKayttooikeus tutu-crud tutu-organisaatio)
+      (.withKayttooikeus tutu-esittelija tutu-organisaatio)
       (.build)))
 
 (defn finnish-datetime-from-long [timestamp-long]
@@ -42,24 +56,26 @@
         with-recipient (fn ([builder recipient] (.withVastaanottaja builder (Optional/empty) recipient)))]
     (.build (reduce with-recipient builder recipients))))
 
-(defn ->viesti ^Viesti [email-data body]
+(defn ->viesti ^Viesti [email-data body origin]
   (-> (ViestinvalitysBuilder/viestiBuilder)
       (.withOtsikko (:subject email-data))
       (.withHtmlSisalto body)
       (.withKielet (into-array ^String [(name (:lang email-data))]))
       (.withVastaanottajat (->vastaanottajat (:recipients email-data)))
-      (.withKayttooikeusRajoitukset kayttorajoitukset)
+      (.withKayttooikeusRajoitukset (if (= "tutu" origin)
+                                      kayttorajoitukset-tutu
+                                      kayttorajoitukset))
       (.withLahettavaPalvelu lahettava-palvelu)
       (.withNormaaliPrioriteetti)
       (.withLahettaja (Optional/of "Opetushallitus") (:from email-data))
       (.withSailytysAika sailytysaika-5-vuotta) ; About 5 and a half years
       (.build)))
 
-(defn- make-email ^Viesti [email-data render-file-fn]
+(defn- make-email ^Viesti [email-data render-file-fn origin]
   (when (seq (:recipients email-data))
     (let [template-params (:template-params email-data)
           body (render-file-fn template-params)]
-      (->viesti email-data body))))
+      (->viesti email-data body origin))))
 
 (defn make-email-data
   [recipient subject lang template-params]
@@ -70,7 +86,7 @@
    :template-params template-params})
 
 
-(defn- create-email ^Viesti [recipient locale trans-ns template-file & {:as params}]
+(defn- create-email ^Viesti [recipient locale trans-ns template-file origin & {:as params}]
    (let [lang                            (keyword locale)
          trans                           (partial get-translation lang)
          subject                         (str (trans :email/subject-prefix) ": " (trans (keyword (name trans-ns) (name :otsikko))))
@@ -84,7 +100,8 @@
                                             (selmer/render-file template-file template-params))]
      (make-email
        applicant-email-data
-       render-file-fn)))
+       render-file-fn
+       origin)))
 
 
 (defn create-tutu-processing-email ^Viesti [recipient locale application-id]
@@ -92,13 +109,15 @@
                 locale
                 :email-käsittely
                 "templates/tutu_payment_processing.html"
+                "tutu"
                 :application-id application-id))
 
 (defn create-tutu-decision-email ^Viesti [recipient locale]
   (create-email recipient
                 locale
                 :email-päätös
-                "templates/tutu_payment_decision.html"))
+                "templates/tutu_payment_decision.html"
+                "tutu"))
 
 (defn create-payment-receipt ^Viesti
   [recipient locale first-name last-name payment-reference timestamp-millis
@@ -110,6 +129,7 @@
                   "astu" :astukuitti
                   "kkhakemusmaksu" :kkmaksukuitti)
                 "templates/payment_receipt.html"
+                origin
                 :first-name first-name
                 :last-name last-name
                 :payment-reference payment-reference
