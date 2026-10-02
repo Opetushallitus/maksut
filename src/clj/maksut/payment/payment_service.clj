@@ -204,6 +204,10 @@
                        client/request)
           audit-data (Lasku->AuditJson lasku)]
 
+      (when (maksut-queries/check-and-add-payment-attempt db (:id lasku) (-> this :config :attempt-limits))
+        (warn "Liian monta maksuyritystä: " secret)
+        (maksut-error :too-many-payment-attempts (str "Liian monta maksuyritystä: " secret) {:status-code 429}))
+
       (audit/log audit-logger
                  (audit/->user session)
                  op-payment-redirect
