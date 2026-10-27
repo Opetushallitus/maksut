@@ -112,9 +112,6 @@
                  [environ "1.2.0"]
                  [org.simplejavamail/simple-java-mail "8.3.1"]]
 
-  :plugins [[lein-ancient "0.6.15"]
-            [lein-shell "0.5.0"]]
-
   :min-lein-version "2.5.3"
 
   :main maksut.core
@@ -125,16 +122,9 @@
   :clean-targets ^{:protect false} ["target"
                                     ".ts-out"]
 
-  :shell {:commands {"open" {:windows ["cmd" "/c" "start"]
-                             :macosx  "open"
-                             :linux   "xdg-open"}}}
-
   :jvm-opts ["-Dclojure.main.report=stderr"]
 
   :aliases {"server:dev"    ["with-profile" "dev" "run"]
-            "build-report"  ["with-profile" "prod" "do"
-                             ["run" "-m" "maksut" "target/build-report.html"]
-                             ["shell" "open" "target/build-report.html"]]
             "lint"          ["with-profile" "dev" "do"
                              ["run" "-m" "clj-kondo.main" "--config" "oph-configuration/clj-kondo.config.edn" "--lint" "src"]]}
 
