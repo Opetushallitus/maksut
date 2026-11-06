@@ -363,15 +363,12 @@
                          :selite          {:fi "Hakemusmaksu"
                                            :en "Application fee"
                                            :sv "Ansökningsavgift"}
-                         :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1188/2023) määrätty maksu."
-                                           :en "The application fee is based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (1188/2023). The fees are exempted from VAT."
-                                           :sv "Ansökningsavgiften är föreskriven i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (1188/2023)."}
-                         :voimassa        {:fi "Hakemusmaksu voimassa"
-                                           :en "Application fee valid for"
-                                           :sv "Ansökningsavgiften gäller för"}
-                         :kevat           {:fi "kevät"
-                                           :en "spring"
-                                           :sv "vår"}
-                         :syksy           {:fi "syksy"
-                                           :en "autumn"
-                                           :sv "höst"}})}))
+                         :vat-explanation {:fi "Hakemuksestasi peritty maksu on opetus- ja kulttuuriministeriön asetuksella Opetushallituksen suoritteiden maksullisuudesta (1508/2025) määrätty maksu."
+                                           :en "The application fee is based on the Ministry of Education and Culture’s Decree on the Fees on the Services Provided by the Finnish National Agency for Education (1508/2025). The fees are exempted from VAT."
+                                           :sv "Ansökningsavgiften är föreskriven i undervisnings- och kulturministeriets förordning om Utbildningsstyrelsens avgiftsbelagda prestationer (1508/2025)."}
+                         :voimassa-kevat  {:fi "Hakemusmaksu voimassa keväällä {alkamisvuosi} (1.1.{alkamisvuosi} – 31.7.{alkamisvuosi}) alkaviin koulutuksiin"
+                                           :en "Application fee valid for programmes starting in spring {alkamisvuosi} (Jan. 1, {alkamisvuosi} – Jul. 31, {alkamisvuosi})"
+                                           :sv "Ansökningsavgiften gäller för utbildningar som börjar våren {alkamisvuosi} (1.1.{alkamisvuosi}–31.7.{alkamisvuosi})"}
+                         :voimassa-syksy  {:fi "Hakemusmaksu voimassa syksyllä {alkamisvuosi} (1.8.{alkamisvuosi} – 31.12.{alkamisvuosi}) alkaviin koulutuksiin"
+                                           :en "Application fee valid for programmes starting in autumn {alkamisvuosi} (Aug. 1, {alkamisvuosi} – Dec. 31, {alkamisvuosi})"
+                                           :sv "Ansökningsavgiften gäller för utbildningar som börjar hösten {alkamisvuosi} (1.8.{alkamisvuosi}–31.12.{alkamisvuosi})"}})}))
