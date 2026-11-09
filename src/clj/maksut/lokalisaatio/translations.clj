@@ -53,6 +53,21 @@
    :TutuPanel.päätösMaksettu           {:fi "Olet maksanut päätösmaksun. Olet saanut vahvistuksen maksun onnistumisesta sähköpostiisi. Olet saanut myös kuitin maksustasi erillisellä sähköpostilla. Lähetämme päätöksen sinulle mahdollisimman pian. Otathan huomioon, että tämä voi viedä jopa kolme työpäivää."
                                         :en "You have paid the decision fee. A confirmation of the transaction has been sent to your email. You have also received a receipt for your payment in a separate email. We will send the decision to you as soon as possible. Please note that this might take up to three working days."
                                         :sv "Du har betalat beslutsavgiften. Du har fått en bekräftelse om betalningen till din e-post. Kvittot på betalningen har du fått som ett separat epost. Vi skickar beslutet till dig så snart som möjligt. Vänligen notera att detta kan ta upp till tre arbetsdagar."}
+   :TutuPanel.hyvaksynta               {:fi "TODO TutuPanel.hyvaksynta <link>TODO</link>"
+                                        :en "TODO TutuPanel.hyvaksynta - en <link>TODO</link>"
+                                        :sv "TODO TutuPanel.hyvaksynta - sv <link>TODO</link>"}
+   :TutuMaksuTerms.title               {:fi "TODO TutuMaksuTerms.title"
+                                        :en "TODO TutuMaksuTerms.title - en"
+                                        :sv "TODO TutuMaksuTerms.title - sv"}
+   :TutuMaksuTerms.body                {:fi "TODO TutuMaksuTerms.body"
+                                        :en "TODO TutuMaksuTerms.body - en"
+                                        :sv "TODO TutuMaksuTerms.body - sv"}
+   :TutuMaksuTerms.sulje               {:fi "Sulje"
+                                        :en "Close"
+                                        :sv "Stäng"}
+   :TutuMaksuTerms.nappi               {:fi "Hyväksyn ehdot"
+                                        :en "I accept the terms and conditions"
+                                        :sv "Jag godkänner villkoren"}
    :TutuStateTracker.käsittely         {:fi "Hakemuksen käsittely"
                                         :en "Processing of the application"
                                         :sv "Behandling av ansökan"}
@@ -68,6 +83,21 @@
    :AstuPanel.päätösMaksamatta         {:fi "Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :en "EN Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :sv "SV Hakemuksesi on käsitelty. Siirry maksamaan maksu."}
+   :AstuPanel.hyvaksynta               {:fi "TODO AstuPanel.hyvaksynta <link>TODO</link>"
+                                        :en "TODO AstuPanel.hyvaksynta - en <link>TODO</link>"
+                                        :sv "TODO AstuPanel.hyvaksynta - sv <link>TODO</link>"}
+   :AstuMaksuTerms.title               {:fi "TODO AstuMaksuTerms.title"
+                                        :en "TODO AstuMaksuTerms.title - en"
+                                        :sv "TODO AstuMaksuTerms.title - sv"}
+   :AstuMaksuTerms.body                {:fi "TODO AstuMaksuTerms.body"
+                                        :en "TODO AstuMaksuTerms.body - en"
+                                        :sv "TODO AstuMaksuTerms.body - sv"}
+   :AstuMaksuTerms.sulje               {:fi "Sulje"
+                                        :en "Close"
+                                        :sv "Stäng"}
+   :AstuMaksuTerms.nappi               {:fi "Hyväksyn ehdot"
+                                        :en "I accept the terms and conditions"
+                                        :sv "Jag godkänner villkoren"}
    :KkHakemusmaksuPanel.title          {:fi "Hakemusmaksu"
                                         :en "Application fee"
                                         :sv "Ansökningsavgift"}
