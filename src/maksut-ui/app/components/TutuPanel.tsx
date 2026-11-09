@@ -5,9 +5,9 @@ import Maksu from '@/app/components/Maksu';
 import { Box, useTheme } from '@mui/material';
 import { useTranslations } from 'use-intl';
 import Panel from '@/app/components/Panel';
-import MaksaButton from '@/app/components/MaksaButton';
 import TutuStateTracker from '@/app/components/TutuStateTracker';
 import { OphTypography } from '@opetushallitus/oph-design-system';
+import MaksuTermsAgreementForm from '@/app/components/MaksuTermsAgreementForm';
 import { styled } from '@mui/system';
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -104,7 +104,7 @@ const TutuPanel = ({
         {kasittely && <Maksu lasku={kasittely} />}
         {paatos && <Maksu lasku={paatos} />}
       </StyledBox>
-      <MaksaButton lasku={activeLasku}></MaksaButton>
+      <MaksuTermsAgreementForm lasku={activeLasku} />
     </Panel>
   );
 };
