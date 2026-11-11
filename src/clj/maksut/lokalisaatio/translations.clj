@@ -83,15 +83,15 @@
    :AstuPanel.päätösMaksamatta         {:fi "Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :en "EN Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :sv "SV Hakemuksesi on käsitelty. Siirry maksamaan maksu."}
-   :AstuPanel.hyvaksynta               {:fi "TODO AstuPanel.hyvaksynta <link>TODO</link>"
-                                        :en "TODO AstuPanel.hyvaksynta - en <link>TODO</link>"
-                                        :sv "TODO AstuPanel.hyvaksynta - sv <link>TODO</link>"}
-   :AstuMaksuTerms.title               {:fi "TODO AstuMaksuTerms.title"
-                                        :en "TODO AstuMaksuTerms.title - en"
-                                        :sv "TODO AstuMaksuTerms.title - sv"}
-   :AstuMaksuTerms.body                {:fi "TODO AstuMaksuTerms.body"
-                                        :en "TODO AstuMaksuTerms.body - en"
-                                        :sv "TODO AstuMaksuTerms.body - sv"}
+   :AstuPanel.hyvaksynta               {:fi "Olen lukenut ja hyväksyn <link>käsittelymaksun ehdot</link>"
+                                        :en "I have read and accept the <link>terms and conditions of the processing fee</link>"
+                                        :sv "Jag har läst och godkänner <link>villkoren för behandlingsavgiften</link>"}
+   :AstuMaksuTerms.title               {:fi "Käsittelymaksun maksu- ja toimitusehdot"
+                                        :en "Payment and Delivery Terms for the Processing Fee"
+                                        :sv "Betalnings- och leveransvillkor för handläggningsavgiften"}
+   :AstuMaksuTerms.body                {:fi (slurp (io/resource "provider-terms/astu-terms-fi.html"))
+                                        :en (slurp (io/resource "provider-terms/astu-terms-en.html"))
+                                        :sv (slurp (io/resource "provider-terms/astu-terms-sv.html"))}
    :AstuMaksuTerms.sulje               {:fi "Sulje"
                                         :en "Close"
                                         :sv "Stäng"}
