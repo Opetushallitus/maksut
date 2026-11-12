@@ -53,15 +53,15 @@
    :TutuPanel.päätösMaksettu           {:fi "Olet maksanut päätösmaksun. Olet saanut vahvistuksen maksun onnistumisesta sähköpostiisi. Olet saanut myös kuitin maksustasi erillisellä sähköpostilla. Lähetämme päätöksen sinulle mahdollisimman pian. Otathan huomioon, että tämä voi viedä jopa kolme työpäivää."
                                         :en "You have paid the decision fee. A confirmation of the transaction has been sent to your email. You have also received a receipt for your payment in a separate email. We will send the decision to you as soon as possible. Please note that this might take up to three working days."
                                         :sv "Du har betalat beslutsavgiften. Du har fått en bekräftelse om betalningen till din e-post. Kvittot på betalningen har du fått som ett separat epost. Vi skickar beslutet till dig så snart som möjligt. Vänligen notera att detta kan ta upp till tre arbetsdagar."}
-   :TutuPanel.hyvaksynta               {:fi "TODO TutuPanel.hyvaksynta <link>TODO</link>"
-                                        :en "TODO TutuPanel.hyvaksynta - en <link>TODO</link>"
-                                        :sv "TODO TutuPanel.hyvaksynta - sv <link>TODO</link>"}
-   :TutuMaksuTerms.title               {:fi "TODO TutuMaksuTerms.title"
-                                        :en "TODO TutuMaksuTerms.title - en"
-                                        :sv "TODO TutuMaksuTerms.title - sv"}
-   :TutuMaksuTerms.body                {:fi "TODO TutuMaksuTerms.body"
-                                        :en "TODO TutuMaksuTerms.body - en"
-                                        :sv "TODO TutuMaksuTerms.body - sv"}
+   :TutuPanel.hyvaksynta               {:fi "Olen lukenut ja hyväksyn <link>käsittelymaksun ehdot</link>"
+                                        :en "I have read and accept the <link>terms and conditions of the processing fee</link>"
+                                        :sv "Jag har läst och godkänner <link>villkoren för behandlingsavgiften</link>"}
+   :TutuMaksuTerms.title               {:fi "Käsittelymaksun maksu- ja toimitusehdot"
+                                        :en "Payment and Delivery Terms for the Processing Fee"
+                                        :sv "Betalnings- och leveransvillkor för handläggningsavgiften"}
+   :TutuMaksuTerms.body                {:fi (slurp (io/resource "provider-terms/tutu-terms-fi.html"))
+                                        :en (slurp (io/resource "provider-terms/tutu-terms-en.html"))
+                                        :sv (slurp (io/resource "provider-terms/tutu-terms-sv.html"))}
    :TutuMaksuTerms.sulje               {:fi "Sulje"
                                         :en "Close"
                                         :sv "Stäng"}
@@ -83,12 +83,12 @@
    :AstuPanel.päätösMaksamatta         {:fi "Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :en "EN Hakemuksesi on käsitelty. Siirry maksamaan maksu."
                                         :sv "SV Hakemuksesi on käsitelty. Siirry maksamaan maksu."}
-   :AstuPanel.hyvaksynta               {:fi "Olen lukenut ja hyväksyn <link>käsittelymaksun ehdot</link>"
-                                        :en "I have read and accept the <link>terms and conditions of the processing fee</link>"
-                                        :sv "Jag har läst och godkänner <link>villkoren för behandlingsavgiften</link>"}
-   :AstuMaksuTerms.title               {:fi "Käsittelymaksun maksu- ja toimitusehdot"
-                                        :en "Payment and Delivery Terms for the Processing Fee"
-                                        :sv "Betalnings- och leveransvillkor för handläggningsavgiften"}
+   :AstuPanel.hyvaksynta               {:fi "Olen lukenut ja hyväksyn <link>päätösmaksun ehdot</link>"
+                                        :en "I have read and accept the <link>terms and conditions of the decision fee</link>"
+                                        :sv "Jag har läst och godkänner <link>villkoren för beslutsavgiften</link>"}
+   :AstuMaksuTerms.title               {:fi "Päätösmaksun maksu- ja toimitusehdot"
+                                        :en "Payment and Delivery Terms for the Decision Fee"
+                                        :sv "Betalnings- och leveransvillkor för beslutsavgiften"}
    :AstuMaksuTerms.body                {:fi (slurp (io/resource "provider-terms/astu-terms-fi.html"))
                                         :en (slurp (io/resource "provider-terms/astu-terms-en.html"))
                                         :sv (slurp (io/resource "provider-terms/astu-terms-sv.html"))}
