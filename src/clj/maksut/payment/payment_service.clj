@@ -74,11 +74,10 @@
   (str (get-translation (keyword language-code) :kkmaksukuitti/oph) "\n"
        (get-translation (keyword language-code) :kkmaksukuitti/selite) "\n"
        haku-name "\n"
-       (when-let [kausi (case alkamiskausi
-                          "kausi_k" :kkmaksukuitti/kevat
-                          "kausi_s" :kkmaksukuitti/syksy)]
-         (str (get-translation (keyword language-code) :kkmaksukuitti/voimassa) ": "
-              (get-translation (keyword language-code) kausi) " " alkamisvuosi))))
+       (when-let [voimassa (case alkamiskausi
+                             "kausi_k" :kkmaksukuitti/voimassa-kevat
+                             "kausi_s" :kkmaksukuitti/voimassa-syksy)]
+         (str/replace (get-translation (keyword language-code) voimassa) "{alkamisvuosi}" (str alkamisvuosi)))))
 
 (defn- generate-json-data [{:keys [callback-uri]}
                            {:keys [language-code amount order-number secret first-name last-name

@@ -216,7 +216,8 @@
         (is (= (count emails-to-user) 1))
         (is (= subjects #{"Opetushallitus: Kuitti hakemusmaksusta"}))
         (is (true? (s/includes? (:body receipt)
-                                "Opetushallitus<br />Hakemusmaksu<br />Haku FI<br />Hakemusmaksu voimassa: syksy 2025")))
+                                "Opetushallitus<br />Hakemusmaksu<br />Haku FI<br />Hakemusmaksu voimassa syksyllä 2025 (1.8.2025 – 31.12.2025) alkaviin koulutuksiin")))
+        (is (true? (s/includes? (:body receipt) "(1508/2025)")))
         (is (true? (s/includes? (:body receipt)
                                 "Haku FI: kuitti hakemusmaksusta")))
         (is (true? (s/includes? (:body receipt)
@@ -266,6 +267,21 @@
         (is-email-count 0)))
     )
   )
+
+(deftest kkhakemusmaksu-receipt-description-validity
+  (let [description #'payment-service/create-kk-payment-receipt-description]
+    (testing "spring validity"
+      (is (s/ends-with? (description "fi" "Haku FI" "kausi_k" 2026)
+                        "Hakemusmaksu voimassa keväällä 2026 (1.1.2026 – 31.7.2026) alkaviin koulutuksiin"))
+      (is (s/ends-with? (description "sv" "Haku SV" "kausi_k" 2026)
+                        "Ansökningsavgiften gäller för utbildningar som börjar våren 2026 (1.1.2026–31.7.2026)"))
+      (is (s/ends-with? (description "en" "Haku EN" "kausi_k" 2026)
+                        "Application fee valid for programmes starting in spring 2026 (Jan. 1, 2026 – Jul. 31, 2026)")))
+    (testing "autumn validity"
+      (is (s/ends-with? (description "sv" "Haku SV" "kausi_s" 2026)
+                        "Ansökningsavgiften gäller för utbildningar som börjar hösten 2026 (1.8.2026–31.12.2026)"))
+      (is (s/ends-with? (description "en" "Haku EN" "kausi_s" 2026)
+                        "Application fee valid for programmes starting in autumn 2026 (Aug. 1, 2026 – Dec. 31, 2026)")))))
 
 ;Rare use-case where multiple Paytrail sessions are initiated before payments have been finalized,
 ;and then more than one is finalized will results in multiple rows in payments table (with unique PAYMENT_ID)
