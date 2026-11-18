@@ -50,7 +50,7 @@ const createInvoice: (
         'first-name': 'test1',
         'last-name': 'test1',
         email: payerEmail,
-        amount: '11',
+        amount: '256',
         'due-date': dueDateIso,
         index: 1,
       },
@@ -94,7 +94,7 @@ const assertEmailsSent = async (payerEmail: string) => {
         email.recipients.includes(`<${payerEmail}>`),
       );
     })
-    .toHaveLength(1);
+    .toHaveLength(2);
 };
 
 const assertProviderTermsVisible = async () => {
