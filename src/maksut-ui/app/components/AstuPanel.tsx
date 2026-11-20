@@ -5,8 +5,8 @@ import Maksu from '@/app/components/Maksu';
 import { useLocale, useTranslations } from 'use-intl';
 import { translateLocalizedString } from '@/app/lib/utils';
 import Panel from '@/app/components/Panel';
-import MaksaButton from '@/app/components/MaksaButton';
 import { OphTypography } from '@opetushallitus/oph-design-system';
+import MaksuTermsAgreementForm from '@/app/components/MaksuTermsAgreementForm';
 
 const AstuPanel = ({ lasku }: { lasku: Lasku }) => {
   const t = useTranslations('AstuPanel');
@@ -41,7 +41,7 @@ const AstuPanel = ({ lasku }: { lasku: Lasku }) => {
       </OphTypography>
       {stateText()}
       <Maksu lasku={lasku} />
-      <MaksaButton lasku={lasku}></MaksaButton>
+      <MaksuTermsAgreementForm lasku={lasku} />
     </Panel>
   );
 };

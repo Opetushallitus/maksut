@@ -16,13 +16,16 @@ import {
 import { useTranslations } from 'use-intl';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid2';
+import { Origin } from '../lib/types';
 
-export default function KkHakemusmaksuTerms({
+export default function MaksuTerms({
   linkChildren,
   onAgreeTerms,
+  origin,
 }: {
   linkChildren: ReactNode;
   onAgreeTerms: () => void;
+  origin: Origin;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -34,7 +37,18 @@ export default function KkHakemusmaksuTerms({
     setOpen(false);
   };
 
-  const t = useTranslations('KkHakemusmaksuTerms');
+  let t;
+  switch (origin) {
+    case 'kkhakemusmaksu':
+      t = useTranslations('KkHakemusmaksuTerms');
+      break;
+    case 'astu':
+      t = useTranslations('AstuMaksuTerms');
+      break;
+    case 'tutu':
+      t = useTranslations('TutuMaksuTerms');
+      break;
+  }
 
   return (
     <>

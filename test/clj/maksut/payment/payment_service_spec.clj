@@ -67,6 +67,21 @@
               :alkamisvuosi 2025}
    :due_date date})
 
+(defn db-invoice-astu-maksu [date]
+  {:order_id "AKR123456"
+   :first_name "Testi"
+   :last_name "Hakija"
+   :email "testihakija@example.com"
+   :amount (bigdec "100.00")
+   :origin "astu"
+   :reference "1.2.246.562.11.00000000000000123456"
+   :metadata {:haku-name {:fi "Astu FI"
+                          :sv "Astu SV"
+                          :en "Astu EN"}
+              :alkamiskausi "1"
+              :alkamisvuosi 2026}
+   :due_date date})
+
 (def params {
   :checkout-reference "TTU123456-1"
   :checkout-stamp "106173855345"
@@ -456,7 +471,8 @@
              (let [{:keys [href]} (payment-protocol/payment service maksut-test-fixtures/fake-session
                                                             {:order-id (:order_id db-data)
                                                             :locale "fi"
-                                                            :secret secret})]
+                                                            :secret secret 
+                                                            :terms-agreed true})]
                (is (not-empty href))
                )))
     ))
@@ -564,6 +580,210 @@
           (is (s/includes?
                 (-> change (.get "newValue") .getAsString)
                 "<p>Hyväksymällä nämä ehdot vahvistan ymmärtäväni ja hyväksyväni seuraavat hakemusmaksua koskevat maksu- ja toimitusehdot.</p>")))))))
+
+(deftest tutu-maksu-pay-without-terms-agreed
+  (let [service (:payment-service @test-system)
+        db (:db @test-system)
+        due-date (plus-days-from-now 7)
+        db-data (db-invoice due-date)
+        secret "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret     secret})
+
+    (testing "Throws an exception"
+      (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                             {:order-id (:order_id db-data)
+                                                              :locale "fi"
+                                                              :secret secret}))
+            data (:data exc)]
+        (is (= (:type data) :maksut.error))
+        (is (= (:code data) :invoice-invalidstate-termsunaccepted))))
+
+    (testing "Does not save to database"
+      (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                   {:order-id (:order_id db-data)
+                                                    :locale "fi"
+                                                    :secret secret}))
+      (let [{:keys [terms_agreed_at]}
+            (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+        (is (= terms_agreed_at nil))))
+
+    (testing "Does not write to audit log"
+      (reset-audit-logs!)
+      (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                   {:order-id (:order_id db-data)
+                                                    :locale "fi"
+                                                    :secret secret}))
+      (let [{:keys [terms_agreed_at]}
+            (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+        (is (= terms_agreed_at nil)))
+      (let [terms-logs (filter
+                        #(= (:operation %) payment-service/op-terms-agreement)
+                        (get-audit-logs))]
+        (is (empty? terms-logs))))))
+
+(deftest tutu-maksu-pay-with-terms-agreed
+  (let [service (:payment-service @test-system)
+        db (:db @test-system)
+        due-date (plus-days-from-now 7)
+        db-data (db-invoice due-date)
+        secret "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret     secret})
+
+    (testing "Saves the date of agreement to database"
+      (with-global-fake-routes
+        {"http://localhost:9040/payments" {:post (fn [_]
+                                                   {:status  200
+                                                    :headers {}
+                                                    :body    "{\"href\":\"http://esimerkkilinkki\"}"})}}
+        (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                  {:order-id     (:order_id db-data)
+                                   :locale       "fi"
+                                   :secret       secret
+                                   :terms-agreed true})
+        (let [{:keys [terms_agreed_at]}
+              (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+          (is (= terms_agreed_at (LocalDate/now))))))
+
+    (testing "Writes the current terms to audit log"
+      (with-global-fake-routes
+        {"http://localhost:9040/payments" {:post (fn [_]
+                                                   {:status  200
+                                                    :headers {}
+                                                    :body    "{\"href\":\"http://esimerkkilinkki\"}"})}}
+        (reset-audit-logs!)
+        (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                  {:order-id     (:order_id db-data)
+                                   :locale       "fi"
+                                   :secret       secret
+                                   :terms-agreed true})
+
+        (let [terms-logs (filter
+                          #(= (:operation %) payment-service/op-terms-agreement)
+                          (get-audit-logs))
+              terms-log (first terms-logs)
+              target ^Target (:target terms-log)
+              targetRef (-> target .asJson (.get "reference") .getAsString)
+              targetEmail (-> target .asJson (.get "email") .getAsString)
+              changes ^JsonArray (.asJsonArray (:changes terms-log))
+              change ^JsonObject (-> changes (.get 0) .getAsJsonObject)]
+          (is (= 1 (count terms-logs)))
+          (is (= "1.2.246.562.11.00000000000000123456" targetRef))
+          (is (= "hannes@gmail.com" targetEmail))
+          (is (= 1 (.size changes)))
+          (is (= "agreed-terms" (-> change (.get "fieldName") .getAsString)))
+          (is (s/includes?
+               (-> change (.get "newValue") .getAsString)
+               "<p>Hyväksymällä nämä ehdot vahvistan, että ymmärrän ja hyväksyn seuraavat käsittelymaksua koskevat ehdot.")))))))
+
+(deftest astu-maksu-pay-without-terms-agreed
+  (let [service (:payment-service @test-system)
+        db (:db @test-system)
+        due-date (LocalDate/now)
+        db-data (db-invoice-astu-maksu due-date)
+        secret "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret     secret})
+
+    (testing "Throws an exception"
+      (let [exc (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                             {:order-id (:order_id db-data)
+                                                              :locale "fi"
+                                                              :secret secret}))
+            data (:data exc)]
+        (is (= (:type data) :maksut.error))
+        (is (= (:code data) :invoice-invalidstate-termsunaccepted))))
+
+    (testing "Does not save to database"
+      (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                   {:order-id (:order_id db-data)
+                                                    :locale "fi"
+                                                    :secret secret}))
+      (let [{:keys [terms_agreed_at]}
+            (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+        (is (= terms_agreed_at nil))))
+
+    (testing "Does not write to audit log"
+      (reset-audit-logs!)
+      (catch-thrown-info (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                                   {:order-id (:order_id db-data)
+                                                    :locale "fi"
+                                                    :secret secret}))
+      (let [{:keys [terms_agreed_at]}
+            (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+        (is (= terms_agreed_at nil)))
+      (let [terms-logs (filter
+                        #(= (:operation %) payment-service/op-terms-agreement)
+                        (get-audit-logs))]
+        (is (empty? terms-logs))))))
+
+(deftest astu-maksu-pay-with-terms-agreed
+  (let [service (:payment-service @test-system)
+        db (:db @test-system)
+        due-date (LocalDate/now)
+        db-data (db-invoice-astu-maksu due-date)
+        secret "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret     secret})
+
+    (testing "Saves the date of agreement to database"
+      (with-global-fake-routes
+        {"http://localhost:9040/payments" {:post (fn [_]
+                                                   {:status  200
+                                                    :headers {}
+                                                    :body    "{\"href\":\"http://esimerkkilinkki\"}"})}}
+        (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                  {:order-id     (:order_id db-data)
+                                   :locale       "fi"
+                                   :secret       secret
+                                   :terms-agreed true})
+        (let [{:keys [terms_agreed_at]}
+              (jdbc/query db ["SELECT terms_agreed_at FROM invoices WHERE id = ?" invoice-id])]
+          (is (= terms_agreed_at (LocalDate/now))))))
+
+    (testing "Writes the current terms to audit log"
+      (with-global-fake-routes
+        {"http://localhost:9040/payments" {:post (fn [_]
+                                                   {:status  200
+                                                    :headers {}
+                                                    :body    "{\"href\":\"http://esimerkkilinkki\"}"})}}
+        (reset-audit-logs!)
+        (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                  {:order-id     (:order_id db-data)
+                                   :locale       "fi"
+                                   :secret       secret
+                                   :terms-agreed true})
+
+        (let [terms-logs (filter
+                          #(= (:operation %) payment-service/op-terms-agreement)
+                          (get-audit-logs))
+              terms-log (first terms-logs)
+              target ^Target (:target terms-log)
+              targetRef (-> target .asJson (.get "reference") .getAsString)
+              targetEmail (-> target .asJson (.get "email") .getAsString)
+              changes ^JsonArray (.asJsonArray (:changes terms-log))
+              change ^JsonObject (-> changes (.get 0) .getAsJsonObject)]
+          (is (= 1 (count terms-logs)))
+          (is (= "1.2.246.562.11.00000000000000123456" targetRef))
+          (is (= "testihakija@example.com" targetEmail))
+          (is (= 1 (.size changes)))
+          (is (= "agreed-terms" (-> change (.get "fieldName") .getAsString)))
+          (is (s/includes?
+               (-> change (.get "newValue") .getAsString)
+               "<p>Hyväksymällä nämä ehdot vahvistan, että ymmärrän ja hyväksyn seuraavat päätösmaksua koskevat ehdot.")))))))
 
 (defn- attempt-count [db]
   (:count (first (jdbc/query db ["SELECT count(*) as count FROM payment_attempts"]))))

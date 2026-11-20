@@ -165,6 +165,12 @@ test.describe('Real Paytrail', () => {
 
     await assertProviderTermsVisible();
 
+    // Hyväksytään ehdot
+    await expect(
+      userPage.getByText('Olen lukenut ja hyväksyn käsittelymaksun ehdot'),
+    ).toBeVisible();
+    await userPage.getByRole('checkbox').check();
+
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole('link', { name: 'Siirry maksamaan' }).click();
 
@@ -235,6 +241,12 @@ test.describe('Mocked Paytrail', () => {
     await goTo(userPage, `/maksut/fi?secret=${invoice.secret}`);
 
     await assertProviderTermsVisible();
+
+    // Hyväksytään ehdot
+    await expect(
+      userPage.getByText('Olen lukenut ja hyväksyn käsittelymaksun ehdot'),
+    ).toBeVisible();
+    await userPage.getByRole('checkbox').check();
 
     // käynnistetään käyttäjänä maksuflow
     await userPage.getByRole('link', { name: 'Siirry maksamaan' }).click();

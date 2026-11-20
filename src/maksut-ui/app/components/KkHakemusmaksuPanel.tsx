@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from 'use-intl';
 import Panel from '@/app/components/Panel';
 import { translateLocalizedString } from '@/app/lib/utils';
 import { OphTypography } from '@opetushallitus/oph-design-system';
-import KkHakemusmaksuTermsAgreementForm from '@/app/components/KkHakemusmaksuTermsAgreementForm';
+import MaksuTermsAgreementForm from '@/app/components/MaksuTermsAgreementForm';
 
 const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
   const t = useTranslations('KkHakemusmaksuPanel');
@@ -93,7 +93,7 @@ const KkHakemusmaksuPanel = ({ lasku }: { lasku: Lasku }) => {
       )}
       {stateText()}
       <Maksu lasku={lasku} />
-      <KkHakemusmaksuTermsAgreementForm lasku={lasku} />
+      <MaksuTermsAgreementForm lasku={lasku} />
     </Panel>
   );
 };

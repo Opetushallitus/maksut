@@ -3,16 +3,27 @@ import { Box, Checkbox, FormControlLabel } from '@mui/material';
 import { useTranslations } from 'use-intl';
 import { Lasku } from '@/app/lib/types';
 import MaksaButton from '@/app/components/MaksaButton';
-import KkHakemusmaksuTerms from '@/app/components/KkHakemusmaksuTerms';
+import MaksuTerms from '@/app/components/MaksuTerms';
 
-export default function KkHakemusmaksuTermsAgreementdForm({
+export default function MaksuTermsAgreementForm({
   lasku,
 }: {
   lasku: Lasku;
 }): React.JSX.Element {
   const [agreed, setAgreed] = useState<boolean>(false);
 
-  const t = useTranslations('KkHakemusmaksuPanel');
+  let t;
+  switch (lasku.origin) {
+    case 'kkhakemusmaksu':
+      t = useTranslations('KkHakemusmaksuPanel');
+      break;
+    case 'astu':
+      t = useTranslations('AstuPanel');
+      break;
+    case 'tutu':
+      t = useTranslations('TutuPanel');
+      break;
+  }
 
   // Type the change event for the checkbox element
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -44,7 +55,11 @@ export default function KkHakemusmaksuTermsAgreementdForm({
             }
             label={t.rich('hyvaksynta', {
               link: (chunks) => (
-                <KkHakemusmaksuTerms linkChildren={chunks} onAgreeTerms={onAgreeTerms} />
+                <MaksuTerms
+                  linkChildren={chunks}
+                  onAgreeTerms={onAgreeTerms}
+                  origin={lasku.origin}
+                />
               ),
             })}
           />
