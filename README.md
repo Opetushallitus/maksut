@@ -83,6 +83,7 @@ Paytrail-flowta voi kehittää/testata lokaalilla kannalla seuraavilla askelilla
 
    ```bash
       cd src/maksut-ui
+      pnpm run build
       pnpm run dev
    ```
 

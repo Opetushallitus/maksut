@@ -36,13 +36,13 @@
 
 (def op-payment-redirect (audit/->operation "MaksupalveluunOhjaus"))
 
-(def op-terms-agreement (audit/->operation "HakumaksunEhtojenHyvaksyminen"))
+(def op-terms-agreement (audit/->operation "MaksuEhtojenHyvaksyminen"))
 
 (def op-get-kuitti (audit/->operation "KuitinHakeminen"))
 
 (def vat-zero 0)
 
-(defonce terms-keys {"kkhakemusmaksu" "KkHakemusmaksuTerms.body"})
+(defonce terms-keys {"kkhakemusmaksu" "KkHakemusmaksuTerms.body" "astu" "AstuMaksuTerms.body"})
 
 (defn Lasku->AuditJson [lasku]
   (assoc
@@ -54,6 +54,14 @@
   (cond
     (str/ends-with? order-id "-1") :käsittely
     (str/ends-with? order-id "-2") :päätös))
+
+(defn- terms-key [origin order-id]
+  (if (= origin "tutu")
+    (case (order-state order-id)
+      :käsittely "TutuMaksuTerms.käsittelyBody"
+      :päätös "TutuMaksuTerms.päätösBody"
+      nil)
+    (get terms-keys origin)))
 
 (defn- create-description [language-code order-id]
   (case (order-state order-id)
@@ -174,10 +182,10 @@
     (when (not= (:status lasku) "active")
           (maksut-error :invoice-not-active (str "Maksua ei voi enää maksaa: " secret)))
 
-    (when (= "kkhakemusmaksu" (:origin lasku))
+    (when (#{"kkhakemusmaksu" "astu" "tutu"} (:origin lasku))
       (when-not terms-agreed
         (maksut-error :invoice-invalidstate-termsunaccepted (str "Ehtoja ei ole hyväksytty: " secret)))
-      (let [terms (lokalisaatio-protocol/get-localisation lokalisaatio-service locale (get terms-keys (:origin lasku)))]
+      (let [terms (lokalisaatio-protocol/get-localisation lokalisaatio-service locale (terms-key (:origin lasku) (:order_id lasku)))]
         (maksut-queries/update-terms-agreed-at-by-id db (:id lasku))
         (audit/log audit-logger
                    (audit/->user session)
