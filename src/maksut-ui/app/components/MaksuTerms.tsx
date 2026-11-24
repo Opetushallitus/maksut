@@ -22,10 +22,12 @@ export default function MaksuTerms({
   linkChildren,
   onAgreeTerms,
   origin,
+  isDecision,
 }: {
   linkChildren: ReactNode;
   onAgreeTerms: () => void;
   origin: Origin;
+  isDecision?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -50,6 +52,15 @@ export default function MaksuTerms({
       break;
   }
 
+  const title =
+    origin === 'tutu'
+      ? isDecision
+        ? 'päätösTitle'
+        : 'käsittelyTitle'
+      : 'title';
+  const body =
+    origin === 'tutu' ? (isDecision ? 'päätösBody' : 'käsittelyBody') : 'body';
+
   return (
     <>
       <OphLink
@@ -62,7 +73,7 @@ export default function MaksuTerms({
       </OphLink>
       <Dialog
         open={open}
-        title={t('title')}
+        title={t(title)}
         scroll={'paper'}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -78,7 +89,7 @@ export default function MaksuTerms({
             alignItems: 'center',
           }}
         >
-          {t('title')}
+          {t(title)}
           <IconButton
             aria-label="close"
             onClick={handleClose}
@@ -91,7 +102,7 @@ export default function MaksuTerms({
           </IconButton>
         </DialogTitle>
         <DialogContent id="modal-modal-description" sx={{ pt: 0, pr: 6 }}>
-          {t.rich('body', {
+          {t.rich(body, {
             p: (chunks) => (
               <OphTypography variant={'body1'} sx={{ marginBottom: 2 }}>
                 {chunks}

@@ -34,6 +34,14 @@ export default function MaksuTermsAgreementForm({
     setAgreed(true);
   };
 
+  const isDecision = lasku.origin === 'tutu' && !lasku.order_id.endsWith('-1');
+  const labelKey =
+    lasku.origin === 'tutu'
+      ? isDecision
+        ? 'päätösHyväksyntä'
+        : 'käsittelyHyväksyntä'
+      : 'hyvaksynta';
+
   if (lasku.status === 'active') {
     return (
       <>
@@ -53,12 +61,13 @@ export default function MaksuTermsAgreementForm({
                 color="primary"
               />
             }
-            label={t.rich('hyvaksynta', {
+            label={t.rich(labelKey, {
               link: (chunks) => (
                 <MaksuTerms
                   linkChildren={chunks}
                   onAgreeTerms={onAgreeTerms}
                   origin={lasku.origin}
+                  isDecision={isDecision}
                 />
               ),
             })}
