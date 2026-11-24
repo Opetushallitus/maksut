@@ -37,7 +37,8 @@ interface Invoice {
 
 const createInvoice: (
   apiContext: APIRequestContext,
-) => Promise<Invoice> = async () => {
+  index?: number,
+) => Promise<Invoice> = async (apiContext, index = 1) => {
   const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000);
   const dueDateIso = dueDate.toISOString().split('T')[0];
   const invoiceKey = 'K' + uuid();
@@ -52,7 +53,7 @@ const createInvoice: (
         email: payerEmail,
         amount: '256',
         'due-date': dueDateIso,
-        index: 1,
+        index,
       },
     },
   );
@@ -60,7 +61,7 @@ const createInvoice: (
   const newInvoiceResponseJson = await newInvoice.json();
 
   return {
-    key: `TTU${invoiceKey}-1`,
+    key: `TTU${invoiceKey}-${index}`,
     secret: newInvoiceResponseJson.secret,
     payerEmail,
   };
@@ -213,6 +214,36 @@ test('Accessibility', async () => {
 
   // saavutettavuuden pitäisi olla täälläkin ok
   await expectPageAccessibilityOk(userPage);
+});
+
+test('Päätösmaksun ehdot näkyvät ja ne voi hyväksyä', async () => {
+  const invoice = await createInvoice(apiContext, 2);
+  await goTo(userPage, `/maksut/fi?secret=${invoice.secret}`);
+
+  const termsLink = userPage.getByRole('button', {
+    name: 'päätösmaksun ehdot',
+  });
+  await expect(termsLink).toBeVisible();
+  await termsLink.click();
+
+  await expect(
+    userPage.getByRole('heading', {
+      name: 'Päätösmaksun maksu- ja toimitusehdot',
+    }),
+  ).toBeVisible();
+  await expect(
+    userPage.getByText(
+      'Hyväksymällä nämä ehdot vahvistan, että ymmärrän ja hyväksyn seuraavat päätösmaksua koskevat ehdot.',
+      { exact: true },
+    ),
+  ).toBeVisible();
+
+  await userPage.getByRole('button', { name: 'Hyväksyn ehdot' }).click();
+  await expect(
+    userPage.getByRole('checkbox', {
+      name: 'Olen lukenut ja hyväksyn päätösmaksun ehdot',
+    }),
+  ).toBeChecked();
 });
 
 test.describe('Mocked Paytrail', () => {

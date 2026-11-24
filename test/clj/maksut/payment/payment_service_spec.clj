@@ -683,6 +683,44 @@
                (-> change (.get "newValue") .getAsString)
                "<p>Hyväksymällä nämä ehdot vahvistan, että ymmärrän ja hyväksyn seuraavat käsittelymaksua koskevat ehdot.")))))))
 
+(deftest tutu-paatosmaksu-pay-with-terms-agreed
+  (let [service (:payment-service @test-system)
+        db (:db @test-system)
+        due-date (plus-days-from-now 7)
+        db-data (db-invoice-2 due-date)
+        secret "foobar"
+        invoice-insert (test-fixtures/add-invoice! db db-data)
+        invoice-id (-> invoice-insert first :id)]
+
+    (jdbc/insert! db :secrets {:fk_invoice invoice-id
+                               :secret     secret})
+
+    (testing "Writes the decision fee terms to audit log"
+      (with-global-fake-routes
+        {"http://localhost:9040/payments" {:post (fn [_]
+                                                   {:status  200
+                                                    :headers {}
+                                                    :body    "{\"href\":\"http://esimerkkilinkki\"}"})}}
+        (reset-audit-logs!)
+        (payment-protocol/payment service maksut-test-fixtures/fake-session
+                                  {:order-id     (:order_id db-data)
+                                   :locale       "fi"
+                                   :secret       secret
+                                   :terms-agreed true})
+
+        (let [terms-logs (filter
+                          #(= (:operation %) payment-service/op-terms-agreement)
+                          (get-audit-logs))
+              terms-log (first terms-logs)
+              changes ^JsonArray (.asJsonArray (:changes terms-log))
+              change ^JsonObject (-> changes (.get 0) .getAsJsonObject)]
+          (is (= 1 (count terms-logs)))
+          (is (= 1 (.size changes)))
+          (is (= "agreed-terms" (-> change (.get "fieldName") .getAsString)))
+          (is (s/includes?
+               (-> change (.get "newValue") .getAsString)
+               "<p>Hyväksymällä nämä ehdot vahvistan, että ymmärrän ja hyväksyn seuraavat päätösmaksua koskevat ehdot.")))))))
+
 (deftest astu-maksu-pay-without-terms-agreed
   (let [service (:payment-service @test-system)
         db (:db @test-system)
